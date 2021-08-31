@@ -1,0 +1,36 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+
+@font-face {
+  font-family: 'Artifakt Element Regular';
+  src: url('fonts/Artifakt Element Regular.woff') format('woff');
+}
+
+:root {
+  --ifm-color-primary: rgb(62, 149, 209);
+  --ifm-color-primary-dark: rgb(56, 134, 188);
+  --ifm-color-primary-darker: rgb(50, 119, 167);
+  --ifm-color-primary-darkest: rgb(43, 104, 156);
+  --ifm-color-primary-light: rgb(68, 164, 230);
+  --ifm-color-primary-lighter: rgb(74, 179, 251);
+  --ifm-color-primary-lightest: rgb(81, 194, 255);
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-monospace: 'Artifakt Element Regular';
+  --ifm-font-family-base: 'Artifakt Element Regular';
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}
