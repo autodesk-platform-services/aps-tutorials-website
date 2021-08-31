@@ -2,34 +2,22 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Getting Started
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Here's a couple of things you want to do before building your first Forge application.
 
-## Getting Started
+## Create an account
 
-Get started by **creating a new site**.
+If you don't have a Forge account yet, sign up for one on https://forge.autodesk.com.
+You can take advantage of a trial subscription that is valid for 3 months.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Create an app
 
-## Generate a new site
+Create a new Forge application under https://forge.autodesk.com/myapps, and store
+the _Client ID_ and _Client Secret_ credentials as we will need them later.
 
-Generate a new Docusaurus site using the **classic template**:
+And that's it! Now head over to one of the tutorials with the programming language
+of your choice:
 
-```shell
-npx @docusaurus/init@latest init my-website classic
-```
-
-## Start your site
-
-Run the development server:
-
-```shell
-cd my-website
-
-npx docusaurus start
-```
-
-Your site starts at `http://localhost:3000`.
-
-Open `docs/intro.md` and edit some lines: the site **reloads automatically** and display your changes.
+- [Simple Viewer (Node.js)](tutorial-simple-viewer-nodejs/create-a-page)
+- [Hubs Browser (Node.js)](tutorial-hubs-browser-nodejs/translate-your-site)
