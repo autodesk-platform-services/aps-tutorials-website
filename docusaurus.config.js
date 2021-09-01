@@ -3,91 +3,92 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-  title: 'Forge Tutorials',
-  tagline: 'Next-Gen Tutorials for Autodesk Forge',
-  url: 'https://petrbroz.github.io',
-  baseUrl: '/forge-samples-docs/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'petrbroz',
-  projectName: 'forge-samples-docs',
-  themeConfig: {
-    navbar: {
-      title: 'Forge Tutorials',
-      logo: {
-        alt: 'Autodesk Forge',
-        src: 'img/logo.png'
-      },
-      items: [
-        {
-          type: 'doc',
-          docId: 'intro',
-          position: 'left',
-          label: 'Tutorials'
-        },
-        {
-          href: 'https://github.com/petrbroz/forge-samples-docs',
-          label: 'GitHub',
-          position: 'right'
-        }
-      ]
-    },
-    footer: {
-      style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Tutorials',
-              to: '/docs/intro'
-            }
-          ]
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/autodesk-forge'
+    title: 'Forge Tutorials',
+    tagline: 'Next-Gen Tutorials for Autodesk Forge',
+    url: 'https://petrbroz.github.io',
+    baseUrl: '/forge-samples-docs/',
+    onBrokenLinks: 'throw',
+    onBrokenMarkdownLinks: 'warn',
+    favicon: 'img/favicon.ico',
+    organizationName: 'petrbroz',
+    projectName: 'forge-samples-docs',
+    themeConfig: {
+        navbar: {
+            title: 'Forge Tutorials',
+            logo: {
+                alt: 'Autodesk Forge',
+                src: 'img/logo.png'
             },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/ipetrbroz'
-            }
-          ]
+            items: [
+                {
+                    type: 'doc',
+                    docId: 'intro',
+                    position: 'left',
+                    label: 'Tutorials'
+                },
+                {
+                    href: 'https://github.com/petrbroz/forge-samples-docs',
+                    label: 'GitHub',
+                    position: 'right'
+                }
+            ]
         },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/petrbroz/forge-samples-docs'
-            }
-          ]
-        }
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Autodesk, Inc. Built with Docusaurus.`
-    },
-    prism: {
-      theme: lightCodeTheme,
-      darkTheme: darkCodeTheme
-    },
-  },
-  presets: [
-    [
-      '@docusaurus/preset-classic',
-      {
-        docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/main/website/'
+        footer: {
+            style: 'dark',
+            links: [
+                {
+                    title: 'Docs',
+                    items: [
+                        {
+                            label: 'Tutorials',
+                            to: '/docs/intro'
+                        }
+                    ]
+                },
+                {
+                    title: 'Community',
+                    items: [
+                        {
+                            label: 'Stack Overflow',
+                            href: 'https://stackoverflow.com/questions/tagged/autodesk-forge'
+                        },
+                        {
+                            label: 'Twitter',
+                            href: 'https://twitter.com/ipetrbroz'
+                        }
+                    ]
+                },
+                {
+                    title: 'More',
+                    items: [
+                        {
+                            label: 'GitHub',
+                            href: 'https://github.com/petrbroz/forge-samples-docs'
+                        }
+                    ]
+                }
+            ],
+            copyright: `Copyright © ${new Date().getFullYear()} Autodesk, Inc. Built with Docusaurus.`
         },
-        theme: {
-          customCss: require.resolve('./src/css/custom.css')
-        }
-      }
+        prism: {
+            theme: lightCodeTheme,
+            darkTheme: darkCodeTheme
+        },
+        hideableSidebar: true
+    },
+    presets: [
+        [
+            '@docusaurus/preset-classic',
+            {
+                docs: {
+                    sidebarPath: require.resolve('./sidebars.js'),
+                    // Please change this to your repo.
+                    editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/main/website/'
+                },
+                theme: {
+                    customCss: require.resolve('./src/css/custom.css')
+                }
+            }
+        ]
     ]
-  ]
 };

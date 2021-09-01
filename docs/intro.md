@@ -16,8 +16,12 @@ You can take advantage of a trial subscription that is valid for 3 months.
 Create a new Forge application under https://forge.autodesk.com/myapps, and store
 the _Client ID_ and _Client Secret_ credentials as we will need them later.
 
-And that's it! Now head over to one of the tutorials with the programming language
-of your choice:
+## Setup your environment
 
-- [Simple Viewer (Node.js)](tutorial-simple-viewer-nodejs/create-a-page)
-- [Hubs Browser (Node.js)](tutorial-hubs-browser-nodejs/translate-your-site)
+Setup your development environment depending on your programming language of choice:
+
+- [Node.js](setup/nodejs.md)
+- [.NET](setup/dotnet.md)
+
+And you're all set! Now head over to one of the tutorials with the programming language
+of your choice.
