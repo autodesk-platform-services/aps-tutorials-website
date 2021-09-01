@@ -101,7 +101,7 @@ app.use(function (err, req, res, next) {
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
-Since we've attached the route to the `/api/auth` prefix, the router will now handle all requests
+Since we've attached the router to the `/api/auth` prefix, the router will now handle all requests
 coming to the endpoint `/api/auth/token`.
 
 ## Try it out

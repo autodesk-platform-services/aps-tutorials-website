@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Introduction
 
 In this tutorial we're going to build a Forge application that will let us
