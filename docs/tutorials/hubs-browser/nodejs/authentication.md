@@ -206,7 +206,7 @@ redirected to Autodesk login page, and after logging in, you should be redirecte
 to your application, for now simply showing `Cannot GET /`. This is expected as we haven't
 implemented the `GET /` endpoint yet. However, if you try and explore the cookies stored
 by your browser for the `http://localhost:3000` origin, you'll notice that the application
-is already storing `internal_token`, `public_token`, and a couple more properties there.
-We will use these later on.
+is already storing the session data in an `express:sess` cookie. That is where we will
+get our tokens from later in this tutorial.
 
 > TODO: screenshot/gif
