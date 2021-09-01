@@ -18,5 +18,5 @@ We will use the following components of the platform:
 
 Get started by selecting the programming language of your choice:
 
-- [Node.js](nodejs)
-- [.NET](dotnet)
+- [Node.js](nodejs/server)
+- [.NET](dotnet/server)

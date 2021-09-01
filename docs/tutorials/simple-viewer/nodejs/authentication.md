@@ -53,7 +53,7 @@ module.exports = {
 
 The code expects the credentials of a Forge application to be provided as two environment variables,
 `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`. These are the _Client ID_ and _Client Secret_ values you
-can obtain after [creating a new Forge application](../../intro#create-an-app). With the credentials,
+can obtain after [creating a new Forge application](../../../intro#create-an-app). With the credentials,
 the script then creates two authentication clients, one for internal use (giving us read/write access
 to the Data Management buckets and objects), and one for public use (only allowing its owner to
 access translation outputs from the Model Derivative service), and two helper methods to generate
