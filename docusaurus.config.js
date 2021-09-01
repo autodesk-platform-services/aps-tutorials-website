@@ -3,8 +3,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-    title: 'Forge Tutorials',
-    tagline: 'Next-Gen Tutorials for Autodesk Forge',
+    title: 'Another Way to Learn Forge',
+    tagline: 'Don\'t worry... This is just a working title :)',
     url: 'https://petrbroz.github.io',
     baseUrl: '/forge-samples-docs/',
     onBrokenLinks: 'throw',
@@ -14,7 +14,7 @@ module.exports = {
     projectName: 'forge-samples-docs',
     themeConfig: {
         navbar: {
-            title: 'Forge Tutorials',
+            title: 'Another Way to Learn Forge',
             logo: {
                 alt: 'Autodesk Forge',
                 src: 'img/logo.png'

@@ -16,6 +16,13 @@ We will use the following components of the platform:
 - [Model Derivative service](https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
 - [Forge Viewer](https://forge.autodesk.com/en/docs/viewer/v7/developers_guide/overview)
 
+> IDEA: maybe replace the bullet list with a collection of official Forge icons
+
+The full implementation of this sample is available on GitHub:
+
+- https://github.com/petrbroz/forge-simple-viewer-nodejs
+- https://github.com/petrbroz/forge-simple-viewer-dotnet
+
 Get started by selecting the programming language of your choice:
 
 - [Node.js](nodejs/server)
