@@ -297,6 +297,13 @@ Then, create an `index.html` file (also in the `public` subfolder) with the foll
 > Note that since `public/main.js` is also an ES6 module, we have to use `type="module"`
 > in its `<script>` tag.
 
+The application will look for `favicon.ico` and `logo.png` images under the `public` folder to use
+as the website's icon and logo. If you don't have any images of your own, feel free to download
+them from one of our samples:
+
+- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/favicon.ico
+- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/logo.png
+
 ## Try it out
 
 And that's it! Your application is now ready for action. Start it from the command line as usual:
