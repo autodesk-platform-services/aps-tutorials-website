@@ -99,7 +99,7 @@ and a couple of methods for generating the corresponding tokens for us.
 Next, let's update our `Startup.cs` file to make a singleton instance of the `ForgeService` class
 available to our server application:
 
-```csharp {30} title="Startup.cs"
+```csharp title="Startup.cs"
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -129,7 +129,9 @@ namespace simpleviewer
             {
                 throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
             }
+            // highlight-start
             services.AddSingleton<IForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeBucket));
+            // highlight-end
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -177,12 +177,13 @@ Since we've attached the router to the `/api/auth` prefix, the router will now h
 requests:
 
 - `GET /api/auth/login` will redirect the user to the Autodesk login page
-- `GET /api/auth/callback` is the URL our user will be redirected to after logging in successfully
+- `GET /api/auth/callback` is the URL our user will be redirected to after logging in successfully,
+and it is where we're going to generate a new set of tokens for the user
 - `GET /api/auth/logout` will remove any cookie-based session data for the given user, effectively
 logging the user out of our application
 - `GET /api/auth/token` will generate a public access token that will later be used by Forge Viewer
 to load our designs
-- `GET /api/auth/profile` will return a simple JSON with information about the logged in user
+- `GET /api/auth/profile` will return a simple JSON with additional information about the logged in user
 
 ## Try it out
 
