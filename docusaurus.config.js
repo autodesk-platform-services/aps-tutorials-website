@@ -72,7 +72,8 @@ module.exports = {
         },
         prism: {
             theme: lightCodeTheme,
-            darkTheme: darkCodeTheme
+            darkTheme: darkCodeTheme,
+            additionalLanguages: ['csharp']
         },
         hideableSidebar: true
     },

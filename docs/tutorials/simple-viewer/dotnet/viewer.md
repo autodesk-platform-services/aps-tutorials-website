@@ -9,9 +9,9 @@ Finally, we're ready to build the client-side piece of our application.
 ## Viewer logic
 
 Let's start by implementing the Forge Viewer functionality of our application.
-Create a `viewer.js` file under the `public` subfolder with the following code:
+Create a `viewer.js` file under the `wwwroot` subfolder with the following code:
 
-```js title="public/viewer.js"
+```js title="wwwroot/viewer.js"
 export async function initViewer(container) {
     async function getAccessToken(callback) {
         const resp = await fetch('/api/auth/token');
@@ -53,10 +53,10 @@ in the specified DOM container, and `loadModel` which can load a specific model 
 
 Next, let's define the logic of the application itself. We will need to populate
 the UI with all models available for viewing, and also the UI for uploading and
-translating new models. Create a `main.js` file under the `public` subfolder with
+translating new models. Create a `main.js` file under the `wwwroot` subfolder with
 the following content:
 
-```js title="public/main.js"
+```js title="wwwroot/main.js"
 import { initViewer, loadModel } from './viewer.js';
 
 initViewer(document.getElementById('preview')).then(viewer => {
@@ -131,10 +131,10 @@ the user for the name of the file **inside the archive** that should be converte
 
 And finally, let's build the UI of our application.
 
-Create a `main.css` file under the `public` subfolder, and populate it with the following
+Create a `main.css` file under the `wwwroot` subfolder, and populate it with the following
 CSS rules:
 
-```css title="public/main.css"
+```css title="wwwroot/main.css"
 body, html {
     margin: 0;
     padding: 0;
@@ -177,9 +177,9 @@ body, html {
 }
 ```
 
-Then, create an `index.html` file (also in the `public` subfolder) with the following content:
+Then, create an `index.html` file (also in the `wwwroot` subfolder) with the following content:
 
-```html title="public/index.html"
+```html title="wwwroot/index.html"
 <!DOCTYPE html>
 <html lang="en">
 
@@ -211,7 +211,7 @@ Then, create an `index.html` file (also in the `public` subfolder) with the foll
 The HTML markup simply uses a `<select>` element as the dropdown for listing the viewable models,
 and an `<input type="file">` element with a `<button>` to handle the uploading of a new model.
 
-> Note that since `public/main.js` is also an ES6 module, we have to use `type="module"`
+> Note that since `wwwroot/main.js` is also an ES6 module, we have to use `type="module"`
 > in its `<script>` tag.
 
 ## Try it out
@@ -222,10 +222,10 @@ And that's it! Your application is now ready for action. Start it from the comma
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 export FORGE_BUCKET=your-custom-bucket-name
-npm start
+dotnet run
 ```
 
-And then navigate to http://localhost:3000 in your browser. You should be presented with a simple UI,
+And then navigate to https://localhost:5001 in your browser. You should be presented with a simple UI,
 with a dropdown in the top-right corner that will eventually get populated with all models available
 in your configured bucket, and with a button for uploading new models. And as soon as you select one
 of the options from the dropdown, the corresponding model will get loaded in the viewer that occupies

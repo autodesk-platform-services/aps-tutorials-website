@@ -310,7 +310,8 @@ export FORGE_BUCKET=your-custom-bucket-name
 npm start
 ```
 
-If the bucket name is _not_ provided, the code in `services/forge.js` will generate one by appending `-basic-app`.
+If the bucket name is _not_ provided, the code in `services/forge.js` will generate one by appending `-basic-app`
+to your Forge client ID.
 
 > Note that the Data Management service requires bucket names to be **globally unique**,
 > and attempts to create a bucket with an already used name will fail with `409 Conflict`.
