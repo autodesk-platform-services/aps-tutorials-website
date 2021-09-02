@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Viewer
+# Viewer & UI
 
 Finally, we're ready to build the client-side piece of our application.
 
