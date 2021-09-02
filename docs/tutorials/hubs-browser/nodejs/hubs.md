@@ -221,4 +221,4 @@ one of the hubs, and use it in another address: http://localhost:3000/api/hubs/y
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
 
-> TODO: screenshot/gif
+![Hubs Response](./hubs-response.png)

@@ -210,4 +210,4 @@ by your browser for the `http://localhost:3000` origin, you'll notice that the a
 is already storing the session data in an `express:sess` cookie. That is where we will
 get our tokens from later in this tutorial.
 
-> TODO: screenshot/gif
+![Empty Response](./empty-response.png)

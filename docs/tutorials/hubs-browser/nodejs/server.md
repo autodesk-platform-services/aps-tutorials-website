@@ -43,7 +43,7 @@ Finally, let's create a couple of subfolders in your project folder that we're g
 - `routes` - this is where we're going to implement all the server endpoints
 - `services` - here we're going to keep all the server-side logic that can be shared by different endpoints
 
-> TODO: add a screenshot of the folder structure
+![Folder Structure](./folder-structure.png)
 
 ## Create a basic server
 
@@ -93,4 +93,4 @@ npm start
 
 Then open your browser and navigate to http://localhost:3000. The server should respond
 with `Cannot GET /` because we haven't added any logic to it just yet. That's going to be
-the topic of [Step 2](./authentication).
+the topic of step 2, [Authentication](./auth).
