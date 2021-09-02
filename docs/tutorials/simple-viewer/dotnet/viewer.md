@@ -237,3 +237,5 @@ with a dropdown in the top-right corner that will eventually get populated with 
 in your configured bucket, and with a button for uploading new models. And as soon as you select one
 of the options from the dropdown, the corresponding model will get loaded in the viewer that occupies
 the rest of the webpage.
+
+![Final App](./final-app.png)

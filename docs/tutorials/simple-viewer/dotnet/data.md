@@ -522,4 +522,4 @@ to your Forge client ID.
 When you navigate to https://localhost:5001/api/models in the browser, the server should respond with
 a JSON list with names and URNs of all objects available in your configured bucket.
 
-> TODO: screenshot
+![Server Response](./data-response.png)

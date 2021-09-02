@@ -47,7 +47,7 @@ Finally, let's create a couple more subfolders in your project folder that we're
 - `Models` - here we're going to keep all the server-side logic that can be shared by different endpoints
 - `wwwrooot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 
-> TODO: add a screenshot of the folder structure
+![Folder Structure](./folder-structure.png)
 
 ## Create a basic server
 
@@ -154,4 +154,4 @@ dotnet run
 
 When you navigate to https://localhost:5001 in your browser, you should get a 404 response
 because we haven't implemented any server logic yet. That's going to be the topic of the next
-step - [Authentication](./authentication).
+step - [Authentication](./auth).

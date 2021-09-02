@@ -213,4 +213,4 @@ dotnet run
 If the application start successfully and you navigate to https://localhost:5001/api/auth/token
 in the browser, the server should respond with a JSON object containing the access token data.
 
-> TODO: screenshot
+![Server Response](./auth-response.png)
