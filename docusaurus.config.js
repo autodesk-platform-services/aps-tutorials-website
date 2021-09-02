@@ -27,6 +27,10 @@ module.exports = {
                     label: 'Tutorials'
                 },
                 {
+                    type: 'localeDropdown',
+                    position: 'right',
+                },
+                {
                     href: 'https://github.com/petrbroz/forge-samples-docs',
                     label: 'GitHub',
                     position: 'right'
@@ -91,5 +95,9 @@ module.exports = {
                 }
             }
         ]
-    ]
+    ],
+    i18n: {
+        defaultLocale: 'en',
+        locales: ['en', 'cz']
+    }
 };
