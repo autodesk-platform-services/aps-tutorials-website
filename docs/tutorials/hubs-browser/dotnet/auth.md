@@ -321,6 +321,8 @@ dotnet run
 When you navigate to https://localhost:5001/api/auth/login in the browser, you should be
 redirected to Autodesk login page, and after logging in, you should be redirected back
 to your application, for now simply returning 404. This is expected as we haven't
-implemented the `GET /` endpoint yet.
+implemented the `GET /` endpoint yet. However, if you try and explore the cookies stored
+by your browser for the `https://localhost:5001` origin, you'll notice that the application
+is already storing the authentication data.
 
-> TODO: screenshot/gif
+![Empty Response](./empty-response.png)

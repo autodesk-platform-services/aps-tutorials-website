@@ -320,4 +320,4 @@ with a tree-view on the left side, and an empty viewer on the right. Try browsin
 and select a specific version of one of your files. After that the corresponding model should be loaded
 into the viewer.
 
-> TODO: screenshot/gif
+![Final App](./final-app.png)
