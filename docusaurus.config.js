@@ -13,7 +13,8 @@ module.exports = {
     organizationName: 'petrbroz',
     projectName: 'forge-samples-docs',
     plugins: [
-        require.resolve('@cmfcmf/docusaurus-search-local')
+        require.resolve('@cmfcmf/docusaurus-search-local'),
+        // '@docusaurus/plugin-google-gtag' // looks like this plugin is loaded automatically when we add a `gtag` property to theme config
     ],
     themeConfig: {
         navbar: {
@@ -82,7 +83,11 @@ module.exports = {
             darkTheme: darkCodeTheme,
             additionalLanguages: ['csharp']
         },
-        hideableSidebar: true
+        gtag: {
+            trackingID: 'G-5DQ48W5MB1',
+            anonymizeIP: true
+        },
+        hideableSidebar: true        
     },
     presets: [
         [
