@@ -12,6 +12,9 @@ module.exports = {
     favicon: 'img/favicon.ico',
     organizationName: 'petrbroz',
     projectName: 'forge-samples-docs',
+    plugins: [
+        require.resolve('@cmfcmf/docusaurus-search-local')
+    ],
     themeConfig: {
         navbar: {
             title: 'Another Way to Learn Forge',
