@@ -14,15 +14,19 @@ to store its files in. Typically the bucket would be created just once as part o
 step but in our sample we will implement a helper function that will make sure that the bucket
 is available. Let's update the `services/forge.js` file:
 
-```js {1,8,29-40} title="services/forge.js"
+```js title="services/forge.js"
+// highlight-start
 const { AuthClientTwoLegged, BucketsApi } = require('forge-apis');
+// highlight-end
 
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET } = process.env;
 if (!FORGE_CLIENT_ID || !FORGE_CLIENT_SECRET) {
     console.warn('Missing some of the environment variables.');
     process.exit(1);
 }
+// highlight-start
 const BUCKET = FORGE_BUCKET || `${FORGE_CLIENT_ID.toLowerCase()}-basic-app`;
+// highlight-end
 const INTERNAL_TOKEN_SCOPES = ['bucket:read', 'bucket:create', 'data:read', 'data:write', 'data:create'];
 const PUBLIC_TOKEN_SCOPES = ['viewables:read'];
 
@@ -43,6 +47,7 @@ async function getPublicToken() {
     return publicAuthClient.getCredentials();
 }
 
+// highlight-start
 async function ensureBucketExists() {
     const token = await getInternalToken();
     try {
@@ -55,6 +60,7 @@ async function ensureBucketExists() {
         }
     }
 }
+// highlight-end
 
 module.exports = {
     getPublicToken
@@ -70,8 +76,10 @@ attempt to create a new bucket of that name.
 Now we will update the `services/forge.js` script with a helper function that will
 list all objects in the preconfigured bucket:
 
-```js {1,15,44-58,62} title="services/forge.js"
+```js title="services/forge.js"
+// highlight-start
 const { AuthClientTwoLegged, BucketsApi, ObjectsApi } = require('forge-apis');
+// highlight-end
 
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET } = process.env;
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET } = process.env;
@@ -85,7 +93,9 @@ const PUBLIC_TOKEN_SCOPES = ['viewables:read'];
 let internalAuthClient = new AuthClientTwoLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, INTERNAL_TOKEN_SCOPES, true);
 let publicAuthClient = new AuthClientTwoLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, PUBLIC_TOKEN_SCOPES, true);
 
+// highlight-start
 const urnify = (id) => Buffer.from(id).toString('base64').replace(/=/g, '');
+// highlight-end
 
 async function getInternalToken() {
     if (!internalAuthClient.isAuthorized()) {
@@ -114,6 +124,7 @@ async function ensureBucketExists() {
     }
 }
 
+// highlight-start
 async function listModels() {
     await ensureBucketExists(); // Remove this if we can assume the bucket to exist
     const token = await getInternalToken();
@@ -129,10 +140,13 @@ async function listModels() {
         urn: urnify(obj.objectId)
     }));
 }
+// highlight-end
 
 module.exports = {
     getPublicToken,
-    listModels
+    // highlight-start
+    listModels,
+    // highlight-end
 };
 ```
 
@@ -141,13 +155,15 @@ The `listModels` function pages through all objects in the bucket, and returns t
 
 ## Uploading and translating models
 
-The last helper function we add to `services/forge.js` will handle the uploading of a file
-to the Data Management service, and its translation into a format that can later be loaded into
+The last helper function we add to `services/forge.js` will handle the uploading of files
+to the Data Management service, and their translation into a format that can later be loaded into
 Forge Viewer:
 
-```js {1,2,61-79,84} title="services/forge.js"
+```js title="services/forge.js"
+// highlight-start
 const fs = require('fs');
 const { AuthClientTwoLegged, BucketsApi, ObjectsApi, DerivativesApi } = require('forge-apis');
+// highlight-end
 
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET } = process.env;
 if (!FORGE_CLIENT_ID || !FORGE_CLIENT_SECRET) {
@@ -206,6 +222,7 @@ async function listModels() {
     }));
 }
 
+// highlight-start
 async function uploadModel(objectName, filePath, rootFilename) {
     await ensureBucketExists(); // Remove this if we can assume the bucket to exist
     const token = await getInternalToken();
@@ -225,11 +242,14 @@ async function uploadModel(objectName, filePath, rootFilename) {
     }
     await new DerivativesApi().translate(job, {}, null, token);
 }
+// highlight-end
 
 module.exports = {
     getPublicToken,
     listModels,
+    // highlight-start
     uploadModel
+    // highlight-end
 };
 ```
 
@@ -279,14 +299,16 @@ coming with the request is parsed and available in the `req.files` and `req.fiel
 
 Next, let's mount the router to our server application by modifying the `server.js`:
 
-```js {7} title="server.js"
+```js title="server.js"
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 
 let app = express();
 app.use(express.static('public'));
 app.use('/api/auth', require('./routes/auth.js'));
+// highlight-start
 app.use('/api/models', require('./routes/models.js'));
+// highlight-end
 app.use(function (err, req, res, next) {
     console.error(err);
     res.status(500).send(err.message);
@@ -310,15 +332,20 @@ export FORGE_BUCKET=your-custom-bucket-name
 npm start
 ```
 
+:::info
 If the bucket name is _not_ provided, the code in `services/forge.js` will generate one by appending `-basic-app`
 to your Forge client ID.
+:::
 
-> Note that the Data Management service requires bucket names to be **globally unique**,
-> and attempts to create a bucket with an already used name will fail with `409 Conflict`.
-> See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
-> for more details.
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
 
-When you navigate to http://localhost:3000/api/models in the browser, the server should respond with
-a JSON list with names and URNs of all objects available in your configured bucket.
+When you navigate to [http://localhost:3000/api/models](http://localhost:3000/api/models)
+in the browser, the server should respond with a JSON list with names and URNs of all objects
+available in your configured bucket.
 
 ![Server Response](./data-response.png)

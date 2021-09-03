@@ -47,7 +47,7 @@ export function loadModel(viewer, urn) {
 
 The script is an [ES6 module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
 that exports two functions, `initViewer` that will create a new instance of Forge Viewer
-in the specified DOM container, and `loadModel` which can load a specific model to the viewer.
+in the specified DOM container, and `loadModel` which will load a specific model to the viewer.
 
 ## Application logic
 
@@ -122,9 +122,9 @@ async function setupModelUpload(viewer) {
 }
 ```
 
-The scripts will initialize the viewer, and after that it will populate a dropdown element
-in the UI with models retrieved from the `/api/models` endpoint, and setup the file upload UI.
-Note that when the uploaded file has a `.zip` extension, the JavaScript logic will also prompt
+The scripts will initialize the viewer, populate a dropdown element in the UI with models
+retrieved from the `/api/models` endpoint, and setup the file upload UI. Note that when
+the uploaded file has a `.zip` extension, the JavaScript logic will also prompt
 the user for the name of the file **inside the archive** that should be converted by Forge.
 
 ## User interface
@@ -209,17 +209,15 @@ Then, create an `index.html` file (also in the `public` subfolder) with the foll
 ```
 
 The HTML markup simply uses a `<select>` element as the dropdown for listing the viewable models,
-and an `<input type="file">` element with a `<button>` to handle the uploading of a new model.
-
-> Note that since `public/main.js` is also an ES6 module, we have to use `type="module"`
-> in its `<script>` tag.
+and an `<input type="file">` element with a `<button>` to handle the uploading of a new model. Note
+that since `public/main.js` is also an ES6 module, we have to use `type="module"` in its `<script>` tag.
 
 The application will look for `favicon.ico` and `logo.png` images under the `public` folder to use
 as the website's icon and logo. If you don't have any images of your own, feel free to download
 them from one of our samples:
 
-- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/favicon.ico
-- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/logo.png
+- https://raw.githubusercontent.com/petrbroz/forge-simple-viewer-nodejs/develop/public/favicon.ico
+- https://raw.githubusercontent.com/petrbroz/forge-simple-viewer-nodejs/develop/public/logo.png
 
 ## Try it out
 
@@ -228,14 +226,14 @@ And that's it! Your application is now ready for action. Start it from the comma
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_BUCKET=your-custom-bucket-name
+export FORGE_BUCKET=optional-custom-bucket-name
 npm start
 ```
 
-And then navigate to http://localhost:3000 in your browser. You should be presented with a simple UI,
-with a dropdown in the top-right corner that will eventually get populated with all models available
-in your configured bucket, and with a button for uploading new models. And as soon as you select one
-of the options from the dropdown, the corresponding model will get loaded in the viewer that occupies
-the rest of the webpage.
+And then navigate to [http://localhost:3000](http://localhost:3000) in your browser. You should be
+presented with a simple UI, with a dropdown in the top-right corner that will eventually get populated
+with all models available in your configured bucket, and with a button for uploading new models.
+And as soon as you select one of the options from the dropdown, the corresponding model will get loaded
+in the viewer occupying the rest of the webpage.
 
 ![Final App](./final-app.png)

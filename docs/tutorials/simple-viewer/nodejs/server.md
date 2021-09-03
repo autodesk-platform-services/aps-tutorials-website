@@ -5,7 +5,7 @@ sidebar_position: 1
 # Basic Server
 
 In this step we're going to create a new Node.js project, install all the required dependencies,
-and setup a basic Node.js server.
+and setup a basic [Express.js](https://expressjs.com) server.
 
 ## Project & dependencies
 
@@ -17,8 +17,8 @@ npm init -y
 ```
 
 Next, install all the Node.js dependencies we're going to use. In this case it will be
-the [Express.js](https://expressjs.com) framework, a middleware for handling `multipart/form-data`
-requests, and finally the [Forge SDK](https://www.npmjs.com/package/forge-apis):
+the [Express.js](https://expressjs.com) framework, an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
+for handling `multipart/form-data` requests, and finally the [Forge SDK](https://www.npmjs.com/package/forge-apis):
 
 ```bash
 npm install --save express express-formidable forge-apis
@@ -37,7 +37,7 @@ with slightly different version numbers):
 // ...
 ```
 
-Finally, let's create a couple of subfolders in your project folder that we're going to need later:
+Finally, let's create a couple more subfolders in the project folder that we're going to need later:
 
 - `public` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 - `routes` - this is where we're going to implement all the server endpoints
@@ -62,8 +62,8 @@ app.use(function (err, req, res, next) {
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
-For now the server isn't doing much, just serving client side assets from the `public` subfolder,
-and reporting all errors to the console and back to the client.
+For now the server isn't doing much, just serving client side assets from the (currently empty)
+`public` subfolder, and reporting all errors to the console and back to the client.
 
 Next, let's add a `"start": "node server.js"` script to the `package.json` file so that we can
 easily run our application later:
@@ -84,8 +84,8 @@ Try running the application from the command line:
 npm start
 ```
 
-Then open your browser and navigate to http://localhost:3000. The server should respond
-with `Cannot GET /` because we haven't added any logic to it just yet.
+Then open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+The server should respond with `Cannot GET /` because we haven't added any logic to it just yet.
 
 ![Empty Response](./empty-response.png)
 

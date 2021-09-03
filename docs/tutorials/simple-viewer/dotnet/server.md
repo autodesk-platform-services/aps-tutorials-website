@@ -137,14 +137,14 @@ namespace simpleviewer
 }
 ```
 
-This code will make sure that the dotnet application creates a web server with our
+This code will make sure that the .NET application creates a web server with our
 new `Startup` class.
 
 ## Try it out
 
 Now that we have a basic ASP.NET application setup, let's try it out. In the command line,
 setup the two required environment variables, `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`,
-and run the dotnet application:
+and run the .NET application:
 
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
@@ -152,6 +152,6 @@ export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 dotnet run
 ```
 
-When you navigate to https://localhost:5001 in your browser, you should get a 404 response
-because we haven't implemented any server logic yet. That's going to be the topic of the next
-step - [Authentication](./auth).
+When you navigate to [https://localhost:5001](https://localhost:5001) in your browser, you should
+get a 404 response because we haven't implemented any server logic yet. That's going to be the topic
+of the next step - [Authentication](./auth).

@@ -258,8 +258,8 @@ The `GetObjects` method pages through all objects in the bucket, and returns the
 
 ## Uploading and translating models
 
-Finally we will add helper methods to `ForgeService` that will handle the uploading of a file
-to the Data Management service, and its translation into a format that can later be loaded into
+Next we will add helper methods to `ForgeService` that will handle the uploading of files
+to the Data Management service, and their translation into a format that can later be loaded into
 Forge Viewer:
 
 ```csharp title="Models/ForgeService.cs"
@@ -511,15 +511,20 @@ export FORGE_BUCKET=your-custom-bucket-name
 dotnet run
 ```
 
+:::info
 If the bucket name is _not_ provided, the `ForgeService` class will generate one by appending `-basic-app`
 to your Forge client ID.
+:::
 
-> Note that the Data Management service requires bucket names to be **globally unique**,
-> and attempts to create a bucket with an already used name will fail with `409 Conflict`.
-> See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
-> for more details.
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
 
-When you navigate to https://localhost:5001/api/models in the browser, the server should respond with
-a JSON list with names and URNs of all objects available in your configured bucket.
+When you navigate to [https://localhost:5001/api/models](https://localhost:5001/api/models)
+in the browser, the server should respond with a JSON list with names and URNs of all objects
+available in your configured bucket.
 
 ![Server Response](./data-response.png)

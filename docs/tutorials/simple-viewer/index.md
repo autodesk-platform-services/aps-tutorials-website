@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction
 
-In this tutorial we're going to build a simple Forge application that will let us
+In this tutorial we're going to build a simple Forge application that lets us
 upload, translate, and preview 3D designs and 2D drawings.
 
 > TODO: screenshot or gif

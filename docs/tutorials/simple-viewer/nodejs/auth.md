@@ -7,10 +7,12 @@ sidebar_position: 2
 In this step we're going to extend the server implementation so that it can authenticate itself
 to the Forge platform, and generate access tokens for various needs.
 
-> It is a good practice to generate an "internal" token with more capabilities (for example,
-> allowing the owner to create or delete files in the Data Management service) that will only be used
-> by the server, and a "public" token with fewer capabilities that can be safely shared with
-> the client-side logic.
+:::tip
+It is a good practice to generate an "internal" token with more capabilities (for example,
+allowing the owner to create or delete files in the Data Management service) that will only be used
+by the server, and a "public" token with fewer capabilities that can be safely shared with
+the client-side logic.
+:::
 
 ## Token management
 
@@ -47,7 +49,7 @@ async function getPublicToken() {
 }
 
 module.exports = {
-    getPublicToken
+    getPublicToken,
 };
 ```
 
@@ -55,11 +57,11 @@ The code expects the credentials of a Forge application to be provided as two en
 `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`. These are the _Client ID_ and _Client Secret_ values you
 can obtain after [creating a new Forge application](../../../intro#create-an-app). With the credentials,
 the script then creates two authentication clients, one for internal use (giving us read/write access
-to the Data Management buckets and objects), and one for public use (only allowing its owner to
-access translation outputs from the Model Derivative service), and two helper methods to generate
+to the Data Management buckets and objects), and one for public use (only giving a read access to
+the translation outputs from the Model Derivative service), and two helper methods to generate
 the corresponding tokens for us. The `getPublicToken` is made available to other Node.js scripts.
 
-## Authentication endpoint
+## Server endpoints
 
 Next, let's add a first endpoint to our server. Create an `auth.js` file under the `routes` subfolder
 with the following content:
@@ -82,18 +84,20 @@ module.exports = router;
 ```
 
 Here we implement a new [Express Router](http://expressjs.com/en/4x/api.html#router) that can handle
-endpoints ending with `/token` by generating a (public) access token and sending it back to the client
+endpoints ending with `/token` by generating a public access token and sending it back to the client
 as a JSON response.
 
 Let's "mount" the router to our server application by modifying the `server.js`:
 
-```js {6} title="server.js"
+```js title="server.js"
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 
 let app = express();
 app.use(express.static('public'));
+// highlight-start
 app.use('/api/auth', require('./routes/auth.js'));
+// highlight-end
 app.use(function (err, req, res, next) {
     console.error(err);
     res.status(500).send(err.message);
@@ -101,7 +105,7 @@ app.use(function (err, req, res, next) {
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
-Since we've attached the router to the `/api/auth` prefix, the router will now handle all requests
+Since the router has been attached to the `/api/auth` prefix, it will now handle all requests
 coming to the endpoint `/api/auth/token`.
 
 ## Try it out
@@ -115,7 +119,7 @@ export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 npm start
 ```
 
-If the application start successfully and you navigate to http://localhost:3000/api/auth/token
+If the application start successfully and you navigate to [http://localhost:3000/api/auth/token](http://localhost:3000/api/auth/token)
 in the browser, the server should respond with a JSON object containing the access token data.
 
 ![Server Response](./auth-response.png)

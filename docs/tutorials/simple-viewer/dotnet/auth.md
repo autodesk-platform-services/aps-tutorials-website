@@ -7,10 +7,12 @@ sidebar_position: 2
 In this step we're going to extend the server implementation so that it can authenticate itself
 to the Forge platform, and generate access tokens for various needs.
 
-> It is a good practice to generate an "internal" token with more capabilities (for example,
-> allowing the owner to create or delete files in the Data Management service) that will only be used
-> by the server, and a "public" token with fewer capabilities that can be safely shared with
-> the client-side logic.
+:::tip
+It is a good practice to generate an "internal" token with more capabilities (for example,
+allowing the owner to create or delete files in the Data Management service) that will only be used
+by the server, and a "public" token with fewer capabilities that can be safely shared with
+the client-side logic.
+:::
 
 ## Token management
 
@@ -93,7 +95,7 @@ namespace simpleviewer
 
 The helper class expects the credentials of a Forge application, and it creates two authentication clients,
 one for internal use (giving us read/write access to the Data Management buckets and objects), and one
-for public use (only allowing its owner to access translation outputs from the Model Derivative service),
+for public use (only allowing access to the translation outputs from the Model Derivative service),
 and a couple of methods for generating the corresponding tokens for us.
 
 Next, let's update our `Startup.cs` file to make a singleton instance of the `ForgeService` class
@@ -155,9 +157,9 @@ namespace simpleviewer
 }
 ```
 
-## Authentication endpoint
+## Server endpoints
 
-Next, let's add a first endpoint to our server. Create an `AuthController.cs` file under the `Controllers`
+Now let's add a first endpoint to our server. Create an `AuthController.cs` file under the `Controllers`
 subfolder with the following content:
 
 ```csharp title="Controllers/AuthController.cs"
@@ -210,7 +212,7 @@ export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 dotnet run
 ```
 
-If the application start successfully and you navigate to https://localhost:5001/api/auth/token
+If the server starts successfully and you navigate to [https://localhost:5001/api/auth/token](https://localhost:5001/api/auth/token)
 in the browser, the server should respond with a JSON object containing the access token data.
 
 ![Server Response](./auth-response.png)
