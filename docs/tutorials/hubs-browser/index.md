@@ -8,7 +8,7 @@ In this tutorial we're going to build a Forge application that will let us
 browse through our designs in 3rd party applications built on top of the platform
 such as BIM 360 Docs or ACC.
 
-> TODO: screenshot or gif
+![Preview](./preview.gif)
 
 We will use the following components of the platform:
 
