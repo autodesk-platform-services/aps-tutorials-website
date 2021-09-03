@@ -14,14 +14,12 @@ Data Management hubs, projects, folders, items, and versions. Create a `ForgeSer
 under the `Models` subfolder with the following content:
 
 ```csharp title="Models/ForgeService.Hubs.cs"
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;
 
 namespace hubsbrowser
 {
-    public partial class ForgeService : IForgeService
+    public partial class ForgeService
     {
         public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
         {
@@ -91,57 +89,6 @@ namespace hubsbrowser
 }
 ```
 
-Next we'll need to update the `IForgeService` interface in `Models/ForgeService.cs`
-to make the new methods available to our server:
-
-```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Autodesk.Forge;
-
-namespace hubsbrowser
-{
-    public class Tokens
-    {
-        public string InternalToken;
-        public string PublicToken;
-        public string RefreshToken;
-        public DateTime ExpiresAt;
-    }
-
-    public interface IForgeService
-    {
-        string GetAuthorizationURL();
-        Task<Tokens> GenerateTokens(string code);
-        Task<Tokens> RefreshTokens(Tokens tokens);
-        Task<dynamic> GetUserProfile(Tokens tokens);
-        // highlight-start
-        Task<IEnumerable<dynamic>> GetHubs(Tokens tokens);
-        Task<IEnumerable<dynamic>> GetProjects(string hubId, Tokens tokens);
-        Task<IEnumerable<dynamic>> GetContents(string hubId, string projectId, string folderId, Tokens tokens);
-        Task<IEnumerable<dynamic>> GetVersions(string hubId, string projectId, string itemId, Tokens tokens);
-        // highlight-end
-    }
-
-    public partial class ForgeService : IForgeService
-    {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _callbackUri;
-        private readonly Scope[] InternalTokenScopes = new Scope[] { Scope.DataRead, Scope.ViewablesRead };
-        private readonly Scope[] PublicTokenScopes = new Scope[] { Scope.ViewablesRead };
-
-        public ForgeService(string clientId, string clientSecret, string callbackUri)
-        {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _callbackUri = callbackUri;
-        }
-    }
-}
-```
-
 ## Server endpoints
 
 Finally, let's expose the new functionality to the client-side code through another ASP.NET
@@ -149,9 +96,7 @@ controller. Create a `HubsController.cs` file under the `Controllers` subfolder 
 content:
 
 ```csharp title="Controllers/HubsController.cs"
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace hubsbrowser
@@ -161,9 +106,9 @@ namespace hubsbrowser
     public class HubsController : ControllerBase
     {
         private readonly ILogger<HubsController> _logger;
-        private readonly IForgeService _forgeService;
+        private readonly ForgeService _forgeService;
 
-        public HubsController(ILogger<HubsController> logger, IForgeService forgeService)
+        public HubsController(ILogger<HubsController> logger, ForgeService forgeService)
         {
             _logger = logger;
             _forgeService = forgeService;

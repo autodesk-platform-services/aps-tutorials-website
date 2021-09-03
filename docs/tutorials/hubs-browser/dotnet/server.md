@@ -31,7 +31,6 @@ slightly version numbers):
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -55,13 +54,6 @@ Next we'll setup our basic server. Start by creating a `Startup.cs` file in the 
 of your project with the following content:
 
 ```csharp title="Startup.cs"
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace hubsbrowser
 {
     public class Startup
@@ -116,9 +108,6 @@ variables for later use.
 Next, replace the content of `Program.cs` with the following:
 
 ```csharp title="Program.cs"
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
 namespace hubsbrowser
 {
     public class Program

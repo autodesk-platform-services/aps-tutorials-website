@@ -22,9 +22,6 @@ the Forge-specific logic that will be used in different areas of our server appl
 start by adding the following code to the file:
 
 ```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 
 namespace hubsbrowser
@@ -37,15 +34,7 @@ namespace hubsbrowser
         public DateTime ExpiresAt;
     }
 
-    public interface IForgeService
-    {
-        string GetAuthorizationURL();
-        Task<Tokens> GenerateTokens(string code);
-        Task<Tokens> RefreshTokens(Tokens tokens);
-        Task<dynamic> GetUserProfile(Tokens tokens);
-    }
-
-    public partial class ForgeService : IForgeService
+    public partial class ForgeService
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
@@ -64,19 +53,16 @@ namespace hubsbrowser
 ```
 
 Notice that the `ForgeService` class is declared as `partial`. We're going to extend in other `*.cs` files later.
-The `IForgeService` interface will then be used to make the class available to our server through ASP.NET's
-dependency injection.
+A `ForgeService` singleton will then be provided to our server through ASP.NET's [dependency injection](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0).
 
 Next, let's create a `ForgeService.Auth.cs` file under the `Models` subfolder with the following code:
 
 ```csharp title="Models/ForgeService.Auth.cs"
-using System;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 
 namespace hubsbrowser
 {
-    public partial class ForgeService : IForgeService
+    public partial class ForgeService
     {
         public string GetAuthorizationURL()
         {
@@ -129,13 +115,6 @@ Finally, let's update our `Startup.cs` file to make a singleton instance of the 
 available to our server application:
 
 ```csharp title="Startup.cs"
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace hubsbrowser
 {
     public class Startup
@@ -159,7 +138,7 @@ namespace hubsbrowser
                 throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
             }
             // highlight-start
-            services.AddSingleton<IForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeCallbackURL));
+            services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeCallbackURL));
             // highlight-end
         }
 
@@ -190,11 +169,7 @@ Next, let's add a first endpoint to our server. Create an `AuthController.cs` fi
 with the following content:
 
 ```csharp title="Controllers/AuthController.cs"
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace hubsbrowser
 {
@@ -203,15 +178,15 @@ namespace hubsbrowser
     public class AuthController : ControllerBase
     {
         private readonly ILogger<AuthController> _logger;
-        private readonly IForgeService _forgeService;
+        private readonly ForgeService _forgeService;
 
-        public AuthController(ILogger<AuthController> logger, IForgeService forgeService)
+        public AuthController(ILogger<AuthController> logger, ForgeService forgeService)
         {
             _logger = logger;
             _forgeService = forgeService;
         }
 
-        public static async Task<Tokens> PrepareTokens(HttpRequest request, HttpResponse response, IForgeService forgeService)
+        public static async Task<Tokens> PrepareTokens(HttpRequest request, HttpResponse response, ForgeService forgeService)
         {
             if (!request.Cookies.ContainsKey("internal_token"))
             {
@@ -272,7 +247,10 @@ namespace hubsbrowser
                 return Unauthorized();
             }
             dynamic profile = await _forgeService.GetUserProfile(tokens);
-            return profile;
+            return new
+            {
+                name = string.Format("{0} {1}", profile.firstName, profile.lastName)
+            };
         }
 
         [HttpGet("token")]
@@ -283,11 +261,12 @@ namespace hubsbrowser
             {
                 return Unauthorized();
             }
-            dynamic response = new System.Dynamic.ExpandoObject();
-            response.access_token = tokens.PublicToken;
-            response.token_type = "Bearer";
-            response.expires_in = Math.Floor((tokens.ExpiresAt - DateTime.Now.ToUniversalTime()).TotalSeconds);
-            return response;
+            return new
+            {
+                access_token = tokens.PublicToken,
+                token_type = "Bearer",
+                expires_in = Math.Floor((tokens.ExpiresAt - DateTime.Now.ToUniversalTime()).TotalSeconds)
+            };
         }
     }
 }
