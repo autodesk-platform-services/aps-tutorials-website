@@ -1,0 +1,72 @@
+import CodeBlock from '@theme/CodeBlock';
+import ViewerJsSource from '!!raw-loader!./_snippets/viewer.js';
+import SidebarJsSource from '!!raw-loader!./_snippets/sidebar.js';
+import MainJsSource from '!!raw-loader!./_snippets/main.js';
+import MainCssSource from '!!raw-loader!./_snippets/main.css';
+import IndexHtmlSource from '!!raw-loader!./_snippets/index.html';
+
+## Viewer logic
+
+<p>
+    Let's start by implementing the Forge Viewer functionality of our application.
+    Create a <code>viewer.js</code> file under the <code>{props.assetsFolder}</code> subfolder with the following code:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/viewer.js'} className="language-jsx">{ViewerJsSource}</CodeBlock>
+
+The script is an [ES6 module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+that exports two functions:
+
+- `initViewer` will create a new instance of Forge Viewer in the specified DOM container
+- `loadModel` for loading a specific model to the viewer
+
+## Sidebar logic
+
+<p>
+    Next we'll implement the behavior of a sidebar where we're going to display
+    all the hubs, projects, folders, items, and versions in a 3rd party tree-view component.
+    Create a <code>sidebar.js</code> file under the <code>{props.assetsFolder}</code> subfolder
+    with the following code:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/sidebar.js'} className="language-jsx">{SidebarJsSource}</CodeBlock>
+
+## Application logic
+
+<p>
+    Now let's wire all the UI components together. Create a <code>main.js</code> file under
+    the <code>{props.assetsFolder}</code> folder, and populate it with the following code:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/main.js'} className="language-jsx">{MainJsSource}</CodeBlock>
+
+The script will first try and obtain user details to check whether we're logged in or not.
+If we are, the code can then initialize the viewer as well as the tree-view component.
+The callback function passed to `initTree` makes sure that when we click on a leaf node
+in the tree, the viewer will start loading the corresponding Forge model.
+
+## User interface
+
+And finally, let's build the UI of our application.
+
+<p>
+    Create a <code>main.css</code> file under the <code>{props.assetsFolder}</code> subfolder, and populate it
+    with the following CSS rules:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/main.css'} className="language-css">{MainJsSource}</CodeBlock>
+
+Then, create an `index.html` file in the same folder with the following content:
+
+<CodeBlock title={props.assetsFolder + '/index.html'} className="language-html">{IndexHtmlSource}</CodeBlock>
+
+> Note that since `main.js` is also an ES6 module, we have to use `type="module"` in its `<script>` tag.
+
+<p>
+    The application will look for <code>favicon.ico</code> and <code>logo.png</code> images
+    under the <code>{props.assetsFolder}</code> folder to use as the website's icon and logo.
+    If you don't have any images of your own, feel free to download them from one of our samples:
+</p>
+
+- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/favicon.ico
+- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/logo.png
