@@ -15,10 +15,6 @@ step but in our sample we will implement a helper function that will make sure t
 is available. Let's update the `Models/ForgeService.cs` file:
 
 ```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
@@ -31,12 +27,7 @@ namespace simpleviewer
         public DateTime ExpiresAt { get; set; }
     }
 
-    public interface IForgeService
-    {
-        Task<Token> GetAccessToken();
-    }
-
-    public class ForgeService : IForgeService
+    public class ForgeService
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
@@ -49,11 +40,6 @@ namespace simpleviewer
             _clientId = clientId;
             _clientSecret = clientSecret;
             _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
-        }
-
-        public async Task<Token> GetAccessToken()
-        {
-            return await GetPublicToken();
         }
 
         // highlight-start
@@ -80,21 +66,17 @@ namespace simpleviewer
         }
         // highlight-end
 
-        private async Task<Token> GetPublicToken()
+        public async Task<Token> GetPublicToken()
         {
             if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            }
             return _publicTokenCache;
         }
 
         private async Task<Token> GetInternalToken()
         {
             if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            }
             return _internalTokenCache;
         }
 
@@ -121,10 +103,6 @@ Now we will update the `ForgeService` class with a helper function that will
 list all objects in the preconfigured bucket:
 
 ```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
@@ -137,15 +115,7 @@ namespace simpleviewer
         public DateTime ExpiresAt { get; set; }
     }
 
-    public interface IForgeService
-    {
-        // highlight-start
-        Task<IEnumerable<dynamic>> GetObjects();
-        // highlight-end
-        Task<Token> GetAccessToken();
-    }
-
-    public class ForgeService : IForgeService
+    public class ForgeService
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
@@ -187,11 +157,6 @@ namespace simpleviewer
         }
         // highlight-end
 
-        public async Task<Token> GetAccessToken()
-        {
-            return await GetPublicToken();
-        }
-
         private async Task EnsureBucketExists(string bucketKey)
         {
             var token = await GetInternalToken();
@@ -214,21 +179,17 @@ namespace simpleviewer
             }
         }
 
-        private async Task<Token> GetPublicToken()
+        public async Task<Token> GetPublicToken()
         {
             if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            }
             return _publicTokenCache;
         }
 
         private async Task<Token> GetInternalToken()
         {
             if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            }
             return _internalTokenCache;
         }
 
@@ -263,10 +224,6 @@ to the Data Management service, and their translation into a format that can lat
 Forge Viewer:
 
 ```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
@@ -279,17 +236,7 @@ namespace simpleviewer
         public DateTime ExpiresAt { get; set; }
     }
 
-    public interface IForgeService
-    {
-        Task<IEnumerable<dynamic>> GetObjects();
-        Task<Token> GetAccessToken();
-        // highlight-start
-        Task<dynamic> UploadModel(string objectName, Stream content, long contentLength);
-        Task<dynamic> TranslateModel(string objectId, string rootFilename);
-        // highlight-end
-    }
-
-    public class ForgeService : IForgeService
+    public class ForgeService
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
@@ -339,9 +286,7 @@ namespace simpleviewer
             dynamic obj = await api.UploadObjectAsync(_bucket, objectName, (int)contentLength, content);
             return obj;
         }
-        // highlight-end
 
-        // highlight-start
         public async Task<dynamic> TranslateModel(string objectId, string rootFilename)
         {
             var token = await GetInternalToken();
@@ -363,11 +308,6 @@ namespace simpleviewer
             return job;
         }
         // highlight-end
-
-        public async Task<Token> GetAccessToken()
-        {
-            return await GetPublicToken();
-        }
 
         private async Task EnsureBucketExists(string bucketKey)
         {
@@ -391,21 +331,17 @@ namespace simpleviewer
             }
         }
 
-        private async Task<Token> GetPublicToken()
+        public async Task<Token> GetPublicToken()
         {
             if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            }
             return _publicTokenCache;
         }
 
         private async Task<Token> GetInternalToken()
         {
             if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            }
             return _internalTokenCache;
         }
 
@@ -435,11 +371,7 @@ controller. Create a `ModelsController.cs` file under the `Controllers` subfolde
 with the following content:
 
 ```csharp title="Controllers/ModelsController.cs"
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace simpleviewer
@@ -448,12 +380,10 @@ namespace simpleviewer
     [Route("api/[controller]")]
     public class ModelsController : ControllerBase
     {
-        private readonly ILogger<ModelsController> _logger;
-        private readonly IForgeService _forgeService;
+        private readonly ForgeService _forgeService;
 
-        public ModelsController(ILogger<ModelsController> logger, IForgeService forgeService)
+        public ModelsController(ForgeService forgeService)
         {
-            _logger = logger;
             _forgeService = forgeService;
         }
 
@@ -476,8 +406,6 @@ namespace simpleviewer
         [HttpPost()]
         public async Task UploadAndTranslateModel([FromForm] UploadModelForm form)
         {
-            // For some reason we cannot use the incoming stream directly...
-            // so let's save the model into a local temp file first
             var tmpPath = Path.GetTempFileName();
             using (var stream = new FileStream(tmpPath, FileMode.OpenOrCreate))
             {

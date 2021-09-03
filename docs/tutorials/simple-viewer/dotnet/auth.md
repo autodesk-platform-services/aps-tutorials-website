@@ -21,10 +21,6 @@ all the Forge-specific logic that will be used in different areas of our server 
 start by adding the following code to the file:
 
 ```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
@@ -37,12 +33,7 @@ namespace simpleviewer
         public DateTime ExpiresAt { get; set; }
     }
 
-    public interface IForgeService
-    {
-        Task<Token> GetAccessToken();
-    }
-
-    public class ForgeService : IForgeService
+    public class ForgeService
     {
         private readonly string _clientId;
         private readonly string _clientSecret;
@@ -57,26 +48,17 @@ namespace simpleviewer
             _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
         }
 
-        public async Task<Token> GetAccessToken()
-        {
-            return await GetPublicToken();
-        }
-
-        private async Task<Token> GetPublicToken()
+        public async Task<Token> GetPublicToken()
         {
             if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            }
             return _publicTokenCache;
         }
 
         private async Task<Token> GetInternalToken()
         {
             if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            {
                 _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            }
             return _internalTokenCache;
         }
 
@@ -102,13 +84,6 @@ Next, let's update our `Startup.cs` file to make a singleton instance of the `Fo
 available to our server application:
 
 ```csharp title="Startup.cs"
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace simpleviewer
 {
     public class Startup
@@ -132,7 +107,7 @@ namespace simpleviewer
                 throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
             }
             // highlight-start
-            services.AddSingleton<IForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeBucket));
+            services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeBucket));
             // highlight-end
         }
 
@@ -163,10 +138,7 @@ Now let's add a first endpoint to our server. Create an `AuthController.cs` file
 subfolder with the following content:
 
 ```csharp title="Controllers/AuthController.cs"
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace simpleviewer
 {
@@ -174,19 +146,17 @@ namespace simpleviewer
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly ILogger<AuthController> _logger;
-        private readonly IForgeService _forgeService;
+        private readonly ForgeService _forgeService;
 
-        public AuthController(ILogger<AuthController> logger, IForgeService forgeService)
+        public AuthController(ForgeService forgeService)
         {
-            _logger = logger;
             _forgeService = forgeService;
         }
 
         [HttpGet("token")]
         public async Task<dynamic> GetAccessToken()
         {
-            var token = await _forgeService.GetAccessToken();
+            var token = await _forgeService.GetPublicToken();
             return new
             {
                 access_token = token.AccessToken,

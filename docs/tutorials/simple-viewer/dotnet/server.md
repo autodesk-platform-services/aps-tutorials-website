@@ -31,7 +31,6 @@ slightly version numbers):
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +38,7 @@ slightly version numbers):
   </ItemGroup>
 
 </Project>
+
 ```
 
 Finally, let's create a couple more subfolders in your project folder that we're going to need later:
@@ -55,13 +55,6 @@ Next we'll setup our basic server. Start by creating a `Startup.cs` file in the 
 of your project with the following content:
 
 ```csharp title="Startup.cs"
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace simpleviewer
 {
     public class Startup
@@ -105,6 +98,7 @@ namespace simpleviewer
         }
     }
 }
+
 ```
 
 The `Startup` class is responsible for configuring our server and its "middleware", for example,
@@ -115,9 +109,6 @@ from environment variables for later use.
 Next, replace the content of `Program.cs` with the following:
 
 ```csharp title="Program.cs"
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
 namespace simpleviewer
 {
     public class Program
@@ -135,6 +126,7 @@ namespace simpleviewer
                 });
     }
 }
+
 ```
 
 This code will make sure that the .NET application creates a web server with our
