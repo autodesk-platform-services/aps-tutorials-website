@@ -8,10 +8,12 @@ In this step we're going to extend the server implementation so that it can auth
 to the Forge platform, guide the user through a [3-legged OAuth workflow](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token),
 and generate access tokens for various needs.
 
-> It is a good practice to generate an "internal" token with more capabilities (for example,
-> allowing the owner to create or delete files in the Data Management service) that will only be used
-> by the server, and a "public" token with fewer capabilities that can be safely shared with
-> the client-side logic.
+:::tip
+It is a good practice to generate an "internal" token with more capabilities (for example,
+allowing the owner to create or delete files in the Data Management service) that will only be used
+by the server, and a "public" token with fewer capabilities that can be safely shared with
+the client-side logic.
+:::
 
 ## Token management
 
@@ -182,7 +184,7 @@ namespace hubsbrowser
 }
 ```
 
-## Authentication endpoint
+## Server endpoints
 
 Next, let's add a first endpoint to our server. Create an `AuthController.cs` file under the `Controllers` subfolder
 with the following content:
@@ -312,17 +314,20 @@ code handling the callbacks from Forge:
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=http://localhost:3000/api/auth/callback
+export FORGE_CALLBACK_URL=https://localhost:5001/api/auth/callback
 dotnet run
 ```
 
-> TODO: add note about the callback URL matching the settings on the Forge portal
+:::caution
+The callback URL we specify here must match the callback URL that you've configured
+for your Forge application on https://forge.autodesk.com/myapps.
+:::
 
-When you navigate to https://localhost:5001/api/auth/login in the browser, you should be
-redirected to Autodesk login page, and after logging in, you should be redirected back
-to your application, for now simply returning 404. This is expected as we haven't
+When you navigate to [https://localhost:5001/api/auth/login](https://localhost:5001/api/auth/login)
+in the browser, you should be redirected to Autodesk login page, and after logging in, you should
+be redirected back to your application, for now simply returning 404. This is expected as we haven't
 implemented the `GET /` endpoint yet. However, if you try and explore the cookies stored
-by your browser for the `https://localhost:5001` origin, you'll notice that the application
-is already storing the authentication data.
+by your browser for the `localhost` origin, you'll notice that the application is already storing
+the authentication data.
 
 ![Empty Response](./empty-response.png)

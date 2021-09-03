@@ -8,10 +8,12 @@ In this step we're going to extend the server implementation so that it can auth
 to the Forge platform, guide the user through a [3-legged OAuth workflow](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token),
 and generate access tokens for various needs.
 
-> It is a good practice to generate an "internal" token with more capabilities (for example,
-> allowing the owner to create or delete files in the Data Management service) that will only be used
-> by the server, and a "public" token with fewer capabilities that can be safely shared with
-> the client-side logic.
+:::tip
+It is a good practice to generate an "internal" token with more capabilities (for example,
+allowing the owner to create or delete files in the Data Management service) that will only be used
+by the server, and a "public" token with fewer capabilities that can be safely shared with
+the client-side logic.
+:::
 
 ## Token management
 
@@ -86,7 +88,7 @@ module.exports = {
     getAuthorizationUrl,
     authCallbackMiddleware,
     authRefreshMiddleware,
-    getUserProfile
+    getUserProfile,
 };
 ```
 
@@ -101,14 +103,14 @@ The code then provides a couple of helper functions:
 
 - the `getAuthorizationUrl` function generates a URL for our users to be redirected to when
 initiating the 3-legged authentication workflow
-- the `authCallbackMiddleware` function can be used as an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
+- the `authCallbackMiddleware` function can be used as an Express.js middleware
 when the user logs in successfully and is redirected back to our application
 - the `authRefreshMiddleware` function is then used as an Express.js middleware for all requests
 that will need to make use of the Forge access tokens
 - the `getUserProfile` function returns additional details about the authenticated user based on
 an existing access token
 
-## Authentication endpoint
+## Server endpoints
 
 Next, let's add a first endpoint to our server. Create an `auth.js` file under the `routes` subfolder
 with the following content:
@@ -200,14 +202,17 @@ export FORGE_CALLBACK_URL=http://localhost:3000/api/auth/callback
 npm start
 ```
 
-> TODO: add note about the callback URL matching the settings on the Forge portal
+:::caution
+The callback URL we specify here must match the callback URL that you've configured
+for your Forge application on https://forge.autodesk.com/myapps.
+:::
 
-When you navigate to http://localhost:3000/api/auth/login in the browser, you should be
-redirected to Autodesk login page, and after logging in, you should be redirected back
-to your application, for now simply showing `Cannot GET /`. This is expected as we haven't
-implemented the `GET /` endpoint yet. However, if you try and explore the cookies stored
-by your browser for the `http://localhost:3000` origin, you'll notice that the application
-is already storing the session data in an `express:sess` cookie. That is where we will
-get our tokens from later in this tutorial.
+When you navigate to [http://localhost:3000/api/auth/login](http://localhost:3000/api/auth/login)
+in the browser, you should be redirected to Autodesk login page, and after logging in,
+you should be redirected back to your application, for now simply showing `Cannot GET /`.
+This is expected as we haven't implemented the `GET /` endpoint yet. However, if you try
+and explore the cookies stored by your browser for the `localhost` origin,
+you'll notice that the application is already storing the session data in an `express:sess` cookie.
+That is where we will get our tokens from later in this tutorial.
 
 ![Empty Response](./empty-response.png)

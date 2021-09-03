@@ -5,20 +5,20 @@ sidebar_position: 1
 # Basic Server
 
 In this step we're going to create a new Node.js project, install all the required dependencies,
-and setup a basic server.
+and setup a basic [Express.js](https://expressjs.com) server.
 
 ## Project & dependencies
 
-Create a new folder for your project, navigate to it in the command line, and initialize a new
-Node.js project:
+Create a new folder for your project, navigate to it in the command line,
+and initialize a new Node.js project:
 
 ```bash
 npm init -y
 ```
 
 Next, install all the Node.js dependencies we're going to use. In this case it will be
-the [Express.js](https://expressjs.com) framework, a middleware for handling cookie-based
-sessions, and finally the [Forge SDK](https://www.npmjs.com/package/forge-apis):
+the [Express.js](https://expressjs.com) framework, an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
+for handling cookie-based sessions, and finally the [Forge SDK](https://www.npmjs.com/package/forge-apis):
 
 ```bash
 npm install --save express cookie-session forge-apis
@@ -37,7 +37,7 @@ The `"dependencies"` in your `package.json` file should now look something like 
 // ...
 ```
 
-Finally, let's create a couple of subfolders in your project folder that we're going to need later:
+Finally, let's create a couple more subfolders in your project folder that we're going to need later:
 
 - `public` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 - `routes` - this is where we're going to implement all the server endpoints
@@ -93,4 +93,4 @@ npm start
 
 Then open your browser and navigate to http://localhost:3000. The server should respond
 with `Cannot GET /` because we haven't added any logic to it just yet. That's going to be
-the topic of step 2, [Authentication](./auth).
+the topic of step 2 - [Authentication](./auth).

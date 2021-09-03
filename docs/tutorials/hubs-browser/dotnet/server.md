@@ -154,6 +154,6 @@ export FORGE_CALLBACK_URL=https://localhost:5001/api/auth/callback
 dotnet run
 ```
 
-When you navigate to https://localhost:5001 in your browser, you should get a 404 response
-because we haven't implemented any server logic yet. That's going to be the topic of the next
-step - [Authentication](./auth).
+When you navigate to [https://localhost:5001](https://localhost:5001) in your browser,
+you should get a 404 response because we haven't implemented any server logic yet.
+That's going to be the topic of the next step - [Authentication](./auth).
