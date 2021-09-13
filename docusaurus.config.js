@@ -62,7 +62,7 @@ module.exports = {
                         },
                         {
                             label: 'Twitter',
-                            href: 'https://twitter.com/ipetrbroz'
+                            href: 'https://twitter.com/autodeskforge'
                         }
                     ]
                 },
@@ -70,8 +70,20 @@ module.exports = {
                     title: 'More',
                     items: [
                         {
+                            label: 'Developer Portal',
+                            href: 'https://forge.autodesk.com'
+                        },
+                        {
                             label: 'GitHub',
-                            href: 'https://github.com/petrbroz/forge-samples-docs'
+                            href: 'https://github.com/Autodesk-Forge'
+                        },
+                        {
+                            label: 'Showroom',
+                            href: 'https://forge-showroom.autodesk.io'
+                        },
+                        {
+                            label: 'Learn Forge v1',
+                            href: 'https://learnforge.autodesk.io'
                         }
                     ]
                 }
@@ -95,8 +107,7 @@ module.exports = {
             {
                 docs: {
                     sidebarPath: require.resolve('./sidebars.js'),
-                    // Please change this to your repo.
-                    editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/main/website/'
+                    editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/master/website/'
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css')
