@@ -1,13 +1,22 @@
-# Node.js
+---
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import NodejsRuntime from './setup/_nodejs.md';
+import DotnetRuntime from './setup/_dotnet.md';
+
+# Environment Setup
 
 ## Command-line interface
 
-Command-line interface, a _CLI_, is an essential tool when developing Node.js applications.
-It is used to initialize new projects, handle their dependencies, and often even to manage their
+Command-line interface, a _CLI_, is an essential tool when developing modern web applications.
+It is often used to initialize new projects, handle their dependencies, or to manage their
 source code. Different operating systems have their own options (for example, in Windows there's
 the [Command Prompt](https://en.wikipedia.org/wiki/Cmd.exe) and [PowerShell](https://en.wikipedia.org/wiki/PowerShell),
 and Unix-based systems have all sorts of [shells](https://en.wikipedia.org/wiki/Unix_shell))
-but in our case we're going to be using `bash` which is available _across_ platforms.
+but in our case we're going to be using `bash` which is available _cross-platform_.
 
 - On Unix-based systems, `bash` (or one of its flavors like `zsh`) is most likely available
 already, and if not, you can get it from https://www.gnu.org/software/bash.
@@ -29,24 +38,18 @@ git --version
 
 You should see something like this:
 
-![Checking git in terminal](git.png)
+![Checking git in terminal](setup/git.png)
 
-## Node.js runtime & NPM
+## Runtime
 
-We will also need the Node.js _runtime_ to run our code, and the Node.js package manager, _NPM_,
-to manage 3rd party dependencies. You can get an installer for your platform on https://nodejs.org/en/download
-which will install both.
-
-To make sure the tools are available, try running the following two commands in `bash`:
-
-```bash
-node -v
-npm -v
-```
-
-You should see something like this:
-
-![Checking node in terminal](node.png)
+<Tabs groupId="programming-language">
+    <TabItem value="dotnet" label=".NET" default>
+        <DotnetRuntime />
+    </TabItem>
+    <TabItem value="nodejs" label="Node.js">
+        <NodejsRuntime />
+    </TabItem>
+</Tabs>
 
 ## Editor
 
