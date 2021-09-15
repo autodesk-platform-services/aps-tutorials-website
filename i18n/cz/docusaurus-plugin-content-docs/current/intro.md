@@ -18,7 +18,7 @@ _Client ID_ a _Client Secret_ údaje, které budeme potřebovat později.
 
 ## Nastavení vývojového prostředí
 
-Připravte si Vaše [vývojové prostředí](./setup) podle programovacího jazyka, který budete používat.
+Připravte si Vaše [vývojové prostředí](./setup.mdx) podle programovacího jazyka, který budete používat.
 
 A to je všechno! Teď se můžete pustit do kteréhokoliv tutoriálu ve Vámi zvoleném
 programovacím jazyce.

@@ -18,7 +18,7 @@ the _Client ID_ and _Client Secret_ credentials as we will need them later.
 
 ## Setup your environment
 
-[Setup your development environment](./setup) depending on your programming language of choice.
+[Setup your development environment](./setup.mdx) depending on your programming language of choice.
 
 And you're all set! Now head over to one of the tutorials with the programming language
 of your choice.
