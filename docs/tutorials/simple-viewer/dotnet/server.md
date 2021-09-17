@@ -23,8 +23,8 @@ Next we will need to install the dependencies. In this case it will just be the
 dotnet add package Autodesk.Forge
 ```
 
-The `*.csproj` file in your project should now look similar to this (perhaps with
-slightly version numbers):
+The `*.csproj` file in your project should now look similar to this (possibly with
+slightly different version numbers, and additional .NET settings):
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
