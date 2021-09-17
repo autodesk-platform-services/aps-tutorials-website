@@ -21,56 +21,57 @@ all the Forge-specific logic that will be used in different areas of our server 
 start by adding the following code to the file:
 
 ```csharp title="Models/ForgeService.cs"
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-namespace simpleviewer
+public class Token
 {
-    public class Token
+    public string AccessToken { get; set; }
+    public DateTime ExpiresAt { get; set; }
+}
+
+public class ForgeService
+{
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _bucket;
+    private Token _internalTokenCache;
+    private Token _publicTokenCache;
+
+    public ForgeService(string clientId, string clientSecret, string bucket = null)
     {
-        public string AccessToken { get; set; }
-        public DateTime ExpiresAt { get; set; }
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
     }
 
-    public class ForgeService
+    public async Task<Token> GetPublicToken()
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _bucket;
-        private Token _internalTokenCache;
-        private Token _publicTokenCache;
+        if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
+            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
+        return _publicTokenCache;
+    }
 
-        public ForgeService(string clientId, string clientSecret, string bucket = null)
-        {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
-        }
+    private async Task<Token> GetInternalToken()
+    {
+        if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
+            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
+        return _internalTokenCache;
+    }
 
-        public async Task<Token> GetPublicToken()
+    private async Task<Token> GetToken(Scope[] scopes)
+    {
+        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
+        return new Token
         {
-            if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-                _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            return _publicTokenCache;
-        }
-
-        private async Task<Token> GetInternalToken()
-        {
-            if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-                _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            return _internalTokenCache;
-        }
-
-        private async Task<Token> GetToken(Scope[] scopes)
-        {
-            dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-            return new Token
-            {
-                AccessToken = auth.access_token,
-                ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
-            };
-        }
+            AccessToken = auth.access_token,
+            ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
+        };
     }
 }
 ```
@@ -84,50 +85,53 @@ Next, let's update our `Startup.cs` file to make a singleton instance of the `Fo
 available to our server application:
 
 ```csharp title="Startup.cs"
-namespace simpleviewer
+using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        Configuration = configuration;
+    }
 
-        public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers();
+        var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
+        var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
+        var ForgeBucket = Environment.GetEnvironmentVariable("FORGE_BUCKET"); // Optional
+        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret))
         {
-            services.AddControllers();
-            var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
-            var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
-            var ForgeBucket = Environment.GetEnvironmentVariable("FORGE_BUCKET"); // Optional
-            if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret))
-            {
-                throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
-            }
-            // highlight-start
-            services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeBucket));
-            // highlight-end
+            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
         }
+        // highlight-start
+        services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeBucket));
+        // highlight-end
+    }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            app.UseHttpsRedirection();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseDeveloperExceptionPage();
         }
+        app.UseHttpsRedirection();
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }
 ```
@@ -138,31 +142,30 @@ Now let's add a first endpoint to our server. Create an `AuthController.cs` file
 subfolder with the following content:
 
 ```csharp title="Controllers/AuthController.cs"
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace simpleviewer
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    private readonly ForgeService _forgeService;
+
+    public AuthController(ForgeService forgeService)
     {
-        private readonly ForgeService _forgeService;
+        _forgeService = forgeService;
+    }
 
-        public AuthController(ForgeService forgeService)
+    [HttpGet("token")]
+    public async Task<dynamic> GetAccessToken()
+    {
+        var token = await _forgeService.GetPublicToken();
+        return new
         {
-            _forgeService = forgeService;
-        }
-
-        [HttpGet("token")]
-        public async Task<dynamic> GetAccessToken()
-        {
-            var token = await _forgeService.GetPublicToken();
-            return new
-            {
-                access_token = token.AccessToken,
-                expires_in = Math.Round((token.ExpiresAt - DateTime.UtcNow).TotalSeconds)
-            };
-        }
+            access_token = token.AccessToken,
+            expires_in = Math.Round((token.ExpiresAt - DateTime.UtcNow).TotalSeconds)
+        };
     }
 }
 ```

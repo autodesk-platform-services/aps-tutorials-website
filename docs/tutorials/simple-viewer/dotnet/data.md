@@ -15,80 +15,81 @@ step but in our sample we will implement a helper function that will make sure t
 is available. Let's update the `Models/ForgeService.cs` file:
 
 ```csharp title="Models/ForgeService.cs"
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-namespace simpleviewer
+public class Token
 {
-    public class Token
+    public string AccessToken { get; set; }
+    public DateTime ExpiresAt { get; set; }
+}
+
+public class ForgeService
+{
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _bucket;
+    private Token _internalTokenCache;
+    private Token _publicTokenCache;
+
+    public ForgeService(string clientId, string clientSecret, string bucket = null)
     {
-        public string AccessToken { get; set; }
-        public DateTime ExpiresAt { get; set; }
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
     }
 
-    public class ForgeService
+    // highlight-start
+    private async Task EnsureBucketExists(string bucketKey)
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _bucket;
-        private Token _internalTokenCache;
-        private Token _publicTokenCache;
-
-        public ForgeService(string clientId, string clientSecret, string bucket = null)
+        var token = await GetInternalToken();
+        var api = new BucketsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        try
         {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
+            await api.GetBucketDetailsAsync(bucketKey);
         }
-
-        // highlight-start
-        private async Task EnsureBucketExists(string bucketKey)
+        catch (ApiException e)
         {
-            var token = await GetInternalToken();
-            var api = new BucketsApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            try
+            if (e.ErrorCode == 404)
             {
-                await api.GetBucketDetailsAsync(bucketKey);
+                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
             }
-            catch (ApiException e)
+            else
             {
-                if (e.ErrorCode == 404)
-                {
-                    await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
-                }
-                else
-                {
-                    throw e;
-                }
+                throw e;
             }
         }
-        // highlight-end
+    }
+    // highlight-end
 
-        public async Task<Token> GetPublicToken()
-        {
-            if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-                _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            return _publicTokenCache;
-        }
+    public async Task<Token> GetPublicToken()
+    {
+        if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
+            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
+        return _publicTokenCache;
+    }
 
-        private async Task<Token> GetInternalToken()
-        {
-            if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-                _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            return _internalTokenCache;
-        }
+    private async Task<Token> GetInternalToken()
+    {
+        if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
+            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
+        return _internalTokenCache;
+    }
 
-        private async Task<Token> GetToken(Scope[] scopes)
+    private async Task<Token> GetToken(Scope[] scopes)
+    {
+        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
+        return new Token
         {
-            dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-            return new Token
-            {
-                AccessToken = auth.access_token,
-                ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
-            };
-        }
+            AccessToken = auth.access_token,
+            ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
+        };
     }
 }
 ```
@@ -99,118 +100,119 @@ attempt to create a new bucket with that name.
 
 ## Listing models
 
-Now we will update the `ForgeService` class with a helper function that will
-list all objects in the preconfigured bucket:
+Now we will update the `ForgeService` class with a helper method that will list all objects
+in the preconfigured bucket:
 
 ```csharp title="Models/ForgeService.cs"
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-namespace simpleviewer
+public class Token
 {
-    public class Token
+    public string AccessToken { get; set; }
+    public DateTime ExpiresAt { get; set; }
+}
+
+public class ForgeService
+{
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _bucket;
+    private Token _internalTokenCache;
+    private Token _publicTokenCache;
+
+    public ForgeService(string clientId, string clientSecret, string bucket = null)
     {
-        public string AccessToken { get; set; }
-        public DateTime ExpiresAt { get; set; }
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
     }
 
-    public class ForgeService
+    // highlight-start
+    public async Task<IEnumerable<dynamic>> GetObjects()
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _bucket;
-        private Token _internalTokenCache;
-        private Token _publicTokenCache;
-
-        public ForgeService(string clientId, string clientSecret, string bucket = null)
+        const int PageSize = 64;
+        await EnsureBucketExists(_bucket);
+        var token = await GetInternalToken();
+        var api = new ObjectsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        var objects = new List<dynamic>();
+        dynamic response = await api.GetObjectsAsync(_bucket, PageSize);
+        foreach (KeyValuePair<string, dynamic> obj in new DynamicDictionaryItems(response.items))
         {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
+            objects.Add(new { name = obj.Value.objectKey, urn = Base64Encode(obj.Value.objectId) });
         }
-
-        // highlight-start
-        public async Task<IEnumerable<dynamic>> GetObjects()
+        while ((response as DynamicDictionary).Dictionary.ContainsKey("next")) // This feels hacky... is there a better way?
         {
-            const int PageSize = 64;
-            await EnsureBucketExists(_bucket);
-            var token = await GetInternalToken();
-            var api = new ObjectsApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            var objects = new List<dynamic>();
-            dynamic response = await api.GetObjectsAsync(_bucket, PageSize);
+            var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(response.next).Query);
+            response = await api.GetObjectsAsync(_bucket, PageSize, null, queryParams["startAt"]);
             foreach (KeyValuePair<string, dynamic> obj in new DynamicDictionaryItems(response.items))
             {
                 objects.Add(new { name = obj.Value.objectKey, urn = Base64Encode(obj.Value.objectId) });
             }
-            while ((response as DynamicDictionary).Dictionary.ContainsKey("next")) // This feels hacky... is there a better way?
-            {
-                var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(response.next).Query);
-                response = await api.GetObjectsAsync(_bucket, PageSize, null, queryParams["startAt"]);
-                foreach (KeyValuePair<string, dynamic> obj in new DynamicDictionaryItems(response.items))
-                {
-                    objects.Add(new { name = obj.Value.objectKey, urn = Base64Encode(obj.Value.objectId) });
-                }
-            }
-            return objects;
         }
-        // highlight-end
-
-        private async Task EnsureBucketExists(string bucketKey)
-        {
-            var token = await GetInternalToken();
-            var api = new BucketsApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            try
-            {
-                await api.GetBucketDetailsAsync(bucketKey);
-            }
-            catch (ApiException e)
-            {
-                if (e.ErrorCode == 404)
-                {
-                    await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
-                }
-                else
-                {
-                    throw e;
-                }
-            }
-        }
-
-        public async Task<Token> GetPublicToken()
-        {
-            if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-                _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            return _publicTokenCache;
-        }
-
-        private async Task<Token> GetInternalToken()
-        {
-            if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-                _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            return _internalTokenCache;
-        }
-
-        private async Task<Token> GetToken(Scope[] scopes)
-        {
-            dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-            return new Token
-            {
-                AccessToken = auth.access_token,
-                ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
-            };
-        }
-
-        // highlight-start
-        private static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes).TrimEnd('=');
-        }
-        // highlight-end
+        return objects;
     }
+    // highlight-end
+
+    private async Task EnsureBucketExists(string bucketKey)
+    {
+        var token = await GetInternalToken();
+        var api = new BucketsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        try
+        {
+            await api.GetBucketDetailsAsync(bucketKey);
+        }
+        catch (ApiException e)
+        {
+            if (e.ErrorCode == 404)
+            {
+                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
+            }
+            else
+            {
+                throw e;
+            }
+        }
+    }
+
+    public async Task<Token> GetPublicToken()
+    {
+        if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
+            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
+        return _publicTokenCache;
+    }
+
+    private async Task<Token> GetInternalToken()
+    {
+        if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
+            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
+        return _internalTokenCache;
+    }
+
+    private async Task<Token> GetToken(Scope[] scopes)
+    {
+        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
+        return new Token
+        {
+            AccessToken = auth.access_token,
+            ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
+        };
+    }
+
+    // highlight-start
+    private static string Base64Encode(string plainText)
+    {
+        var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+        return System.Convert.ToBase64String(plainTextBytes).TrimEnd('=');
+    }
+    // highlight-end
 }
 ```
 
@@ -224,142 +226,143 @@ to the Data Management service, and their translation into a format that can lat
 Forge Viewer:
 
 ```csharp title="Models/ForgeService.cs"
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-namespace simpleviewer
+public class Token
 {
-    public class Token
+    public string AccessToken { get; set; }
+    public DateTime ExpiresAt { get; set; }
+}
+
+public class ForgeService
+{
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _bucket;
+    private Token _internalTokenCache;
+    private Token _publicTokenCache;
+
+    public ForgeService(string clientId, string clientSecret, string bucket = null)
     {
-        public string AccessToken { get; set; }
-        public DateTime ExpiresAt { get; set; }
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
     }
 
-    public class ForgeService
+    public async Task<IEnumerable<dynamic>> GetObjects()
     {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _bucket;
-        private Token _internalTokenCache;
-        private Token _publicTokenCache;
-
-        public ForgeService(string clientId, string clientSecret, string bucket = null)
+        const int PageSize = 64;
+        await EnsureBucketExists(_bucket);
+        var token = await GetInternalToken();
+        var api = new ObjectsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        var objects = new List<dynamic>();
+        dynamic response = await api.GetObjectsAsync(_bucket, PageSize);
+        foreach (KeyValuePair<string, dynamic> obj in new DynamicDictionaryItems(response.items))
         {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
+            objects.Add(new { name = obj.Value.objectKey, urn = Base64Encode(obj.Value.objectId) });
         }
-
-        public async Task<IEnumerable<dynamic>> GetObjects()
+        while ((response as DynamicDictionary).Dictionary.ContainsKey("next")) // This feels hacky... is there a better way?
         {
-            const int PageSize = 64;
-            await EnsureBucketExists(_bucket);
-            var token = await GetInternalToken();
-            var api = new ObjectsApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            var objects = new List<dynamic>();
-            dynamic response = await api.GetObjectsAsync(_bucket, PageSize);
+            var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(response.next).Query);
+            response = await api.GetObjectsAsync(_bucket, PageSize, null, queryParams["startAt"]);
             foreach (KeyValuePair<string, dynamic> obj in new DynamicDictionaryItems(response.items))
             {
                 objects.Add(new { name = obj.Value.objectKey, urn = Base64Encode(obj.Value.objectId) });
             }
-            while ((response as DynamicDictionary).Dictionary.ContainsKey("next")) // This feels hacky... is there a better way?
-            {
-                var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(response.next).Query);
-                response = await api.GetObjectsAsync(_bucket, PageSize, null, queryParams["startAt"]);
-                foreach (KeyValuePair<string, dynamic> obj in new DynamicDictionaryItems(response.items))
-                {
-                    objects.Add(new { name = obj.Value.objectKey, urn = Base64Encode(obj.Value.objectId) });
-                }
-            }
-            return objects;
         }
+        return objects;
+    }
 
-        // highlight-start
-        public async Task<dynamic> UploadModel(string objectName, Stream content, long contentLength)
-        {
-            await EnsureBucketExists(_bucket);
-            var token = await GetInternalToken();
-            var api = new ObjectsApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            dynamic obj = await api.UploadObjectAsync(_bucket, objectName, (int)contentLength, content);
-            return obj;
-        }
+    // highlight-start
+    public async Task<dynamic> UploadModel(string objectName, Stream content, long contentLength)
+    {
+        await EnsureBucketExists(_bucket);
+        var token = await GetInternalToken();
+        var api = new ObjectsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        dynamic obj = await api.UploadObjectAsync(_bucket, objectName, (int)contentLength, content);
+        return obj;
+    }
 
-        public async Task<dynamic> TranslateModel(string objectId, string rootFilename)
-        {
-            var token = await GetInternalToken();
-            var api = new DerivativesApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            var formats = new List<JobPayloadItem> {
+    public async Task<dynamic> TranslateModel(string objectId, string rootFilename)
+    {
+        var token = await GetInternalToken();
+        var api = new DerivativesApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        var formats = new List<JobPayloadItem> {
                 new JobPayloadItem (JobPayloadItem.TypeEnum.Svf, new List<JobPayloadItem.ViewsEnum> { JobPayloadItem.ViewsEnum._2d, JobPayloadItem.ViewsEnum._2d })
             };
-            var payload = new JobPayload(
-                new JobPayloadInput(Base64Encode(objectId)),
-                new JobPayloadOutput(formats)
-            );
-            if (!string.IsNullOrEmpty(rootFilename))
+        var payload = new JobPayload(
+            new JobPayloadInput(Base64Encode(objectId)),
+            new JobPayloadOutput(formats)
+        );
+        if (!string.IsNullOrEmpty(rootFilename))
+        {
+            payload.Input.RootFilename = rootFilename;
+            payload.Input.CompressedUrn = true;
+        }
+        dynamic job = await api.TranslateAsync(payload);
+        return job;
+    }
+    // highlight-end
+
+    private async Task EnsureBucketExists(string bucketKey)
+    {
+        var token = await GetInternalToken();
+        var api = new BucketsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        try
+        {
+            await api.GetBucketDetailsAsync(bucketKey);
+        }
+        catch (ApiException e)
+        {
+            if (e.ErrorCode == 404)
             {
-                payload.Input.RootFilename = rootFilename;
-                payload.Input.CompressedUrn = true;
+                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
             }
-            dynamic job = await api.TranslateAsync(payload);
-            return job;
-        }
-        // highlight-end
-
-        private async Task EnsureBucketExists(string bucketKey)
-        {
-            var token = await GetInternalToken();
-            var api = new BucketsApi();
-            api.Configuration.AccessToken = token.AccessToken;
-            try
+            else
             {
-                await api.GetBucketDetailsAsync(bucketKey);
-            }
-            catch (ApiException e)
-            {
-                if (e.ErrorCode == 404)
-                {
-                    await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
-                }
-                else
-                {
-                    throw e;
-                }
+                throw e;
             }
         }
+    }
 
-        public async Task<Token> GetPublicToken()
-        {
-            if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-                _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-            return _publicTokenCache;
-        }
+    public async Task<Token> GetPublicToken()
+    {
+        if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
+            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
+        return _publicTokenCache;
+    }
 
-        private async Task<Token> GetInternalToken()
-        {
-            if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-                _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-            return _internalTokenCache;
-        }
+    private async Task<Token> GetInternalToken()
+    {
+        if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
+            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
+        return _internalTokenCache;
+    }
 
-        private async Task<Token> GetToken(Scope[] scopes)
+    private async Task<Token> GetToken(Scope[] scopes)
+    {
+        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
+        return new Token
         {
-            dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-            return new Token
-            {
-                AccessToken = auth.access_token,
-                ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
-            };
-        }
+            AccessToken = auth.access_token,
+            ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
+        };
+    }
 
-        private static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes).TrimEnd('=');
-        }
+    private static string Base64Encode(string plainText)
+    {
+        var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+        return System.Convert.ToBase64String(plainTextBytes).TrimEnd('=');
     }
 }
 ```
@@ -371,53 +374,55 @@ controller. Create a `ModelsController.cs` file under the `Controllers` subfolde
 with the following content:
 
 ```csharp title="Controllers/ModelsController.cs"
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace simpleviewer
+[ApiController]
+[Route("api/[controller]")]
+public class ModelsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ModelsController : ControllerBase
+    private readonly ForgeService _forgeService;
+
+    public ModelsController(ForgeService forgeService)
     {
-        private readonly ForgeService _forgeService;
+        _forgeService = forgeService;
+    }
 
-        public ModelsController(ForgeService forgeService)
+    [HttpGet()]
+    public async Task<ActionResult<string>> GetModels()
+    {
+        var objects = await _forgeService.GetObjects();
+        return JsonConvert.SerializeObject(objects);
+    }
+
+    public class UploadModelForm
+    {
+        [FromForm(Name = "model-zip-entrypoint")]
+        public string Entrypoint { get; set; }
+
+        [FromForm(Name = "model-file")]
+        public IFormFile File { get; set; }
+    }
+
+    [HttpPost()]
+    public async Task UploadAndTranslateModel([FromForm] UploadModelForm form)
+    {
+        // For some reason we cannot use the incoming stream directly...
+        // so let's save the model into a local temp file first
+        var tmpPath = Path.GetTempFileName();
+        using (var stream = new FileStream(tmpPath, FileMode.OpenOrCreate))
         {
-            _forgeService = forgeService;
+            await form.File.CopyToAsync(stream);
         }
-
-        [HttpGet()]
-        public async Task<ActionResult<string>> GetModels()
+        using (var stream = System.IO.File.OpenRead(tmpPath))
         {
-            var objects = await _forgeService.GetObjects();
-            return JsonConvert.SerializeObject(objects);
+            dynamic obj = await _forgeService.UploadModel(form.File.FileName, stream, form.File.Length);
+            await _forgeService.TranslateModel(obj.objectId, form.Entrypoint);
         }
-
-        public class UploadModelForm
-        {
-            [FromForm(Name = "model-zip-entrypoint")]
-            public string Entrypoint { get; set; }
-
-            [FromForm(Name = "model-file")]
-            public IFormFile File { get; set; }
-        }
-
-        [HttpPost()]
-        public async Task UploadAndTranslateModel([FromForm] UploadModelForm form)
-        {
-            var tmpPath = Path.GetTempFileName();
-            using (var stream = new FileStream(tmpPath, FileMode.OpenOrCreate))
-            {
-                await form.File.CopyToAsync(stream);
-            }
-            using (var stream = System.IO.File.OpenRead(tmpPath))
-            {
-                dynamic obj = await _forgeService.UploadModel(form.File.FileName, stream, form.File.Length);
-                await _forgeService.TranslateModel(obj.objectId, form.Entrypoint);
-            }
-            System.IO.File.Delete(tmpPath);
-        }
+        System.IO.File.Delete(tmpPath);
     }
 }
 ```
