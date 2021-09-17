@@ -22,32 +22,30 @@ the Forge-specific logic that will be used in different areas of our server appl
 start by adding the following code to the file:
 
 ```csharp title="Models/ForgeService.cs"
+using System;
 using Autodesk.Forge;
 
-namespace hubsbrowser
+public class Tokens
 {
-    public class Tokens
-    {
-        public string InternalToken;
-        public string PublicToken;
-        public string RefreshToken;
-        public DateTime ExpiresAt;
-    }
+    public string InternalToken;
+    public string PublicToken;
+    public string RefreshToken;
+    public DateTime ExpiresAt;
+}
 
-    public partial class ForgeService
-    {
-        private readonly string _clientId;
-        private readonly string _clientSecret;
-        private readonly string _callbackUri;
-        private readonly Scope[] InternalTokenScopes = new Scope[] { Scope.DataRead, Scope.ViewablesRead };
-        private readonly Scope[] PublicTokenScopes = new Scope[] { Scope.ViewablesRead };
+public partial class ForgeService
+{
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _callbackUri;
+    private readonly Scope[] InternalTokenScopes = new Scope[] { Scope.DataRead, Scope.ViewablesRead };
+    private readonly Scope[] PublicTokenScopes = new Scope[] { Scope.ViewablesRead };
 
-        public ForgeService(string clientId, string clientSecret, string callbackUri)
-        {
-            _clientId = clientId;
-            _clientSecret = clientSecret;
-            _callbackUri = callbackUri;
-        }
+    public ForgeService(string clientId, string clientSecret, string callbackUri)
+    {
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _callbackUri = callbackUri;
     }
 }
 ```
@@ -58,50 +56,49 @@ A `ForgeService` singleton will then be provided to our server through ASP.NET's
 Next, let's create a `ForgeService.Auth.cs` file under the `Models` subfolder with the following code:
 
 ```csharp title="Models/ForgeService.Auth.cs"
+using System;
+using System.Threading.Tasks;
 using Autodesk.Forge;
 
-namespace hubsbrowser
+public partial class ForgeService
 {
-    public partial class ForgeService
+    public string GetAuthorizationURL()
     {
-        public string GetAuthorizationURL()
-        {
-            return new ThreeLeggedApi().Authorize(_clientId, "code", _callbackUri, InternalTokenScopes);
-        }
+        return new ThreeLeggedApi().Authorize(_clientId, "code", _callbackUri, InternalTokenScopes);
+    }
 
-        public async Task<Tokens> GenerateTokens(string code)
+    public async Task<Tokens> GenerateTokens(string code)
+    {
+        dynamic internalAuth = await new ThreeLeggedApi().GettokenAsync(_clientId, _clientSecret, "authorization_code", code, _callbackUri);
+        dynamic publicAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", internalAuth.refresh_token, PublicTokenScopes);
+        return new Tokens
         {
-            dynamic internalAuth = await new ThreeLeggedApi().GettokenAsync(_clientId, _clientSecret, "authorization_code", code, _callbackUri);
-            dynamic publicAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", internalAuth.refresh_token, PublicTokenScopes);
-            return new Tokens
-            {
-                PublicToken = publicAuth.access_token,
-                InternalToken = internalAuth.access_token,
-                RefreshToken = publicAuth.refresh_token,
-                ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds(internalAuth.expires_in)
-            };
-        }
+            PublicToken = publicAuth.access_token,
+            InternalToken = internalAuth.access_token,
+            RefreshToken = publicAuth.refresh_token,
+            ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds(internalAuth.expires_in)
+        };
+    }
 
-        public async Task<Tokens> RefreshTokens(Tokens tokens)
+    public async Task<Tokens> RefreshTokens(Tokens tokens)
+    {
+        dynamic internalAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", tokens.RefreshToken, InternalTokenScopes);
+        dynamic publicAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", internalAuth.refresh_token, PublicTokenScopes);
+        return new Tokens
         {
-            dynamic internalAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", tokens.RefreshToken, InternalTokenScopes);
-            dynamic publicAuth = await new ThreeLeggedApi().RefreshtokenAsync(_clientId, _clientSecret, "refresh_token", internalAuth.refresh_token, PublicTokenScopes);
-            return new Tokens
-            {
-                PublicToken = publicAuth.access_token,
-                InternalToken = internalAuth.access_token,
-                RefreshToken = publicAuth.refresh_token,
-                ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds(internalAuth.expires_in)
-            };
-        }
+            PublicToken = publicAuth.access_token,
+            InternalToken = internalAuth.access_token,
+            RefreshToken = publicAuth.refresh_token,
+            ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds(internalAuth.expires_in)
+        };
+    }
 
-        public async Task<dynamic> GetUserProfile(Tokens tokens)
-        {
-            var api = new UserProfileApi();
-            api.Configuration.AccessToken = tokens.InternalToken;
-            dynamic profile = await api.GetUserProfileAsync();
-            return profile;
-        }
+    public async Task<dynamic> GetUserProfile(Tokens tokens)
+    {
+        var api = new UserProfileApi();
+        api.Configuration.AccessToken = tokens.InternalToken;
+        dynamic profile = await api.GetUserProfileAsync();
+        return profile;
     }
 }
 ```
@@ -115,50 +112,53 @@ Finally, let's update our `Startup.cs` file to make a singleton instance of the 
 available to our server application:
 
 ```csharp title="Startup.cs"
-namespace hubsbrowser
+using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        Configuration = configuration;
+    }
 
-        public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers();
+        var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
+        var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
+        var ForgeCallbackURL = Environment.GetEnvironmentVariable("FORGE_CALLBACK_URL");
+        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret) || string.IsNullOrEmpty(ForgeCallbackURL))
         {
-            services.AddControllers();
-            var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
-            var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
-            var ForgeCallbackURL = Environment.GetEnvironmentVariable("FORGE_CALLBACK_URL");
-            if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret) || string.IsNullOrEmpty(ForgeCallbackURL))
-            {
-                throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
-            }
-            // highlight-start
-            services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeCallbackURL));
-            // highlight-end
+            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
         }
+        // highlight-start
+        services.AddSingleton<ForgeService>(new ForgeService(ForgeClientID, ForgeClientSecret, ForgeCallbackURL));
+        // highlight-end
+    }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            app.UseHttpsRedirection();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseDeveloperExceptionPage();
         }
+        app.UseHttpsRedirection();
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
     }
 }
 ```
@@ -169,105 +169,106 @@ Next, let's add a first endpoint to our server. Create an `AuthController.cs` fi
 with the following content:
 
 ```csharp title="Controllers/AuthController.cs"
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace hubsbrowser
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    private readonly ILogger<AuthController> _logger;
+    private readonly ForgeService _forgeService;
+
+    public AuthController(ILogger<AuthController> logger, ForgeService forgeService)
     {
-        private readonly ILogger<AuthController> _logger;
-        private readonly ForgeService _forgeService;
+        _logger = logger;
+        _forgeService = forgeService;
+    }
 
-        public AuthController(ILogger<AuthController> logger, ForgeService forgeService)
+    public static async Task<Tokens> PrepareTokens(HttpRequest request, HttpResponse response, ForgeService forgeService)
+    {
+        if (!request.Cookies.ContainsKey("internal_token"))
         {
-            _logger = logger;
-            _forgeService = forgeService;
+            return null;
         }
+        var tokens = new Tokens
+        {
+            PublicToken = request.Cookies["public_token"],
+            InternalToken = request.Cookies["internal_token"],
+            RefreshToken = request.Cookies["refresh_token"],
+            ExpiresAt = DateTime.Parse(request.Cookies["expires_at"])
+        };
+        if (tokens.ExpiresAt < DateTime.Now.ToUniversalTime())
+        {
+            tokens = await forgeService.RefreshTokens(tokens);
+            response.Cookies.Append("public_token", tokens.PublicToken);
+            response.Cookies.Append("internal_token", tokens.InternalToken);
+            response.Cookies.Append("refresh_token", tokens.RefreshToken);
+            response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
+        }
+        return tokens;
+    }
 
-        public static async Task<Tokens> PrepareTokens(HttpRequest request, HttpResponse response, ForgeService forgeService)
-        {
-            if (!request.Cookies.ContainsKey("internal_token"))
-            {
-                return null;
-            }
-            var tokens = new Tokens
-            {
-                PublicToken = request.Cookies["public_token"],
-                InternalToken = request.Cookies["internal_token"],
-                RefreshToken = request.Cookies["refresh_token"],
-                ExpiresAt = DateTime.Parse(request.Cookies["expires_at"])
-            };
-            if (tokens.ExpiresAt < DateTime.Now.ToUniversalTime())
-            {
-                tokens = await forgeService.RefreshTokens(tokens);
-                response.Cookies.Append("public_token", tokens.PublicToken);
-                response.Cookies.Append("internal_token", tokens.InternalToken);
-                response.Cookies.Append("refresh_token", tokens.RefreshToken);
-                response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
-            }
-            return tokens;
-        }
+    [HttpGet("login")]
+    public ActionResult Login()
+    {
+        var redirectUri = _forgeService.GetAuthorizationURL();
+        return Redirect(redirectUri);
+    }
 
-        [HttpGet("login")]
-        public ActionResult Login()
-        {
-            var redirectUri = _forgeService.GetAuthorizationURL();
-            return Redirect(redirectUri);
-        }
+    [HttpGet("logout")]
+    public ActionResult Logout()
+    {
+        Response.Cookies.Delete("public_token");
+        Response.Cookies.Delete("internal_token");
+        Response.Cookies.Delete("refresh_token");
+        Response.Cookies.Delete("expires_at");
+        return Redirect("/");
+    }
 
-        [HttpGet("logout")]
-        public ActionResult Logout()
-        {
-            Response.Cookies.Delete("public_token");
-            Response.Cookies.Delete("internal_token");
-            Response.Cookies.Delete("refresh_token");
-            Response.Cookies.Delete("expires_at");
-            return Redirect("/");
-        }
+    [HttpGet("callback")]
+    public async Task<ActionResult> Callback(string code)
+    {
+        var tokens = await _forgeService.GenerateTokens(code);
+        Response.Cookies.Append("public_token", tokens.PublicToken);
+        Response.Cookies.Append("internal_token", tokens.InternalToken);
+        Response.Cookies.Append("refresh_token", tokens.RefreshToken);
+        Response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
+        return Redirect("/");
+    }
 
-        [HttpGet("callback")]
-        public async Task<ActionResult> Callback(string code)
+    [HttpGet("profile")]
+    public async Task<dynamic> GetProfile(string code)
+    {
+        var tokens = await PrepareTokens(Request, Response, _forgeService);
+        if (tokens == null)
         {
-            var tokens = await _forgeService.GenerateTokens(code);
-            Response.Cookies.Append("public_token", tokens.PublicToken);
-            Response.Cookies.Append("internal_token", tokens.InternalToken);
-            Response.Cookies.Append("refresh_token", tokens.RefreshToken);
-            Response.Cookies.Append("expires_at", tokens.ExpiresAt.ToString());
-            return Redirect("/");
+            return Unauthorized();
         }
+        dynamic profile = await _forgeService.GetUserProfile(tokens);
+        return new
+        {
+            name = string.Format("{0} {1}", profile.firstName, profile.lastName)
+        };
+    }
 
-        [HttpGet("profile")]
-        public async Task<dynamic> GetProfile(string code)
+    [HttpGet("token")]
+    public async Task<dynamic> GetPublicToken(string code)
+    {
+        var tokens = await PrepareTokens(Request, Response, _forgeService);
+        if (tokens == null)
         {
-            var tokens = await PrepareTokens(Request, Response, _forgeService);
-            if (tokens == null)
-            {
-                return Unauthorized();
-            }
-            dynamic profile = await _forgeService.GetUserProfile(tokens);
-            return new
-            {
-                name = string.Format("{0} {1}", profile.firstName, profile.lastName)
-            };
+            return Unauthorized();
         }
-
-        [HttpGet("token")]
-        public async Task<dynamic> GetPublicToken(string code)
+        return new
         {
-            var tokens = await PrepareTokens(Request, Response, _forgeService);
-            if (tokens == null)
-            {
-                return Unauthorized();
-            }
-            return new
-            {
-                access_token = tokens.PublicToken,
-                token_type = "Bearer",
-                expires_in = Math.Floor((tokens.ExpiresAt - DateTime.Now.ToUniversalTime()).TotalSeconds)
-            };
-        }
+            access_token = tokens.PublicToken,
+            token_type = "Bearer",
+            expires_in = Math.Floor((tokens.ExpiresAt - DateTime.Now.ToUniversalTime()).TotalSeconds)
+        };
     }
 }
 ```

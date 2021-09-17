@@ -14,77 +14,76 @@ Data Management hubs, projects, folders, items, and versions. Create a `ForgeSer
 under the `Models` subfolder with the following content:
 
 ```csharp title="Models/ForgeService.Hubs.cs"
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;
 
-namespace hubsbrowser
+public partial class ForgeService
 {
-    public partial class ForgeService
+    public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
     {
-        public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
+        var hubs = new List<dynamic>();
+        var api = new HubsApi();
+        api.Configuration.AccessToken = tokens.InternalToken;
+        var response = await api.GetHubsAsync();
+        foreach (KeyValuePair<string, dynamic> hub in new DynamicDictionaryItems(response.data))
         {
-            var hubs = new List<dynamic>();
-            var api = new HubsApi();
-            api.Configuration.AccessToken = tokens.InternalToken;
-            var response = await api.GetHubsAsync();
-            foreach (KeyValuePair<string, dynamic> hub in new DynamicDictionaryItems(response.data))
-            {
-                hubs.Add(hub.Value);
-            }
-            return hubs;
+            hubs.Add(hub.Value);
         }
+        return hubs;
+    }
 
-        public async Task<IEnumerable<dynamic>> GetProjects(string hubId, Tokens tokens)
+    public async Task<IEnumerable<dynamic>> GetProjects(string hubId, Tokens tokens)
+    {
+        var projects = new List<dynamic>();
+        var api = new ProjectsApi();
+        api.Configuration.AccessToken = tokens.InternalToken;
+        var response = await api.GetHubProjectsAsync(hubId);
+        foreach (KeyValuePair<string, dynamic> project in new DynamicDictionaryItems(response.data))
         {
-            var projects = new List<dynamic>();
+            projects.Add(project.Value);
+        }
+        return projects;
+    }
+
+    public async Task<IEnumerable<dynamic>> GetContents(string hubId, string projectId, string folderId, Tokens tokens)
+    {
+        var contents = new List<dynamic>();
+        if (string.IsNullOrEmpty(folderId))
+        {
             var api = new ProjectsApi();
             api.Configuration.AccessToken = tokens.InternalToken;
-            var response = await api.GetHubProjectsAsync(hubId);
-            foreach (KeyValuePair<string, dynamic> project in new DynamicDictionaryItems(response.data))
+            var response = await api.GetProjectTopFoldersAsync(hubId, projectId);
+            foreach (KeyValuePair<string, dynamic> folders in new DynamicDictionaryItems(response.data))
             {
-                projects.Add(project.Value);
+                contents.Add(folders.Value);
             }
-            return projects;
         }
-
-        public async Task<IEnumerable<dynamic>> GetContents(string hubId, string projectId, string folderId, Tokens tokens)
+        else
         {
-            var contents = new List<dynamic>();
-            if (string.IsNullOrEmpty(folderId))
-            {
-                var api = new ProjectsApi();
-                api.Configuration.AccessToken = tokens.InternalToken;
-                var response = await api.GetProjectTopFoldersAsync(hubId, projectId);
-                foreach (KeyValuePair<string, dynamic> folders in new DynamicDictionaryItems(response.data))
-                {
-                    contents.Add(folders.Value);
-                }
-            }
-            else
-            {
-                var api = new FoldersApi();
-                api.Configuration.AccessToken = tokens.InternalToken;
-                var response = await api.GetFolderContentsAsync(projectId, folderId); // TODO: add paging
-                foreach (KeyValuePair<string, dynamic> item in new DynamicDictionaryItems(response.data))
-                {
-                    contents.Add(item.Value);
-                }
-            }
-            return contents;
-        }
-
-        public async Task<IEnumerable<dynamic>> GetVersions(string hubId, string projectId, string itemId, Tokens tokens)
-        {
-            var versions = new List<dynamic>();
-            var api = new ItemsApi();
+            var api = new FoldersApi();
             api.Configuration.AccessToken = tokens.InternalToken;
-            var response = await api.GetItemVersionsAsync(projectId, itemId);
-            foreach (KeyValuePair<string, dynamic> version in new DynamicDictionaryItems(response.data))
+            var response = await api.GetFolderContentsAsync(projectId, folderId); // TODO: add paging
+            foreach (KeyValuePair<string, dynamic> item in new DynamicDictionaryItems(response.data))
             {
-                versions.Add(version.Value);
+                contents.Add(item.Value);
             }
-            return versions;
         }
+        return contents;
+    }
+
+    public async Task<IEnumerable<dynamic>> GetVersions(string hubId, string projectId, string itemId, Tokens tokens)
+    {
+        var versions = new List<dynamic>();
+        var api = new ItemsApi();
+        api.Configuration.AccessToken = tokens.InternalToken;
+        var response = await api.GetItemVersionsAsync(projectId, itemId);
+        foreach (KeyValuePair<string, dynamic> version in new DynamicDictionaryItems(response.data))
+        {
+            versions.Add(version.Value);
+        }
+        return versions;
     }
 }
 ```
@@ -96,71 +95,70 @@ controller. Create a `HubsController.cs` file under the `Controllers` subfolder 
 content:
 
 ```csharp title="Controllers/HubsController.cs"
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace hubsbrowser
+[ApiController]
+[Route("api/[controller]")]
+public class HubsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class HubsController : ControllerBase
+    private readonly ILogger<HubsController> _logger;
+    private readonly ForgeService _forgeService;
+
+    public HubsController(ILogger<HubsController> logger, ForgeService forgeService)
     {
-        private readonly ILogger<HubsController> _logger;
-        private readonly ForgeService _forgeService;
+        _logger = logger;
+        _forgeService = forgeService;
+    }
 
-        public HubsController(ILogger<HubsController> logger, ForgeService forgeService)
+    [HttpGet()]
+    public async Task<ActionResult<string>> ListHubs()
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+        if (tokens == null)
         {
-            _logger = logger;
-            _forgeService = forgeService;
+            return Unauthorized();
         }
+        var hubs = await _forgeService.GetHubs(tokens);
+        return JsonConvert.SerializeObject(hubs);
+    }
 
-        [HttpGet()]
-        public async Task<ActionResult<string>> ListHubs()
+    [HttpGet("{hub}/projects")]
+    public async Task<ActionResult<string>> ListProjects(string hub)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+        if (tokens == null)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
-            if (tokens == null)
-            {
-                return Unauthorized();
-            }
-            var hubs = await _forgeService.GetHubs(tokens);
-            return JsonConvert.SerializeObject(hubs);
+            return Unauthorized();
         }
+        var projects = await _forgeService.GetProjects(hub, tokens);
+        return JsonConvert.SerializeObject(projects);
+    }
 
-        [HttpGet("{hub}/projects")]
-        public async Task<ActionResult<string>> ListProjects(string hub)
+    [HttpGet("{hub}/projects/{project}/contents")]
+    public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string folder_id)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+        if (tokens == null)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
-            if (tokens == null)
-            {
-                return Unauthorized();
-            }
-            var projects = await _forgeService.GetProjects(hub, tokens);
-            return JsonConvert.SerializeObject(projects);
+            return Unauthorized();
         }
+        var contents = await _forgeService.GetContents(hub, project, folder_id, tokens);
+        return JsonConvert.SerializeObject(contents);
+    }
 
-        [HttpGet("{hub}/projects/{project}/contents")]
-        public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string folder_id)
+    [HttpGet("{hub}/projects/{project}/contents/{item}/versions")]
+    public async Task<ActionResult<string>> ListVersions(string hub, string project, string item)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
+        if (tokens == null)
         {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
-            if (tokens == null)
-            {
-                return Unauthorized();
-            }
-            var contents = await _forgeService.GetContents(hub, project, folder_id, tokens);
-            return JsonConvert.SerializeObject(contents);
+            return Unauthorized();
         }
-
-        [HttpGet("{hub}/projects/{project}/contents/{item}/versions")]
-        public async Task<ActionResult<string>> ListVersions(string hub, string project, string item)
-        {
-            var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
-            if (tokens == null)
-            {
-                return Unauthorized();
-            }
-            var versions = await _forgeService.GetVersions(hub, project, item, tokens);
-            return JsonConvert.SerializeObject(versions);
-        }
+        var versions = await _forgeService.GetVersions(hub, project, item, tokens);
+        return JsonConvert.SerializeObject(versions);
     }
 }
 ```
