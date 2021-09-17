@@ -1,6 +1,10 @@
 We will also need the .NET 6 _runtime_ to run our code and manage 3rd party dependencies.
 You can get an installer for your platform on https://dotnet.microsoft.com/download/dotnet/6.0.
 
+:::info
+Our sample applications have been developed and tested with .NET 6 **Release Candidate 1**.
+:::
+
 To make sure the tool is available, try running the following command in `bash`:
 
 ```bash
