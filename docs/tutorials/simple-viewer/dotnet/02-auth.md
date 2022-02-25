@@ -29,17 +29,12 @@ using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-public class Token
-{
-    public string AccessToken { get; set; }
-    public DateTime ExpiresAt { get; set; }
-}
+public record Token(string AccessToken, DateTime ExpiresAt);
 
 public class ForgeService
 {
     private readonly string _clientId;
     private readonly string _clientSecret;
-    private readonly string _bucket;
     private Token _internalTokenCache;
     private Token _publicTokenCache;
 
@@ -47,7 +42,12 @@ public class ForgeService
     {
         _clientId = clientId;
         _clientSecret = clientSecret;
-        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
+    }
+
+    private async Task<Token> GetToken(Scope[] scopes)
+    {
+        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
+        return new Token(auth.access_token, DateTime.UtcNow.AddSeconds(auth.expires_in));
     }
 
     public async Task<Token> GetPublicToken()
@@ -63,20 +63,10 @@ public class ForgeService
             _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
         return _internalTokenCache;
     }
-
-    private async Task<Token> GetToken(Scope[] scopes)
-    {
-        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-        return new Token
-        {
-            AccessToken = auth.access_token,
-            ExpiresAt = DateTime.UtcNow.AddSeconds(auth.expires_in)
-        };
-    }
 }
 ```
 
-The helper class expects the credentials of a Forge application, and it creates two authentication clients,
+The helper class takes the credentials of a Forge application, and creates two authentication clients,
 one for internal use (giving us read/write access to the Data Management buckets and objects), and one
 for public use (only allowing access to the translation outputs from the Model Derivative service),
 and a couple of methods for generating the corresponding tokens for us.
@@ -150,6 +140,8 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    public record AccessToken(string access_token, long expires_in);
+
     private readonly ForgeService _forgeService;
 
     public AuthController(ForgeService forgeService)
@@ -158,20 +150,20 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("token")]
-    public async Task<dynamic> GetAccessToken()
+    public async Task<AccessToken> GetAccessToken()
     {
         var token = await _forgeService.GetPublicToken();
-        return new
-        {
-            access_token = token.AccessToken,
-            expires_in = Math.Round((token.ExpiresAt - DateTime.UtcNow).TotalSeconds)
-        };
+        return new AccessToken(
+            token.AccessToken,
+            (long)Math.Round((token.ExpiresAt - DateTime.UtcNow).TotalSeconds)
+        );
     }
 }
 ```
 
-The controller will receive the instance of `ForgeService` through ASP.NET's dependency
-injection, and it will handle requests to `/api/auth/token` by generating a new access token
+The controller will receive the instance of `ForgeService` through ASP.NET's
+[Dependency injection](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0),
+and it will handle requests to `/api/auth/token` by generating a new access token
 and sending it back to the client as a JSON payload.
 
 ## Try it out

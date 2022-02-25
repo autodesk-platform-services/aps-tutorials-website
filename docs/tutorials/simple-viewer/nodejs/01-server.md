@@ -45,13 +45,50 @@ Finally, let's create a couple more subfolders in the project folder that we're 
 
 ![Folder Structure](./folder-structure.png)
 
+## Application config
+
+Our Node.js application will need a couple of configuration parameters to run properly, for example,
+the app credentials for communicating with Autodesk Forge services (Forge client ID and secret), and
+the name of a bucket in the [Data Management](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
+service for storing uploaded designs. We will pass these parameters to the server app using environment variables.
+
+Create a `config.js` file in the root of your project folder, and add the following code:
+
+```js title="config.js"
+let { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET, PORT } = process.env;
+if (!FORGE_CLIENT_ID || !FORGE_CLIENT_SECRET) {
+    console.warn('Missing some of the environment variables.');
+    process.exit(1);
+}
+FORGE_BUCKET = FORGE_BUCKET || `${FORGE_CLIENT_ID.toLowerCase()}-basic-app`;
+PORT = PORT || 3000;
+
+module.exports = {
+    FORGE_CLIENT_ID,
+    FORGE_CLIENT_SECRET,
+    FORGE_BUCKET,
+    PORT
+};
+```
+
+We simply read the environment variables from `process.env`, and exit the application
+immediately if any of the required properties are missing. And if no bucket name is provided,
+we generate one by appending the `-basic-app` suffix to the Forge Client ID.
+
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
+
 ## Create a basic server
 
 Create a `server.js` file in the root of your project folder with the following code:
 
 ```js title="server.js"
 const express = require('express');
-const PORT = process.env.PORT || 3000;
+const { PORT } = require('./config.js');
 
 let app = express();
 app.use(express.static('public'));
@@ -62,8 +99,8 @@ app.use(function (err, req, res, next) {
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
-For now the server isn't doing much, just serving client side assets from the (currently empty)
-`public` subfolder, and reporting all errors to the console and back to the client.
+For now the server isn't doing much, just serving static assets from the `public` subfolder
+(which is currently empty), and reporting all errors to the console and back to the client.
 
 Next, let's add a `"start": "node server.js"` script to the `package.json` file so that we can
 easily run our application later:
@@ -78,9 +115,12 @@ easily run our application later:
 
 ## Try it out
 
-Try running the application from the command line:
+Try setting your own Forge client ID and secret as the `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`
+environment variables, and run the application:
 
 ```bash
+export FORGE_CLIENT_ID=your-own-forge-client-id
+export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 npm start
 ```
 
@@ -89,4 +129,4 @@ The server should respond with `Cannot GET /` because we haven't added any logic
 
 ![Empty Response](./empty-response.png)
 
-That's going to be the topic of step 2 - [Authentication](./auth).
+That's going to be the topic of the next step.

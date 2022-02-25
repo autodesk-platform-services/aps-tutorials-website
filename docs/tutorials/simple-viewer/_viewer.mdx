@@ -4,49 +4,12 @@ import MainJsSource from '!!raw-loader!./_snippets/main.js';
 import MainCssSource from '!!raw-loader!./_snippets/main.css';
 import IndexHtmlSource from '!!raw-loader!./_snippets/index.html';
 
-## Viewer logic
-
-<p>
-    Let's start by implementing the Forge Viewer functionality of our application. Create
-    a <code>viewer.js</code> file under the <code>{props.assetsFolder}</code> subfolder
-    with the following code:
-</p>
-
-<CodeBlock title={props.assetsFolder + '/viewer.js'} className="language-js">{ViewerJsSource}</CodeBlock>
-
-The script is an [ES6 module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
-that exports two functions, `initViewer` that will create a new instance of Forge Viewer
-in the specified DOM container, and `loadModel` which will load a specific model to the viewer.
-
-## Application logic
-
-<p>
-    Next, let's define the logic of the application itself. We will need to populate
-    the UI with all models available for viewing, and also the UI for uploading and
-    translating new models. Create a <code>main.js</code> file under
-    the <code>{props.assetsFolder}</code> subfolder with the following content:
-</p>
-
-<CodeBlock title={props.assetsFolder + '/main.js'} className="language-js">{MainJsSource}</CodeBlock>
-
-The scripts will initialize the viewer, populate a dropdown element in the UI with models
-retrieved from the `/api/models` endpoint, and setup the file upload UI. Note that when
-the uploaded file has a `.zip` extension, the JavaScript logic will also prompt the user
-for the name of the file **inside the archive** that should be converted by Forge.
-
 ## User interface
 
-And finally, let's build the UI of our application.
+Let's start by defining the UI of our application with a simple HTML markup and CSS.
 
 <p>
-    Create a <code>main.css</code> file under the <code>{props.assetsFolder}</code> subfolder,
-    and populate it with the following CSS rules:
-</p>
-
-<CodeBlock title={props.assetsFolder + '/main.css'} className="language-css">{MainCssSource}</CodeBlock>
-
-<p>
-    Then, create an <code>index.html</code> file (also in the <code>{props.assetsFolder}</code> subfolder)
+    Create an <code>index.html</code> file in the <code>{props.assetsFolder}</code> subfolder
     with the following content:
 </p>
 
@@ -54,7 +17,13 @@ And finally, let's build the UI of our application.
 
 The HTML markup simply uses a `<select>` element as the dropdown for listing the viewable models,
 and an `<input type="file">` element with a `<button>` to handle the uploading of a new model.
-Note that since `main.js` is also an ES6 module, we have to use `type="module"` in its `<script>` tag.
+
+<p>
+    Create a <code>main.css</code> file, also under the <code>{props.assetsFolder}</code> subfolder,
+    and populate it with these CSS rules:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/main.css'} className="language-css">{MainCssSource}</CodeBlock>
 
 <p>
     The application will look for <code>favicon.ico</code> and <code>logo.png</code> images
@@ -64,3 +33,46 @@ Note that since `main.js` is also an ES6 module, we have to use `type="module"` 
 
 - https://raw.githubusercontent.com/petrbroz/forge-simple-viewer-nodejs/develop/public/favicon.ico
 - https://raw.githubusercontent.com/petrbroz/forge-simple-viewer-nodejs/develop/public/logo.png
+
+## Viewer logic
+
+<p>
+    Next, let's implement the Forge Viewer functionality for our application. Create
+    a <code>viewer.js</code> file under the <code>{props.assetsFolder}</code> subfolder
+    with the following code:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/viewer.js'} className="language-js">{ViewerJsSource}</CodeBlock>
+
+The script is an [ES6 module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+that exports two functions, `initViewer` that will create a new instance of Forge Viewer
+in the specified DOM container, and `loadModel` which will load a specific model to the viewer.
+When initializing the viewer we include a small helper function (`getAccessToken`) that
+retrieves a public token from our server application. The viewer can then use this token
+to start loading assets from the Model Derivative service.
+
+## Application logic
+
+<p>
+    Finally, let's define the logic of the web application itself. We will need to populate
+    the UI with all models available for viewing, as well as add UI for uploading and
+    translating new models. Create a <code>main.js</code> file under
+    the <code>{props.assetsFolder}</code> subfolder with the following code:
+</p>
+
+<CodeBlock title={props.assetsFolder + '/main.js'} className="language-js">{MainJsSource}</CodeBlock>
+
+:::caution
+Note that since `main.js` is also an ES6 module, we have to use `type="module"` in its `<script>` tag in our HTML.
+:::
+
+The scripts will initialize the viewer, populate a dropdown element in the UI with models
+retrieved from the `/api/models` endpoint, and setup the file upload. And when one of the models
+in the dropdown is selected, the app logic will check the status of the model in Forge (for example,
+whether it's still being translated, or whether the translation failed), and load the model when
+it's available.
+
+:::info
+Note that when the uploaded file has a `.zip` extension, the JavaScript logic will also prompt the user
+for the name of the file **inside the archive** that should be converted by the Model Derivative service.
+:::
