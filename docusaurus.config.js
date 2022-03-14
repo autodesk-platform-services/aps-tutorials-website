@@ -99,10 +99,6 @@ module.exports = {
             darkTheme: darkCodeTheme,
             additionalLanguages: ['csharp']
         },
-        gtag: {
-            trackingID: 'G-5DQ48W5MB1',
-            anonymizeIP: true
-        },
         hideableSidebar: true
     },
     presets: [
@@ -115,6 +111,10 @@ module.exports = {
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css')
+                },
+                gtag: {
+                    trackingID: 'G-5DQ48W5MB1',
+                    anonymizeIP: true
                 }
             }
         ]

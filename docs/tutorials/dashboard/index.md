@@ -13,7 +13,7 @@ to the design preview.
 
 All the features will be implemented as viewer extensions, and will only use
 the viewer UI, so you're free to use any Forge application you want as your starting
-point. We will use the sample app from the [Simple Viewer](../simple-viewer/index)
+point. We will use the sample app from the [Simple Viewer](../simple-viewer)
 tutorial, and you can already check out the implementation of our dashboard application
 in the `dashboard` branch of the original sample code for Node.js:
 https://github.com/petrbroz/forge-simple-viewer-nodejs/tree/dashboards.
