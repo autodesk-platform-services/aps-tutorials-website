@@ -11,13 +11,6 @@ to the design preview.
 
 ![Preview](./preview.gif)
 
-All the features will be implemented as viewer extensions, and will only use
-the viewer UI, so you're free to use any Forge application you want as your starting
-point. We will use the sample app from the [Simple Viewer](../simple-viewer)
-tutorial, and you can already check out the implementation of our dashboard application
-in the `dashboard` branch of the original sample code for Node.js:
-https://github.com/petrbroz/forge-simple-viewer-nodejs/tree/dashboards.
-
 Throughout this tutorial we will be using the [Viewer](https://forge.autodesk.com/en/docs/viewer/v7/developers_guide/overview)
 API and its various features such as:
 
@@ -27,6 +20,11 @@ API and its various features such as:
 - Customizing the viewer toolbar
 - Creating custom UI elements
 
-Alright, let's get started!
+All the features will be implemented as viewer extensions, and will only use
+the viewer UI, so you're free to use any Forge application you want as your starting
+point. We will use the sample app from the [Simple Viewer](../simple-viewer)
+tutorial, and you can already check out the implementation of our dashboard application
+in the `dashboard` branch of the original sample code for Node.js:
+https://github.com/petrbroz/forge-simple-viewer-nodejs/tree/dashboards.
 
-... WIP ...
+Alright, let's get started!
