@@ -22,9 +22,9 @@ Some of the tutorials on this website are provided for various combinations
 of programming languages and IDEs. Based on your preference, setup one of the
 following development environments on your machine:
 
-- [Node.js & Visual Studio Code](./setup/nodejs-vscode) for cross-platform development using Node.js,
-- [.NET 6 & Visual Studio Code](./setup/dotnet-vscode) for cross-platform development using .NET 6, or
-- [.NET 6 & Visual Studio 2022](./setup/dotnet-vs2022) for Windows development with .NET 6
+- [Node.js & VSCode](./setup/nodejs-vscode) for cross-platform development using Node.js,
+- [.NET 6 & VSCode](./setup/dotnet-vscode) for cross-platform development using .NET 6, or
+- [.NET 6 & VS2022](./setup/dotnet-vs2022) for Windows development with .NET 6 and Visual Studio 2022
 
 And you're all set! Now head over to one of the tutorials with the programming language
 and IDE of your choice.

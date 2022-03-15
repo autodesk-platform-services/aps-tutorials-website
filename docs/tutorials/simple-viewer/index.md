@@ -24,5 +24,5 @@ Full implementation of this sample is available on GitHub:
 
 Get started by selecting the programming language of your choice:
 
-- [Node.js](nodejs/server)
-- [.NET](dotnet/server)
+- [Node.js](nodejs-vscode/server)
+- [.NET](dotnet-vscode/server)
