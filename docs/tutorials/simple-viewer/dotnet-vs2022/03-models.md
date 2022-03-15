@@ -455,14 +455,7 @@ The controller will handle 3 types of requests:
 
 Time to test our improved server application. This time, apart from setting the Forge application
 credentials, you can also include the name of the Data Management bucket you want to use via
-the optional `FORGE_BUCKET` environment variable:
-
-```bash
-export FORGE_CLIENT_ID=your-own-forge-client-id
-export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_BUCKET=your-custom-bucket-name
-dotnet run
-```
+the optional `FORGE_BUCKET` environment variable.
 
 :::info
 If the bucket name is _not_ provided, the `ForgeService` class will generate one by appending `-basic-app`
@@ -476,10 +469,14 @@ See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/htt
 for more details.
 :::
 
-When you navigate to [https://localhost:5001/api/models](https://localhost:5001/api/models)
-in the browser, the server should respond with a JSON list with names and URNs of all objects
-available in your configured bucket. If you are getting started, you may get a JSON response
-with an empty array (`[]`) which is expected. In the screenshot below we can already see a couple
-of files that were uploaded to our bucket in the past.
+When you start the application and navigate to [https://localhost:7197/api/models](https://localhost:7197/api/models),
+the server should respond with a JSON list with the names and URNs of all objects
+available in your Data Management bucket.
 
 ![Server Response](./data-response.png)
+
+:::info
+If you are just getting started, you may get a JSON response with an empty array (`[]`)
+which is expected. In the screenshot below we can already see a couple of files that were
+uploaded to our bucket in the past.
+:::
