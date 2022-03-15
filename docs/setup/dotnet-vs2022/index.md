@@ -2,5 +2,14 @@
 
 ## Editor
 
-In our tutorials we will be using Visual Studio Community 2022.
-You can download it [here](https://visualstudio.microsoft.com/vs/community/).
+In our tutorials we will be using Visual Studio Community 2022. You can download _Visual Studio Installer_
+from [here](https://visualstudio.microsoft.com/vs/community/), and then install the desired version and edition
+of Visual Studio from the installer application:
+
+![Visual Studio Installer](vs-installer.png)
+
+Make sure to include the _ASP.NET and web development_ component, and consider including
+the _.NET desktop development_ component as well if you plan to develop plugins for desktop applications
+such as Revit or Inventor.
+
+![Visual Studio Components](vs-components.png)
