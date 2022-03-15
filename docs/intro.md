@@ -18,7 +18,13 @@ the _Client ID_ and _Client Secret_ credentials as we will need them later.
 
 ## Setup your environment
 
-[Setup your development environment](./setup.mdx) depending on your programming language of choice.
+Some of the tutorials on this website are provided for various combinations
+of programming languages and IDEs. Based on your preference, setup one of the
+following development environments on your machine:
+
+- [Node.js & Visual Studio Code](./setup/nodejs-vscode) for cross-platform development using Node.js,
+- [.NET 6 & Visual Studio Code](./setup/dotnet-vscode) for cross-platform development using .NET 6, or
+- [.NET 6 & Visual Studio 2022](./setup/dotnet-vs2022) for Windows development with .NET 6
 
 And you're all set! Now head over to one of the tutorials with the programming language
-of your choice.
+and IDE of your choice.
