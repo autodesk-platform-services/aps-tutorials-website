@@ -138,7 +138,7 @@ public class HubsController : ControllerBase
     }
 
     [HttpGet("{hub}/projects/{project}/contents")]
-    public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string folder_id)
+    public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string? folder_id)
     {
         var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
         if (tokens == null)

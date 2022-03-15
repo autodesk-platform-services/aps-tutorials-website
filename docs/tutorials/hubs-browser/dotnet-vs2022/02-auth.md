@@ -286,25 +286,9 @@ to load our designs
 
 ## Try it out
 
-Let's see if our new server endpoint works. Try setting the `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`
-environment variables to your own Forge app credentials, and set the `FORGE_CALLBACK_URL` env.
-variable to `https://localhost:5001/api/auth/callback` because that's where we implemented our
-code handling the callbacks from Forge:
-
-```bash
-export FORGE_CLIENT_ID=your-own-forge-client-id
-export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=https://localhost:5001/api/auth/callback
-dotnet run
-```
-
-:::caution
-The callback URL we specify here must match the callback URL that you've configured
-for your Forge application on https://forge.autodesk.com/myapps.
-:::
-
-When you navigate to [https://localhost:5001/api/auth/login](https://localhost:5001/api/auth/login)
-in the browser, you should be redirected to Autodesk login page, and after logging in, you should
+Let's see if our new server endpoint works. Start the application, and when Visual Studio
+opens the browser for you, navigate to [https://localhost:7197/api/auth/login](https://localhost:7197/api/auth/login).
+You should be redirected to Autodesk login page, and after logging in, you should
 be redirected back to your application, for now simply returning 404. This is expected as we haven't
 implemented the `GET /` endpoint yet. However, if you try and explore the cookies stored
 by your browser for the `localhost` origin, you'll notice that the application is already storing
