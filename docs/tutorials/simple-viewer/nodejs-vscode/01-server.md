@@ -39,11 +39,9 @@ with slightly different version numbers):
 
 Finally, let's create a couple more subfolders in the project folder that we're going to need later:
 
-- `public` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
+- `wwwroot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 - `routes` - this is where we're going to implement all the server endpoints
 - `services` - here we're going to keep all the server-side logic that can be shared by different endpoints
-
-![Folder Structure](./folder-structure.png)
 
 ## Application config
 
@@ -61,7 +59,7 @@ if (!FORGE_CLIENT_ID || !FORGE_CLIENT_SECRET) {
     process.exit(1);
 }
 FORGE_BUCKET = FORGE_BUCKET || `${FORGE_CLIENT_ID.toLowerCase()}-basic-app`;
-PORT = PORT || 3000;
+PORT = PORT || 8080;
 
 module.exports = {
     FORGE_CLIENT_ID,
@@ -91,11 +89,7 @@ const express = require('express');
 const { PORT } = require('./config.js');
 
 let app = express();
-app.use(express.static('public'));
-app.use(function (err, req, res, next) {
-    console.error(err);
-    res.status(500).send(err.message);
-});
+app.use(express.static('wwwroot'));
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
@@ -124,7 +118,7 @@ export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 npm start
 ```
 
-Then open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+Then open your browser and navigate to [http://localhost:8080](http://localhost:8080).
 The server should respond with `Cannot GET /` because we haven't added any logic to it just yet.
 
 ![Empty Response](./empty-response.png)

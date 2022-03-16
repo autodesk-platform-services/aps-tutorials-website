@@ -16,7 +16,6 @@ is available, and use it in other parts of the server app.
 Let's update the `services/forge.js` file:
 
 ```js title="services/forge.js"
-const fs = require('fs');
 // highlight-start
 const { AuthClientTwoLegged, BucketsApi } = require('forge-apis');
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET } = require('../config.js');
@@ -40,13 +39,12 @@ async function getPublicToken() {
 }
 
 // highlight-start
-async function ensureBucketExists() {
-    const token = await getInternalToken();
+async function ensureBucketExists(bucketKey) {
     try {
-        await new BucketsApi().getBucketDetails(BUCKET, null, token);
+        await new BucketsApi().getBucketDetails(bucketKey, null, await getInternalToken());
     } catch (err) {
         if (err.statusCode === 404) {
-            await new BucketsApi().createBucket({ bucketKey: BUCKET, policyKey: 'temporary' }, {}, null, token);
+            await new BucketsApi().createBucket({ bucketKey, policyKey: 'temporary' }, {}, null, await getInternalToken());
         } else {
             throw err;
         }
@@ -69,9 +67,9 @@ Now, let's add two more functions in `services/forge.js` that will be used to li
 all objects in the preconfigured bucket, and to upload files to this bucket:
 
 ```js title="services/forge.js"
-const fs = require('fs');
 // highlight-start
-const { AuthClientTwoLegged, BucketsApi, ObjectsApi } = require('forge-apis');
+const fs = require('fs');
+const { AuthClientTwoLegged, BucketsApi, ObjectsApi, DerivativesApi } = require('forge-apis');
 // highlight-end
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET } = require('../config.js');
 
@@ -127,10 +125,10 @@ async function uploadObject(objectName, filePath) {
 
 module.exports = {
     getPublicToken,
-// highlight-start
+    // highlight-start
     listObjects,
     uploadObject,
-// highlight-end
+    // highlight-end
 };
 ```
 
@@ -145,7 +143,7 @@ from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - 
 into the Forge Viewer component in our HTML page. To do so, we will need to start a new conversion job
 in the [Model Derivative](https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
 service, and checking the status of the conversion. Also, the Model Derivative service requires all IDs
-we use in the API calls to be [base64](https://cs.wikipedia.org/wiki/Base64)-encoded, so we include a small
+we use in the API calls to be [base64](https://wikipedia.org/wiki/Base64)-encoded, so we include a small
 utility function that will help with that.
 
 :::info
@@ -245,11 +243,11 @@ module.exports = {
     getPublicToken,
     listObjects,
     uploadObject,
-// highlight-start
+    // highlight-start
     translateObject,
     getManifest,
-    urnify,
-// highlight-end
+    urnify
+    // highlight-end
 };
 ```
 
@@ -324,8 +322,9 @@ module.exports = router;
 ```
 
 :::info
-The `formidable()` middleware used in the `POST` request handler will make sure that any `multipart/form-data` content
-coming with the request is parsed and available in the `req.files` and `req.fields` properties.
+The `formidable()` middleware used in the `POST` request handler will make sure that
+any `multipart/form-data` content coming with the request is parsed and available
+in the `req.files` and `req.fields` properties.
 :::
 
 And mount the router to our server application by modifying `server.js`:
@@ -335,15 +334,11 @@ const express = require('express');
 const { PORT } = require('./config.js');
 
 let app = express();
-app.use(express.static('public'));
+app.use(express.static('wwwroot'));
 app.use('/api/auth', require('./routes/auth.js'));
 // highlight-start
 app.use('/api/models', require('./routes/models.js'));
 // highlight-end
-app.use(function (err, req, res, next) {
-    console.error(err);
-    res.status(500).send(err.message);
-});
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
@@ -366,7 +361,7 @@ export FORGE_BUCKET=your-custom-bucket-name
 npm start
 ```
 
-When you navigate to [http://localhost:3000/api/models](http://localhost:3000/api/models)
+When you navigate to [http://localhost:8080/api/models](http://localhost:8080/api/models)
 in the browser, the server should respond with a JSON list with names and URNs of all objects
 available in your configured bucket. If you are getting started, you may get a JSON response
 with an empty array (`[]`) which is expected. In the screenshot below we can already see a couple

@@ -21,7 +21,6 @@ all the Forge-specific logic that will be used in different areas of our server 
 Let's start by adding the following code to the file:
 
 ```js title="services/forge.js"
-const fs = require('fs');
 const { AuthClientTwoLegged } = require('forge-apis');
 const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET } = require('../config.js');
 
@@ -86,14 +85,10 @@ const express = require('express');
 const { PORT } = require('./config.js');
 
 let app = express();
-app.use(express.static('public'));
+app.use(express.static('wwwroot'));
 // highlight-start
 app.use('/api/auth', require('./routes/auth.js'));
 // highlight-end
-app.use(function (err, req, res, next) {
-    console.error(err);
-    res.status(500).send(err.message);
-});
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
@@ -113,7 +108,7 @@ export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 npm start
 ```
 
-If the application starts successfully and you navigate to [http://localhost:3000/api/auth/token](http://localhost:3000/api/auth/token)
+If the application starts successfully and you navigate to [http://localhost:8080/api/auth/token](http://localhost:8080/api/auth/token)
 in the browser, the server should respond with a JSON object containing the access token data.
 
 ![Server Response](./auth-response.png)
