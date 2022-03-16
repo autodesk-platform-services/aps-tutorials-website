@@ -288,13 +288,13 @@ to load our designs
 
 Let's see if our new server endpoint works. Try setting the `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`
 environment variables to your own Forge app credentials, and set the `FORGE_CALLBACK_URL` env.
-variable to `https://localhost:5001/api/auth/callback` because that's where we implemented our
+variable to `https://localhost:8081/api/auth/callback` because that's where we implemented our
 code handling the callbacks from Forge:
 
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=https://localhost:5001/api/auth/callback
+export FORGE_CALLBACK_URL=https://localhost:8081/api/auth/callback
 dotnet run
 ```
 
@@ -303,7 +303,7 @@ The callback URL we specify here must match the callback URL that you've configu
 for your Forge application on https://forge.autodesk.com/myapps.
 :::
 
-When you navigate to [https://localhost:5001/api/auth/login](https://localhost:5001/api/auth/login)
+When you navigate to [https://localhost:8081/api/auth/login](https://localhost:8081/api/auth/login)
 in the browser, you should be redirected to Autodesk login page, and after logging in, you should
 be redirected back to your application, for now simply returning 404. This is expected as we haven't
 implemented the `GET /` endpoint yet. However, if you try and explore the cookies stored

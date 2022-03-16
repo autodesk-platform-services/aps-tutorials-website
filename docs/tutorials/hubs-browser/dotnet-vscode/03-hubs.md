@@ -175,14 +175,14 @@ the required environment variables, and run the application:
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=https://localhost:5001/api/auth/callback
+export FORGE_CALLBACK_URL=https://localhost:8081/api/auth/callback
 dotnet run
 ```
 
 You should now be able to explore the new endpoints tha will eventually be used from
-the UI. For example, if you go to [https://localhost:5001/api/hubs](https://localhost:5001/api/hubs),
+the UI. For example, if you go to [https://localhost:8081/api/hubs](https://localhost:8081/api/hubs),
 the server should respond with a JSON list of all the hubs you have access to. Try copying the ID of
-one of the hubs, and use it in another address: https://localhost:5001/api/hubs/your-hub-id/projects.
+one of the hubs, and use it in another address: https://localhost:8081/api/hubs/your-hub-id/projects.
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
 

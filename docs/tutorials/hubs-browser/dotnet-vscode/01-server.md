@@ -46,7 +46,16 @@ Finally, let's create a couple more subfolders in your project folder that we're
 - `Models` - here we're going to keep all the server-side logic that can be shared by different endpoints
 - `wwwrooot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 
-![Folder Structure](./folder-structure.png)
+## Application config
+
+When the `dotnet` utility bootstrapped your application, it generated random port numbers
+for its HTTP and HTTPS addresses. Let's change those to specific port numbers (8080 for HTTP,
+and 8081 for HTTPS) that we will use throughout this tutorial.
+
+Open the `launchSettings.json` file under the `Properties` folder, and set the `applicationUrl`
+property to `https://localhost:8081;http://localhost:8080`.
+
+![Launch Config](launch-config.png)
 
 ## Create a basic server
 
@@ -142,10 +151,10 @@ setup the required environment variables, `FORGE_CLIENT_ID`, `FORGE_CLIENT_SECRE
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=https://localhost:5001/api/auth/callback
+export FORGE_CALLBACK_URL=https://localhost:8081/api/auth/callback
 dotnet run
 ```
 
-When you navigate to [https://localhost:5001](https://localhost:5001) in your browser,
+When you navigate to [https://localhost:8081](https://localhost:8081) in your browser,
 you should get a 404 response because we haven't implemented any server logic yet.
-That's going to be the topic of the next step - [Authentication](./auth).
+That's going to be the goal of the next step.
