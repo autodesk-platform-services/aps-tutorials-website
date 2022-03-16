@@ -38,22 +38,23 @@ slightly different version numbers, and additional .NET settings):
   </ItemGroup>
 
 </Project>
+
 ```
 
 Finally, let's create a couple more subfolders in your project folder that we're going to need later:
 
 - `Controllers` - this is where we're going to implement all the server endpoints
 - `Models` - here we're going to keep all the server-side logic that can be shared by different endpoints
-- `wwwrooot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
+- `wwwroot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 
 ## Application config
 
 When the `dotnet` utility bootstrapped your application, it generated random port numbers
-for its HTTP and HTTPS addresses. Let's change those to specific port numbers (8080 for HTTP,
-and 8081 for HTTPS) that we will use throughout this tutorial.
+for its HTTP and HTTPS addresses. Let's change those to a specific port number (8080)
+that we will use throughout this tutorial.
 
 Open the `launchSettings.json` file under the `Properties` folder, and set the `applicationUrl`
-property to `https://localhost:8081;http://localhost:8080`.
+property to `http://localhost:8080`.
 
 ![Launch Config](launch-config.png)
 
@@ -85,10 +86,10 @@ public class Startup
         services.AddControllers();
         var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
         var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
-        var ForgeCallbackURL = Environment.GetEnvironmentVariable("FORGE_CALLBACK_URL");
-        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret) || string.IsNullOrEmpty(ForgeCallbackURL))
+        var ForgeBucket = Environment.GetEnvironmentVariable("FORGE_BUCKET"); // Optional
+        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret))
         {
-            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
+            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
         }
     }
 
@@ -112,10 +113,9 @@ public class Startup
 ```
 
 The `Startup` class is responsible for configuring our server and its "middleware", for example,
-serving of static files. We also try and retrieve the Forge application client ID, client secret
-(these are the values you obtain when [creating a new Forge application](../../../intro#create-an-app)),
-and the callback URL (where our users will be redirected to after logging in) from environment
-variables for later use.
+serving of static files. We also try and retrieve the Forge application client ID and secret
+(these are the values you obtain when [creating a new Forge application](../../../intro#create-an-app))
+from environment variables for later use.
 
 Next, replace the content of `Program.cs` with the following:
 
@@ -139,22 +139,21 @@ public class Program
 }
 ```
 
-This code will make sure that the dotnet application creates a web server with our
+This code will make sure that the .NET application creates a web server with our
 new `Startup` class.
 
 ## Try it out
 
 Now that we have a basic ASP.NET application setup, let's try it out. In the command line,
-setup the required environment variables, `FORGE_CLIENT_ID`, `FORGE_CLIENT_SECRET`, and
-`FORGE_CALLBACK_URL`, and run the application:
+setup the two required environment variables, `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`,
+and run the .NET application:
 
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=https://localhost:8081/api/auth/callback
 dotnet run
 ```
 
-When you navigate to [https://localhost:8081](https://localhost:8081) in your browser,
-you should get a 404 response because we haven't implemented any server logic yet.
-That's going to be the goal of the next step.
+When you navigate to [http://localhost:8080](http://localhost:8080) in your browser, you should
+get a 404 response because we haven't implemented any server logic yet. That's going to be the topic
+of the next step.

@@ -34,11 +34,11 @@ And that's it! Your application is now ready for action. Start it from the comma
 ```bash
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=https://localhost:8081/api/auth/callback
+export FORGE_CALLBACK_URL=http://localhost:8080/api/auth/callback
 dotnet run
 ```
 
-And then navigate to [https://localhost:8081](https://localhost:8081) in your browser.
+And then navigate to [http://localhost:8080](http://localhost:8080) in your browser.
 You should be presented with a simple UI, with a tree-view on the left side, and an empty viewer on the right.
 Try browsing through the tree, and select a specific version of one of your files. After that the corresponding
 model should be loaded into the viewer.

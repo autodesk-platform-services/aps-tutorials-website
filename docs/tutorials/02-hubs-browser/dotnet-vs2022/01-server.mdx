@@ -46,10 +46,10 @@ public class Startup
         services.AddControllers();
         var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
         var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
-        var ForgeBucket = Environment.GetEnvironmentVariable("FORGE_BUCKET"); // Optional
-        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret))
+        var ForgeCallbackURL = Environment.GetEnvironmentVariable("FORGE_CALLBACK_URL");
+        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret) || string.IsNullOrEmpty(ForgeCallbackURL))
         {
-            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
+            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
         }
     }
 
@@ -73,9 +73,10 @@ public class Startup
 ```
 
 The `Startup` class is responsible for configuring our server and its "middleware", for example,
-serving of static files. We also try and retrieve the Forge application client ID and secret
-(these are the values you obtain when [creating a new Forge application](../../../intro#create-an-app))
-from environment variables for later use.
+serving of static files. We also try and retrieve the Forge application client ID, client secret
+(these are the values you obtain when [creating a new Forge application](../../../intro#create-an-app)),
+and the callback URL (where our users will be redirected to after logging in) from environment
+variables for later use.
 
 Next, replace the content of `Program.cs` with the following:
 
@@ -109,17 +110,20 @@ Now that we have a basic ASP.NET application setup, let's try it out!
 In order to be able to run our app, we need to provide a "launch configuration" for it,
 specifying things such as the environment variables, and the address and port the server should
 be listening on. Open the `launchSettings.json` file in the `Properties` folder, add the
-`FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET` environment variables with your Forge app credentials
-(and optionally the `FORGE_BUCKET` variable if you already have a bucket you want to use),
-and set the `applicationUrl` to `https://localhost:8081;http://localhost:8080`.
+`FORGE_CLIENT_ID`, `FORGE_CLIENT_SECRET`, and `FORGE_CALLBACK_URL` environment variables
+with your Forge app credentials and callback, and set the `applicationUrl`
+to `http://localhost:8080`.
 
 ![Launch Settings](launch-settings.png)
 
-With your new launch settings, you can now start the application (for example, using
-the _Debug_ > _Start Debugging_ menu item, or by pressing `F5`). Visual Studio will automatically
-open the [https://localhost:8081](https://localhost:8081) URL in your browser. You should get
-a 404 response because we haven't implemented any server logic yet. That's going to be the goal
-of the next step.
+:::caution
+The callback URL we specify here must match the callback URL that you've configured
+for your Forge application on https://forge.autodesk.com/myapps.
+:::
+
+When you start the application, Visual Studio will automaticaly open [http://localhost:8080](http://localhost:8080)
+in your browser, and you should get a 404 response because we haven't implemented any server logic yet.
+That's going to be the topic of the next step.
 
 :::info
 When starting the application for the first time you may be prompted to trust the self-signed

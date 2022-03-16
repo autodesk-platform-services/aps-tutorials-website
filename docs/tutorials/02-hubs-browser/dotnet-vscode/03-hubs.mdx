@@ -138,7 +138,7 @@ public class HubsController : ControllerBase
     }
 
     [HttpGet("{hub}/projects/{project}/contents")]
-    public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string folder_id)
+    public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string? folder_id)
     {
         var tokens = await AuthController.PrepareTokens(Request, Response, _forgeService);
         if (tokens == null)
@@ -169,11 +169,20 @@ building the UI part of the application.
 
 ## Try it out
 
-And that's it for the server side. Time to try it out! Start the application as usual.
+And that's it for the server side. Time to try it out! Make sure you set all
+the required environment variables, and run the application:
+
+```bash
+export FORGE_CLIENT_ID=your-own-forge-client-id
+export FORGE_CLIENT_SECRET=your-own-forge-client-secret
+export FORGE_CALLBACK_URL=http://localhost:8080/api/auth/callback
+dotnet run
+```
+
 You should now be able to explore the new endpoints tha will eventually be used from
-the UI. For example, if you go to [https://localhost:7197/api/hubs](https://localhost:7197/api/hubs),
+the UI. For example, if you go to [http://localhost:8080/api/hubs](http://localhost:8080/api/hubs),
 the server should respond with a JSON list of all the hubs you have access to. Try copying the ID of
-one of the hubs, and use it in another URL: https://localhost:7197/api/hubs/{your-hub-id}/projects.
+one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
 
