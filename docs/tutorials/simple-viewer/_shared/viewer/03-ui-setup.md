@@ -2,7 +2,7 @@ Finally, let's define the UI of our application with a simple HTML markup and CS
 
 Create an `index.html` file in the `wwwroot` subfolder with the following content:
 
-```html title="wwwroot/index/html"
+```html title="wwwroot/index.html"
 <!DOCTYPE html>
 <html lang="en">
 
