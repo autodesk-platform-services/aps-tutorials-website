@@ -16,25 +16,14 @@ Data Management hubs, projects, folders, items, and versions:
 // highlight-start
 const { AuthClientThreeLegged, UserProfileApi, HubsApi, ProjectsApi, FoldersApi, ItemsApi } = require('forge-apis');
 // highlight-end
-
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL } = process.env;
-if (!FORGE_CLIENT_ID || !FORGE_CLIENT_SECRET || !FORGE_CALLBACK_URL) {
-    console.warn('Missing some of the environment variables.');
-    process.exit(1);
-}
-const INTERNAL_TOKEN_SCOPES = ['data:read'];
-const PUBLIC_TOKEN_SCOPES = ['viewables:read'];
-
-function getAuthorizationUrl() {
-    return 'https://developer.api.autodesk.com' +
-        '/authentication/v1/authorize?response_type=code' +
-        '&client_id=' + FORGE_CLIENT_ID +
-        '&redirect_uri=' + FORGE_CALLBACK_URL +
-        '&scope=' + INTERNAL_TOKEN_SCOPES.join(' ');
-}
+const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
 
 const internalAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
 const publicAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, PUBLIC_TOKEN_SCOPES);
+
+function getAuthorizationUrl() {
+    return internalAuthClient.generateAuthUrl();
+}
 
 async function authCallbackMiddleware(req, res, next) {
     const internalCredentials = await internalAuthClient.getToken(req.query.code);
@@ -82,16 +71,12 @@ async function getHubs(token) {
     const resp = await new HubsApi().getHubs(null, internalAuthClient, token);
     return resp.body.data;
 }
-// highlight-end
 
-// highlight-start
 async function getProjects(hubId, token) {
     const resp = await new ProjectsApi().getHubProjects(hubId, null, internalAuthClient, token);
     return resp.body.data;
 }
-// highlight-end
 
-// highlight-start
 async function getProjectContents(hubId, projectId, folderId, token) {
     if (!folderId) {
         const resp = await new ProjectsApi().getProjectTopFolders(hubId, projectId, internalAuthClient, token);
@@ -101,9 +86,7 @@ async function getProjectContents(hubId, projectId, folderId, token) {
         return resp.body.data;
     }
 }
-// highlight-end
 
-// highlight-start
 async function getItemVersions(projectId, itemId, token) {
     const resp = await new ItemsApi().getItemVersions(projectId, itemId, null, internalAuthClient, token);
     return resp.body.data;
@@ -182,22 +165,15 @@ And mount the router to our server application by modifying `server.js`:
 ```js title="server.js"
 const express = require('express');
 const session = require('cookie-session')
-const PORT = process.env.PORT || 3000;
+const { PORT, SERVER_SESSION_SECRET } = require('./config.js');
 
 let app = express();
-app.use(express.static('public'));
-app.use(session({
-    secret: process.env.SERVER_SESSION_SECRET,
-    maxAge: 24 * 60 * 60 * 1000,
-}));
+app.use(express.static('wwwroot'));
+app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
 app.use('/api/auth', require('./routes/auth.js'));
 // highlight-start
 app.use('/api/hubs', require('./routes/hubs.js'));
 // highlight-end
-app.use(function (err, req, res, next) {
-    console.error(err);
-    res.status(500).send(err.message);
-});
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`));
 ```
 
@@ -210,14 +186,14 @@ Make sure you set all the required environment variables, and run the applicatio
 export SERVER_SESSION_SECRET=some-secret-phrase
 export FORGE_CLIENT_ID=your-own-forge-client-id
 export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=http://localhost:3000/api/auth/callback
+export FORGE_CALLBACK_URL=http://localhost:8080/api/auth/callback
 npm start
 ```
 
 You should now be able to explore the new endpoints tha will eventually be used from
-the UI. For example, if you go to [http://localhost:3000/api/hubs](http://localhost:3000/api/hubs),
+the UI. For example, if you go to [http://localhost:8080/api/hubs](http://localhost:8080/api/hubs),
 the server should respond with a JSON list of all the hubs you have access to. Try copying the ID of
-one of the hubs, and use it in another address: http://localhost:3000/api/hubs/your-hub-id/projects.
+one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
 

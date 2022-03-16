@@ -1,3 +1,7 @@
+Now let's wire all the UI components together. Create a `main.js` file under
+the `wwwroot` folder, and populate it with the following code:
+
+```js title="wwwroot/main.js"
 import { initViewer, loadModel } from './viewer.js';
 import { initTree } from './sidebar.js';
 
@@ -19,3 +23,9 @@ try {
     alert('Could not initialize the application. See console for more details.');
     console.error(err);
 }
+```
+
+The script will first try and obtain user details to check whether we're logged in or not.
+If we are, the code can then initialize the viewer as well as the tree-view component.
+The callback function passed to `initTree` makes sure that when we click on a leaf node
+in the tree, the viewer will start loading the corresponding Forge model.

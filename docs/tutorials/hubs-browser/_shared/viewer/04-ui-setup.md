@@ -1,0 +1,142 @@
+And finally, let's build the UI of our application.
+
+Create a `main.css` file under the `wwwroot` subfolder, and populate it with the following CSS rules:
+
+```css title="wwwroot/main.css"
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: ArtifaktElement;
+}
+
+#header, #sidebar, #preview {
+    position: absolute;
+}
+
+#header {
+    height: 3em;
+    width: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#sidebar {
+    width: 25%;
+    left: 0;
+    top: 3em;
+    bottom: 0;
+    overflow-y: scroll;
+}
+
+#preview {
+    width: 75%;
+    right: 0;
+    top: 3em;
+    bottom: 0;
+}
+
+#header > * {
+    height: 2em;
+    margin: 0 0.5em;
+}
+
+#login {
+    font-family: ArtifaktElement;
+    font-size: 1em;
+}
+
+#header .title {
+    height: auto;
+    margin-right: auto;
+}
+
+#tree {
+    margin: 0.5em;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        width: 100%;
+        top: 3em;
+        bottom: 75%;
+    }
+    #preview {
+        width: 100%;
+        top: 25%;
+        bottom: 0;
+    }
+}
+
+.icon-hub:before {
+    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/apps-16.svg); /* or https://raw.githubusercontent.com/primer/octicons/main/icons/stack-16.svg */
+    background-size: cover;
+}
+
+.icon-project:before {
+    
+    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/project-16.svg); /* or https://raw.githubusercontent.com/primer/octicons/main/icons/organization-16.svg */
+    background-size: cover;
+}
+
+.icon-my-folder:before {
+    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/file-directory-16.svg);
+    background-size: cover;
+}
+
+.icon-item:before {
+    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/file-16.svg);
+    background-size: cover;
+}
+
+.icon-version:before {
+    background-image: url(https://raw.githubusercontent.com/primer/octicons/main/icons/clock-16.svg);
+    background-size: cover;
+}
+```
+
+Then, create an `index.html` file in the same folder with the following content:
+
+```html title="wwwroot/index.html"
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/inspire-tree-dom@4.0.6/dist/inspire-tree-light.min.css">
+    <link rel="stylesheet" href="/main.css">
+    <title>Autodesk Forge: Hubs Browser</title>
+</head>
+
+<body>
+    <div id="header">
+        <img class="logo" src="/logo.png" alt="Autodesk Forge">
+        <span class="title">Hubs Browser</span>
+        <button id="login" style="visibility: hidden;">Login</button>
+    </div>
+    <div id="sidebar">
+        <div id="tree"></div>
+    </div>
+    <div id="preview"></div>
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://unpkg.com/inspire-tree@4.3.1/dist/inspire-tree.js"></script>
+    <script src="https://unpkg.com/inspire-tree-dom@4.0.6/dist/inspire-tree-dom.min.js"></script>
+    <script src="/main.js" type="module"></script>
+</body>
+
+</html>
+```
+
+> Note that since `main.js` is also an ES6 module, we have to use `type="module"` in its `<script>` tag.
+
+The application will look for `favicon.ico` and `logo.png` images under the `wwwroot` folder
+to use as the website's icon and logo. If you don't have any images of your own, feel free
+to download them from one of our samples:
+
+- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/favicon.ico
+- https://github.com/petrbroz/forge-simple-viewer-nodejs/blob/develop/public/logo.png

@@ -1,3 +1,8 @@
+Next we'll implement the behavior of a sidebar where we're going to display
+all the hubs, projects, folders, items, and versions in a 3rd party tree-view component.
+Create a `sidebar.js` file under the `wwwroot` subfolder with the following code:
+
+```js title="wwwroot/sidebar.js"
 async function getJSON(url) {
     const resp = await fetch(url);
     if (!resp.ok) {
@@ -65,3 +70,5 @@ export function initTree(selector, onSelectionChanged) {
     });
     return new InspireTreeDOM(tree, { target: selector });
 }
+
+```
