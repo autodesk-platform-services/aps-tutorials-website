@@ -2,13 +2,25 @@
 sidebar_position: 4
 ---
 
-# Viewer & UI
+import ViewerLogic from '../_shared/viewer/01-viewer-logic.md';
+import AppLogic from '../_shared/viewer/02-app-logic.md';
+import UiSetup from '../_shared/viewer/03-ui-setup.md';
 
-import ViewerPartial from '../_viewer.mdx';
+# Viewer & UI
 
 Finally, we're ready to build the client-side piece of our application.
 
-<ViewerPartial assetsFolder="public" />
+## Viewer logic
+
+<ViewerLogic />
+
+## Application logic
+
+<AppLogic />
+
+## User interface
+
+<UiSetup />
 
 ## Try it out
 
@@ -21,7 +33,7 @@ export FORGE_BUCKET=optional-custom-bucket-name
 npm start
 ```
 
-And then navigate to [http://localhost:3000](http://localhost:3000) in your browser. You should be
+And then navigate to [http://localhost:8080](http://localhost:8080) in your browser. You should be
 presented with a simple UI, with a dropdown in the top-right corner that will eventually get populated
 with all models available in your application's bucket, and with a button for uploading new models.
 And as soon as you select one of the names from the dropdown, the corresponding model will get loaded

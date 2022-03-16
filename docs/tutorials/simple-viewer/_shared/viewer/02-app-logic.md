@@ -1,3 +1,8 @@
+Next, let's define the logic of the web application itself. We will need to populate
+the UI with all models available for viewing, as well as add UI for uploading and
+translating new models. Create a `main.js` file under the `wwwroot` subfolder with the following code:
+
+```js title="wwwroot/main.js"
 import { initViewer, loadModel } from './viewer.js';
 
 initViewer(document.getElementById('preview')).then(viewer => {
@@ -106,3 +111,10 @@ function clearNotification() {
     overlay.innerHTML = '';
     overlay.style.display = 'none';
 }
+```
+
+The scripts will initialize the viewer, populate a dropdown element in the UI with models
+retrieved from the `/api/models` endpoint, and setup the file upload. And when one of the models
+in the dropdown is selected, the app logic will check the status of the model in Forge (for example,
+whether it's still being translated, or whether the translation failed), and load the model when
+it's available.

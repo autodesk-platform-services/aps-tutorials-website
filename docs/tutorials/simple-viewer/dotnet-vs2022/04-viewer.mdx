@@ -2,18 +2,30 @@
 sidebar_position: 4
 ---
 
-# Viewer & UI
+import ViewerLogic from '../_shared/viewer/01-viewer-logic.md';
+import AppLogic from '../_shared/viewer/02-app-logic.md';
+import UiSetup from '../_shared/viewer/03-ui-setup.md';
 
-import ViewerPartial from '../_viewer.mdx';
+# Viewer & UI
 
 Finally, we're ready to build the client-side piece of our application.
 
-<ViewerPartial assetsFolder="wwwroot" />
+## Viewer logic
+
+<ViewerLogic />
+
+## Application logic
+
+<AppLogic />
+
+## User interface
+
+<UiSetup />
 
 ## Try it out
 
 And that's it! Your application is now ready for action. Start it from Visual Studio, and then navigate
-to [https://localhost:7197](https://localhost:7197) in your browser. You should be presented with a simple UI,
+to [https://localhost:8081](https://localhost:8081) in your browser. You should be presented with a simple UI,
 with a dropdown in the top-right corner that will eventually get populated with all models available in your
 configured bucket, and with a button for uploading new models. And as soon as you select one of the options
 from the dropdown, the corresponding model will get loaded in the viewer occupying the rest of the webpage.
