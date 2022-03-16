@@ -177,7 +177,7 @@ export FORGE_CLIENT_SECRET=your-own-forge-client-secret
 dotnet run
 ```
 
-If the server starts successfully and you navigate to [https://localhost:5001/api/auth/token](https://localhost:5001/api/auth/token)
+If the server starts successfully and you navigate to [https://localhost:8081/api/auth/token](https://localhost:8081/api/auth/token)
 in the browser, the server should respond with a JSON object containing the access token data.
 
 ![Server Response](./auth-response.png)

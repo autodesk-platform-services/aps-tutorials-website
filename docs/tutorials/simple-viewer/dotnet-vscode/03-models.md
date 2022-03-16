@@ -476,7 +476,7 @@ See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/htt
 for more details.
 :::
 
-When you navigate to [https://localhost:5001/api/models](https://localhost:5001/api/models)
+When you navigate to [https://localhost:8081/api/models](https://localhost:8081/api/models)
 in the browser, the server should respond with a JSON list with names and URNs of all objects
 available in your configured bucket. If you are getting started, you may get a JSON response
 with an empty array (`[]`) which is expected. In the screenshot below we can already see a couple
