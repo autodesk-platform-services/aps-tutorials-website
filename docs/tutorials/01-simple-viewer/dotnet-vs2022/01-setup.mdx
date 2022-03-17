@@ -5,20 +5,20 @@ sidebar_position: 1
 import SetupVS2022 from '../../_shared/setup-vs2022/01-create-project.md';
 import AddDependencies from '../../_shared/setup-vs2022/02-add-dependencies.md';
 
-# Basic Server
+# Application Setup
 
 In this step we're going to create a new .NET 6 project, install all the required dependencies,
 and setup a basic ASP.NET server.
 
-## Create new project
+## Project setup
 
 <SetupVS2022 />
 
-## Add dependencies
+### Add dependencies
 
 <AddDependencies />
 
-## Application config
+### Application config
 
 In order to be able to run our app, we need to provide a "launch configuration" for it,
 specifying things such as environment variables, and the address and port the server should
@@ -29,7 +29,7 @@ and set the `applicationUrl` to `http://localhost:8080`.
 
 ![Launch Settings](launch-settings.png)
 
-## Create a basic server
+## Basic server
 
 Next we'll setup our basic server. Start by creating a `Startup.cs` file in the root folder
 of your project with the following content:

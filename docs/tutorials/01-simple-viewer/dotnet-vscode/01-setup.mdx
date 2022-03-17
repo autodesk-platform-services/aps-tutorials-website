@@ -2,12 +2,12 @@
 sidebar_position: 1
 ---
 
-# Basic Server
+# Application Setup
 
 In this step we're going to create a new .NET 6 project, install all the required dependencies,
 and setup a basic ASP.NET server.
 
-## Project & dependencies
+## Project setup
 
 Create a new folder for your project, navigate to it in the command line, and initialize a new
 ASP.NET Core project:
@@ -47,7 +47,7 @@ Finally, let's create a couple more subfolders in your project folder that we're
 - `Models` - here we're going to keep all the server-side logic that can be shared by different endpoints
 - `wwwroot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
 
-## Application config
+### Application config
 
 When the `dotnet` utility bootstrapped your application, it generated random port numbers
 for its HTTP and HTTPS addresses. Let's change those to a specific port number (8080)
@@ -58,7 +58,7 @@ property to `http://localhost:8080`.
 
 ![Launch Config](launch-config.png)
 
-## Create a basic server
+## Basic server
 
 Next we'll setup our basic server. Start by creating a `Startup.cs` file in the root folder
 of your project with the following content:

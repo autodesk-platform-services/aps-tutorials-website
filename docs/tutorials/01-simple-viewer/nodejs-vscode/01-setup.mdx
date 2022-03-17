@@ -2,12 +2,12 @@
 sidebar_position: 1
 ---
 
-# Basic Server
+# Application Setup
 
 In this step we're going to create a new Node.js project, install all the required dependencies,
 and setup a basic [Express.js](https://expressjs.com) server.
 
-## Project & dependencies
+## Project setup
 
 Create a new folder for your project, navigate to it in the command line, and initialize a new
 Node.js project:
@@ -43,7 +43,7 @@ Finally, let's create a couple more subfolders in the project folder that we're 
 - `routes` - this is where we're going to implement all the server endpoints
 - `services` - here we're going to keep all the server-side logic that can be shared by different endpoints
 
-## Application config
+### Application config
 
 Our Node.js application will need a couple of configuration parameters to run properly, for example,
 the app credentials for communicating with Autodesk Forge services (Forge client ID and secret), and
@@ -80,7 +80,7 @@ See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/htt
 for more details.
 :::
 
-## Create a basic server
+## Basic server
 
 Create a `server.js` file in the root of your project folder with the following code:
 
