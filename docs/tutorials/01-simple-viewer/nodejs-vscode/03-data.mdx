@@ -350,20 +350,10 @@ The router will handle 3 types of requests:
 
 ## Try it out
 
-Time to try our improved server application. This time, apart from setting the Forge application
-credentials, you can also include the name of the Data Management bucket you want to use via
-the optional `FORGE_BUCKET` environment variable:
-
-```bash
-export FORGE_CLIENT_ID=your-own-forge-client-id
-export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_BUCKET=your-custom-bucket-name
-npm start
-```
-
-When you navigate to [http://localhost:8080/api/models](http://localhost:8080/api/models)
-in the browser, the server should respond with a JSON list with names and URNs of all objects
-available in your configured bucket. If you are getting started, you may get a JSON response
+Time to try our improved server application. Start (or restart) the app from Visual Studio Code
+as usual, and navigate to [http://localhost:8080/api/models](http://localhost:8080/api/models)
+in the browser. The server should respond with a JSON list with names and URNs of all objects
+available in your configured bucket. If you are just getting started, you may get a JSON response
 with an empty array (`[]`) which is expected. In the screenshot below we can already see a couple
 of files that were uploaded to our bucket in the past.
 

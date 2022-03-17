@@ -43,12 +43,12 @@ Finally, let's create a couple more subfolders in the project folder that we're 
 - `routes` - this is where we're going to implement all the server endpoints
 - `services` - here we're going to keep all the server-side logic that can be shared by different endpoints
 
-### Application config
+## Application config
 
 Our Node.js application will need a couple of configuration parameters to run properly, for example,
-the app credentials for communicating with Autodesk Forge services (Forge client ID and secret), and
-the name of a bucket in the [Data Management](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
-service for storing uploaded designs. We will pass these parameters to the server app using environment variables.
+the credentials of our Forge app (client ID and secret) for communicating with Autodesk Forge services,
+and the name of a bucket in the [Data Management](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
+service for storing designs. We will pass these parameters to our app using environment variables.
 
 Create a `config.js` file in the root of your project folder, and add the following code:
 
@@ -109,15 +109,51 @@ easily run our application later:
 
 ## Try it out
 
-Try setting your own Forge client ID and secret as the `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET`
-environment variables, and run the application:
+In order to run and debug our application in Visual Studio Code, we need to create
+a [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
+Create a new `.vscode` folder in your project folder, and create a `launch.json` file inside this
+folder with the following content:
 
-```bash
-export FORGE_CLIENT_ID=your-own-forge-client-id
-export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-npm start
+```json title=".vscode/launch.json"
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "start"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
+        }
+    ]
+}
 ```
 
-Then open your browser and navigate to [http://localhost:8080](http://localhost:8080).
-The server should respond with `Cannot GET /` because we haven't added any logic to it just yet.
-That's going to be the topic of the next step.
+The JSON structure defines a single launch configuration called _Launch Server_
+that will start our application using the `npm start` command, and what is more
+important, it will look for a `.env` file in the project folder, and provide
+any `<key>="<value>"` pairs defined in this file as environment variables to our application.
+Let's create the `.env` file in the project folder, and populate it with our environment
+variables:
+
+``` title=".env"
+FORGE_CLIENT_ID="your-client-id"
+FORGE_CLIENT_SECRET="your-client-secret"
+FORGE_BUCKET="optional-name-of-existing-bucket"
+```
+
+:::caution
+Since the `.env` file contains sensitive information, make sure that it is **excluded** from git.
+This can be done by adding the `.env` line to the `.gitignore` file.
+:::
+
+Now start the application from Visual Studio Code (for example, via the _Run > Start Debugging_
+menu, or by pressing `F5`), and navigate to [http://localhost:8080](http://localhost:8080)
+in the browser. The server should respond with `Cannot GET /` because we haven't added any
+logic to it just yet. That's going to be the topic of the next step.

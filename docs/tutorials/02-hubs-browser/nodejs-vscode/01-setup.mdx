@@ -43,12 +43,12 @@ Finally, let's create a couple more subfolders in your project folder that we're
 - `routes` - this is where we're going to implement all the server endpoints
 - `services` - here we're going to keep all the server-side logic that can be shared by different endpoints
 
-### Application config
+## Application config
 
 Our Node.js application will need a couple of configuration parameters to run properly, for example,
 the credentials of our Forge app for communicating with Autodesk Forge services, or the callback URL
-where our users will be redirected to after logging in succesfully. We will pass these parameters
-to the server app using environment variables.
+where our users will be redirected to during the [3-legged authentication workflow](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token/).
+We will pass these parameters to the server app using environment variables.
 
 Create a `config.js` file in the root of your project folder, and add the following code:
 
@@ -108,13 +108,52 @@ easily run our application later:
 
 ## Try it out
 
-Try running the application from the command line:
+In order to run and debug our application in Visual Studio Code, we need to create
+a [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
+Create a new `.vscode` folder in your project folder, and create a `launch.json` file inside this
+folder with the following content:
 
-```bash
-export SERVER_SESSION_SECRET=some-secret-phrase
-npm start
+```json title=".vscode/launch.json"
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "start"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
+        }
+    ]
+}
 ```
 
-Then open your browser and navigate to http://localhost:8080. The server should respond
-with `Cannot GET /` because we haven't added any logic to it just yet. That's going to be
-the goal of the next step.
+The JSON structure defines a single launch configuration called _Launch Server_
+that will start our application using the `npm start` command, and what is more
+important, it will look for a `.env` file in the project folder, and provide
+any `<key>="<value>"` pairs defined in this file as environment variables to our application.
+Let's create the `.env` file in the project folder, and populate it with our environment
+variables:
+
+``` title=".env"
+FORGE_CLIENT_ID="your-client-id"
+FORGE_CLIENT_SECRET="your-client-secret"
+FORGE_CALLBACK_URL="http://localhost:8080/api/auth/callback"
+SERVER_SESSION_SECRET="some-random-phrase"
+```
+
+:::caution
+Since the `.env` file contains sensitive information, make sure that it is **excluded** from git.
+This can be done by adding the `.env` line to the `.gitignore` file.
+:::
+
+Now start the application from Visual Studio Code (for example, via the _Run > Start Debugging_
+menu, or by pressing `F5`), and navigate to [http://localhost:8080](http://localhost:8080)
+in the browser. The server should respond with `Cannot GET /` because we haven't added any
+logic to it just yet. That's going to be the topic of the next step.
