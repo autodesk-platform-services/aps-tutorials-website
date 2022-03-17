@@ -1,0 +1,26 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import NodeJsVsCodeSetup from './_shared/nodejs-vscode/setup.mdx';
+import DotNetVsCodeSetup from './_shared/dotnet-vscode/setup.mdx';
+import DotNetVs2022Setup from './_shared/dotnet-vs2022/setup.mdx';
+
+# Environment Setup
+
+Some of the tutorials on this website are provided for various combinations
+of programming languages and IDEs. Based on your preference, setup one of the
+following development environments on your machine:
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeSetup />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeSetup />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Setup />
+    </TabItem>
+</Tabs>
+
+And you're all set. Now head over to one of the tutorials and let's code!
