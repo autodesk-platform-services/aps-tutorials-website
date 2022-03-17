@@ -23,7 +23,8 @@ The full implementation of this sample is available on GitHub:
 - https://github.com/petrbroz/forge-hubs-browser-nodejs
 - https://github.com/petrbroz/forge-hubs-browser-dotnet
 
-Get started by selecting the programming language of your choice:
+Get started by selecting the programming language and IDE of your choice:
 
-- [Node.js](nodejs-vscode/server)
-- [.NET](dotnet-vscode/server)
+- [Node.js & Visual Studio Code](nodejs-vscode/01-setup.mdx)
+- [.NET & Visual Studio Code](dotnet-vscode/01-setup.mdx)
+- [.NET & Visual Studio 2022](dotnet-vs2022/01-setup.mdx)
