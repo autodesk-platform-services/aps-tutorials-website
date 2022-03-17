@@ -1,0 +1,95 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import NodeJsVsCodeData from './_shared/nodejs-vscode/data/data.mdx';
+import NodeJsVsCodeConversions from './_shared/nodejs-vscode/data/conversions.mdx';
+import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
+import NodeJsVsCodeTest from './_shared/nodejs-vscode/data/test.mdx';
+
+import DotNetVsCodeData from './_shared/dotnet-vscode/data/data.mdx';
+import DotNetVsCodeConversions from './_shared/dotnet-vscode/data/conversions.mdx';
+import DotNetVsCodeEndpoints from './_shared/dotnet-vscode/data/endpoints.mdx';
+import DotNetVsCodeTest from './_shared/dotnet-vscode/data/test.mdx';
+
+import DotNetVs2022Data from './_shared/dotnet-vs2022/data/data.mdx';
+import DotNetVs2022Conversions from './_shared/dotnet-vs2022/data/conversions.mdx';
+import DotNetVs2022Endpoints from './_shared/dotnet-vs2022/data/endpoints.mdx';
+import DotNetVs2022Test from './_shared/dotnet-vs2022/data/test.mdx';
+
+# Data & Translations
+
+Next, let's extend our server so that we can list models, upload them, and initiate their translation
+for viewing.
+
+## Data management
+
+First, let's make sure that our application has a bucket in the Data Management service
+to store its files in. Typically the bucket would be created just once as part of a provisioning
+step but in our sample we will implement a helper function that will make sure that the bucket
+is available, and use it in other parts of the server app.
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeData />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeData />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Data />
+    </TabItem>
+</Tabs>
+
+## Conversions
+
+Finally, we will implement a couple of helper functions that will extract various types of information
+from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - that we can later load
+into the Forge Viewer component in our HTML page. To do so, we will need to start a new conversion job
+in the [Model Derivative](https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
+service, and checking the status of the conversion. Also, the Model Derivative service requires all IDs
+we use in the API calls to be [base64](https://wikipedia.org/wiki/Base64)-encoded, so we include a small
+utility function that will help with that.
+
+:::info
+Base64-encoded IDs are referred to as _URNs_.
+:::
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeConversions />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeConversions />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Conversions />
+    </TabItem>
+</Tabs>
+
+## Server endpoints
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeEndpoints />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeEndpoints />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Endpoints />
+    </TabItem>
+</Tabs>
+
+## Try it out
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Test />
+    </TabItem>
+</Tabs>

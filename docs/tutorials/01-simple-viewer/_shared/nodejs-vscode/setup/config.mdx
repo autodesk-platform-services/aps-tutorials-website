@@ -1,0 +1,34 @@
+Our Node.js application will need a couple of configuration parameters to run properly, for example,
+the credentials of our Forge app (client ID and secret) for communicating with Autodesk Forge services,
+and the name of a bucket in the [Data Management](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
+service for storing designs. We will pass these parameters to our app using environment variables.
+
+Create a `config.js` file in the root of your project folder, and add the following code:
+
+```js title="config.js"
+let { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET, PORT } = process.env;
+if (!FORGE_CLIENT_ID || !FORGE_CLIENT_SECRET) {
+    console.warn('Missing some of the environment variables.');
+    process.exit(1);
+}
+FORGE_BUCKET = FORGE_BUCKET || `${FORGE_CLIENT_ID.toLowerCase()}-basic-app`;
+PORT = PORT || 8080;
+
+module.exports = {
+    FORGE_CLIENT_ID,
+    FORGE_CLIENT_SECRET,
+    FORGE_BUCKET,
+    PORT
+};
+```
+
+We simply read the environment variables from `process.env`, and exit the application
+immediately if any of the required properties are missing. And if no bucket name is provided,
+we generate one by appending the `-basic-app` suffix to the Forge Client ID.
+
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::

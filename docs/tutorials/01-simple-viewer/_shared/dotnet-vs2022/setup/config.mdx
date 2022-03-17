@@ -1,0 +1,8 @@
+In order to be able to run our app, we need to provide a "launch configuration" for it,
+specifying things such as environment variables, and the address and port the server should
+be listening on. Open the `launchSettings.json` file in the `Properties` folder, add the
+`FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET` environment variables with your Forge app credentials
+(and optionally the `FORGE_BUCKET` variable if you already have a bucket you want to use),
+and set the `applicationUrl` to `http://localhost:8080`.
+
+![Launch Settings](launch-settings.png)

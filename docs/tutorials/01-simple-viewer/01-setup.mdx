@@ -1,0 +1,80 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import NodeJsVsCodeProject from './_shared/nodejs-vscode/setup/project.mdx';
+import NodeJsVsCodeConfig from './_shared/nodejs-vscode/setup/config.mdx';
+import NodeJsVsCodeServer from './_shared/nodejs-vscode/setup/server.mdx';
+import NodeJsVsCodeTest from './_shared/nodejs-vscode/setup/test.mdx';
+
+import DotNetVsCodeProject from './_shared/dotnet-vscode/setup/project.mdx';
+import DotNetVsCodeConfig from './_shared/dotnet-vscode/setup/config.mdx';
+import DotNetVsCodeServer from './_shared/dotnet-vscode/setup/server.mdx';
+import DotNetVsCodeTest from './_shared/dotnet-vscode/setup/test.mdx';
+
+import DotNetVs2022Project from './_shared/dotnet-vs2022/setup/project.mdx';
+import DotNetVs2022Config from './_shared/dotnet-vs2022/setup/config.mdx';
+import DotNetVs2022Server from './_shared/dotnet-vs2022/setup/server.mdx';
+import DotNetVs2022Test from './_shared/dotnet-vs2022/setup/test.mdx';
+
+# Application Setup
+
+Let's start by creating a new project, installing required dependencies, and setting up
+a basic server application.
+
+## Create project
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeProject />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeProject />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Project />
+    </TabItem>
+</Tabs>
+
+## Application config
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeConfig />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeConfig />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Config />
+    </TabItem>
+</Tabs>
+
+## Create basic server
+
+Next we'll setup a basic server application.
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeServer />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeServer />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Server />
+    </TabItem>
+</Tabs>
+
+## Try it out
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Test />
+    </TabItem>
+</Tabs>

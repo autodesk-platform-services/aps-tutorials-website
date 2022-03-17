@@ -1,0 +1,40 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import ViewerLogic from './_shared/viewer/viewer-logic.mdx';
+import AppLogic from './_shared/viewer/app-logic.mdx';
+import UiSetup from './_shared/viewer/ui-setup.mdx';
+
+import NodeJsVsCodeTest from './_shared/nodejs-vscode/viewer/test.mdx';
+import DotNetVsCodeTest from './_shared/dotnet-vscode/viewer/test.mdx';
+import DotNetVs2022Test from './_shared/dotnet-vs2022/viewer/test.mdx';
+
+# Viewer & UI
+
+Finally, we're ready to build the client-side piece of our application.
+
+## Viewer logic
+
+<ViewerLogic />
+
+## Application logic
+
+<AppLogic />
+
+## User interface
+
+<UiSetup />
+
+## Try it out
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Test />
+    </TabItem>
+</Tabs>
