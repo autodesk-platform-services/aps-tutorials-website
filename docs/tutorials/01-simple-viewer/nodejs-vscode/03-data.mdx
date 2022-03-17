@@ -6,7 +6,7 @@ sidebar_position: 3
 
 Next, let's extend our server so that we can list models, upload them, and initiate their translation for viewing.
 
-## Creating buckets
+## Create bucket
 
 First, let's make sure that our application has a bucket in the Data Management service
 to store its files in. Typically the bucket would be created just once as part of a provisioning
@@ -61,7 +61,7 @@ The `ensureBucketExists` function will simply try and request additional informa
 about a specific bucket using the `BucketsApi` class from the Forge SDK, and if the response
 from Forge is `404 Not Found`, it will attempt to create a new bucket with this name.
 
-## Listing and uploading models
+## List and upload models
 
 Now, let's add two more functions in `services/forge.js` that will be used to list
 all objects in the preconfigured bucket, and to upload files to this bucket:
@@ -136,7 +136,7 @@ As you can see, the `getObjects` method of the `ObjectsApi` class (responsible f
 uses pagination. In our code we simply iterate through all the pages and return all files from our application's bucket
 in a single list.
 
-## Translating models
+## Translate models
 
 Finally, we will implement a couple of helper functions that will extract various types of information
 from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - that we can later load

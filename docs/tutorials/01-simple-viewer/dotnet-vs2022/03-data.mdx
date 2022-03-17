@@ -7,7 +7,7 @@ sidebar_position: 3
 Next, let's extend our server so that we can list models, upload them, and also initiate
 their translation for viewing.
 
-## Creating buckets
+## Create bucket
 
 First, let's make sure that our application has a bucket in the Data Management service
 to store its files in. Typically the bucket would be created just once as part of a provisioning
@@ -94,7 +94,7 @@ The `EnsureBucketExists` method will simply try and request additional informati
 about a specific bucket, and if the response from Forge is `404 Not Found`, it will
 attempt to create a new bucket with that name.
 
-## Listing and uploading models
+## List and upload models
 
 Now we will update the `ForgeService` class with a helper method that will list all objects in the preconfigured bucket, and a helper method for uploading additional
 files to this bucket:
@@ -203,7 +203,7 @@ public class ForgeService
 The `GetObjects` method pages through all objects in the bucket, and returns their name and URN
 (the base64-encoded ID that will later be used when communicating with the Model Derivative service).
 
-## Translating models
+## Translate models
 
 Finally, we will implement a couple of helper functions that will extract various types of information
 from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - that we can later load
