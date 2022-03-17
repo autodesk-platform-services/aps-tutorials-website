@@ -1,0 +1,71 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import NodeJsVsCodeTokens from './_shared/nodejs-vscode/auth/tokens.mdx';
+import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/auth/endpoints.mdx';
+import NodeJsVsCodeTest from './_shared/nodejs-vscode/auth/test.mdx';
+
+import DotNetVsCodeTokens from './_shared/dotnet-vscode/auth/tokens.mdx';
+import DotNetVsCodeEndpoints from './_shared/dotnet-vscode/auth/endpoints.mdx';
+import DotNetVsCodeTest from './_shared/dotnet-vscode/auth/test.mdx';
+
+import DotNetVs2022Tokens from './_shared/dotnet-vs2022/auth/tokens.mdx';
+import DotNetVs2022Endpoints from './_shared/dotnet-vs2022/auth/endpoints.mdx';
+import DotNetVs2022Test from './_shared/dotnet-vs2022/auth/test.mdx';
+
+# Authentication
+
+In this step we're going to extend the server implementation so that it can authenticate itself
+to the Forge platform, guide the user through a [3-legged OAuth workflow](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token),
+and generate access tokens for various needs.
+
+:::tip
+It is a good practice to generate an "internal" token with more capabilities (for example,
+allowing the owner to create or delete files in the Data Management service) that will only be used
+by the server, and a "public" token with fewer capabilities that can be safely shared with
+the client-side logic.
+:::
+
+## Access tokens
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeTokens />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeTokens />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Tokens />
+    </TabItem>
+</Tabs>
+
+## Server endpoints
+
+Next, let's add a first endpoint to our server. 
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeEndpoints />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeEndpoints />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Endpoints />
+    </TabItem>
+</Tabs>
+
+## Try it out
+
+<Tabs groupId="development-environment">
+    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
+        <NodeJsVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
+        <DotNetVsCodeTest />
+    </TabItem>
+    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
+        <DotNetVs2022Test />
+    </TabItem>
+</Tabs>

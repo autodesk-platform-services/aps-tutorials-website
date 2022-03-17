@@ -1,0 +1,81 @@
+Create a `forge.js` file under the `services` subfolder. This is where we will be implementing
+all the Forge-specific logic that will be used in different areas of our server application. Let's
+start by adding the following code to the file:
+
+```js title="services/forge.js"
+const { AuthClientThreeLegged, UserProfileApi } = require('forge-apis');
+const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
+
+const internalAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
+const publicAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, PUBLIC_TOKEN_SCOPES);
+
+function getAuthorizationUrl() {
+    return internalAuthClient.generateAuthUrl();
+}
+
+async function authCallbackMiddleware(req, res, next) {
+    const internalCredentials = await internalAuthClient.getToken(req.query.code);
+    const publicCredentials = await publicAuthClient.refreshToken(internalCredentials);
+    req.session.public_token = publicCredentials.access_token;
+    req.session.internal_token = internalCredentials.access_token;
+    req.session.refresh_token = publicCredentials.refresh_token;
+    req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
+    next();
+}
+
+async function authRefreshMiddleware(req, res, next) {
+    const { refresh_token, expires_at } = req.session;
+    if (!refresh_token) {
+        res.status(401).end();
+        return;
+    }
+
+    if (expires_at < Date.now()) {
+        const internalCredentials = await internalAuthClient.refreshToken({ refresh_token });
+        const publicCredentials = await publicAuthClient.refreshToken(internalCredentials);
+        req.session.public_token = publicCredentials.access_token;
+        req.session.internal_token = internalCredentials.access_token;
+        req.session.refresh_token = publicCredentials.refresh_token;
+        req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
+    }
+    req.internalOAuthToken = {
+        access_token: req.session.internal_token,
+        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000)
+    };
+    req.publicOAuthToken = {
+        access_token: req.session.public_token,
+        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000)
+    };
+    next();
+}
+
+async function getUserProfile(token) {
+    const resp = await new UserProfileApi().getUserProfile(internalAuthClient, token);
+    return resp.body;
+}
+
+module.exports = {
+    getAuthorizationUrl,
+    authCallbackMiddleware,
+    authRefreshMiddleware,
+    getUserProfile,
+};
+```
+
+The script expects a couple of configuration values to be provided via environment variables:
+
+- `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET` are the credentials generated for you after
+[creating a new Forge application](../../../intro#create-an-app)
+- `FORGE_CALLBACK_URL` is the callback URL the user will be redirected to after logging
+in successfully
+
+The code then provides a couple of helper functions:
+
+- the `getAuthorizationUrl` function generates a URL for our users to be redirected to when
+initiating the 3-legged authentication workflow
+- the `authCallbackMiddleware` function can be used as an Express.js middleware
+when the user logs in successfully and is redirected back to our application
+- the `authRefreshMiddleware` function is then used as an Express.js middleware for all requests
+that will need to make use of the Forge access tokens
+- the `getUserProfile` function returns additional details about the authenticated user based on
+an existing access token

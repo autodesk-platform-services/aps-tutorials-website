@@ -1,0 +1,8 @@
+Time to try our improved server application. Start (or restart) the app from Visual Studio Code
+as usual, and navigate to [http://localhost:8080/api/hubs](http://localhost:8080/api/hubs)
+in the browser. The server should respond with a JSON list of all the hubs you have access to.
+Try copying the ID of one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
+In this case the server application should respond with a JSON list of all projects
+available under the specified hub.
+
+![Hubs Response](./hubs-response.png)

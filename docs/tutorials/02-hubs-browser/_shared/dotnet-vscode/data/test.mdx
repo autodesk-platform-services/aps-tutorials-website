@@ -1,0 +1,18 @@
+And that's it for the server side. Time to try it out! Make sure you set all
+the required environment variables, and run the application:
+
+```bash
+export FORGE_CLIENT_ID=your-own-forge-client-id
+export FORGE_CLIENT_SECRET=your-own-forge-client-secret
+export FORGE_CALLBACK_URL=http://localhost:8080/api/auth/callback
+dotnet run
+```
+
+You should now be able to explore the new endpoints tha will eventually be used from
+the UI. For example, if you go to [http://localhost:8080/api/hubs](http://localhost:8080/api/hubs),
+the server should respond with a JSON list of all the hubs you have access to. Try copying the ID of
+one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
+In this case the server application should respond with a JSON list of all projects
+available under the specified hub.
+
+![Hubs Response](./hubs-response.png)
