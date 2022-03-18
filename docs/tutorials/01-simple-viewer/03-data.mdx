@@ -4,22 +4,15 @@ import TabItem from '@theme/TabItem';
 import NodeJsVsCodeData from './_shared/nodejs-vscode/data/data.mdx';
 import NodeJsVsCodeConversions from './_shared/nodejs-vscode/data/conversions.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
-import NodeJsVsCodeTest from './_shared/nodejs-vscode/data/test.mdx';
 
-import DotNetVsCodeData from './_shared/dotnet-vscode/data/data.mdx';
-import DotNetVsCodeConversions from './_shared/dotnet-vscode/data/conversions.mdx';
-import DotNetVsCodeEndpoints from './_shared/dotnet-vscode/data/endpoints.mdx';
-import DotNetVsCodeTest from './_shared/dotnet-vscode/data/test.mdx';
+import DotNetData from './_shared/dotnet/data/data.mdx';
+import DotNetConversions from './_shared/dotnet/data/conversions.mdx';
+import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
 
-import DotNetVs2022Data from './_shared/dotnet-vs2022/data/data.mdx';
-import DotNetVs2022Conversions from './_shared/dotnet-vs2022/data/conversions.mdx';
-import DotNetVs2022Endpoints from './_shared/dotnet-vs2022/data/endpoints.mdx';
-import DotNetVs2022Test from './_shared/dotnet-vs2022/data/test.mdx';
+# Data & Conversions
 
-# Data & Translations
-
-Next, let's extend our server so that we can list models, upload them, and initiate their translation
-for viewing.
+In this step we will extend our server so that we can list models, upload them,
+and initiate their conversion for viewing.
 
 ## Data management
 
@@ -33,10 +26,10 @@ is available, and use it in other parts of the server app.
         <NodeJsVsCodeData />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeData />
+        <DotNetData />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Data />
+        <DotNetData />
     </TabItem>
 </Tabs>
 
@@ -59,37 +52,40 @@ Base64-encoded IDs are referred to as _URNs_.
         <NodeJsVsCodeConversions />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeConversions />
+        <DotNetConversions />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Conversions />
+        <DotNetConversions />
     </TabItem>
 </Tabs>
 
 ## Server endpoints
+
+Now let's make the new functionality available to the client through another
+set of endpoints.
 
 <Tabs groupId="development-environment">
     <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
         <NodeJsVsCodeEndpoints />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeEndpoints />
+        <DotNetEndpoints />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Endpoints />
+        <DotNetEndpoints />
     </TabItem>
 </Tabs>
 
 ## Try it out
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeTest />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeTest />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Test />
-    </TabItem>
-</Tabs>
+Start (or restart) the app as usual, and navigate to [http://localhost:8080/api/models](http://localhost:8080/api/models)
+in the browser. The server should respond with a JSON list with names and URNs of all objects
+available in your configured bucket.
+
+:::info
+If this is your first time working with Forge, you may get a JSON response
+with an empty array (`[]`) which is expected. In the screenshot below we can
+already see a couple of files that were uploaded to our bucket in the past.
+:::
+
+![Server Response](./_shared/data-response.png)

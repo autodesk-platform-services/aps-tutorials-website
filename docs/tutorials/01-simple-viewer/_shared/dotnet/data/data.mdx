@@ -1,4 +1,4 @@
-Let's update the `Models/ForgeService.cs` file:
+Update the `Models/ForgeService.cs` file with the following code:
 
 ```csharp title="Models/ForgeService.cs"
 using System;
@@ -78,10 +78,18 @@ public class ForgeService
 
 The `EnsureBucketExists` method will simply try and request additional information
 about a specific bucket, and if the response from Forge is `404 Not Found`, it will
-attempt to create a new bucket with that name.
+attempt to create a new bucket with that name. If no bucket name is provided through
+environment variables, we generate one by appending the `-basic-app` suffix to the Forge Client ID.
 
-Now we will update the `ForgeService` class with a helper method that will list all objects in the preconfigured bucket, and a helper method for uploading additional
-files to this bucket:
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
+
+Now we will update the `ForgeService` class with a helper method that will list all objects
+in the preconfigured bucket, and a helper method for uploading additional files to this bucket:
 
 ```csharp title="Models/ForgeService.cs"
 using System;
