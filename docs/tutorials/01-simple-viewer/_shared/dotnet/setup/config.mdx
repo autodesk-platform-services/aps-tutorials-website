@@ -1,5 +1,4 @@
-Start by creating a `Startup.cs` file in the root folder
-of your project with the following content:
+Create a `Startup.cs` file in the root folder of your project with the following content:
 
 ```csharp title="Startup.cs"
 using System;
@@ -22,9 +21,9 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
-        var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
-        var ForgeBucket = Environment.GetEnvironmentVariable("FORGE_BUCKET"); // Optional
+        var ForgeClientID = Configuration["FORGE_CLIENT_ID"];
+        var ForgeClientSecret = Configuration["FORGE_CLIENT_SECRET"];
+        var ForgeBucket = Configuration["FORGE_BUCKET"]; // Optional
         if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret))
         {
             throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
@@ -38,7 +37,6 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
         }
-        app.UseHttpsRedirection();
         app.UseDefaultFiles();
         app.UseStaticFiles();
         app.UseRouting();
@@ -52,30 +50,29 @@ public class Startup
 
 The `Startup` class is responsible for configuring our server and its "middleware", for example,
 serving of static files. We also try and retrieve the Forge application client ID and secret
-(these are the values you obtain when creating a new Forge application)
-from environment variables for later use.
+from environment variables (or from other [configuration providers](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#configuration-providers))
+for later use.
 
-Next, replace the content of `Program.cs` with the following:
+Now, to pass actual configuration values to our application for debugging purposes,
+we will modify the `appsettings.Development.json` file in our project folder,
+or create one of it does not exist, with the following content (using your own
+values instead of the placeholders of course):
 
-```csharp title="Program.cs"
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
-public class Program
+```json
 {
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
     }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
+  },
+  "FORGE_CLIENT_ID": "your-client-id",
+  "FORGE_CLIENT_SECRET": "your-client-secret",
+  "FORGE_BUCKET": "optional-name-of-existing-bucket"
 }
 ```
 
-This code will make sure that the .NET application creates a web server with our
-new `Startup` class.
+:::caution
+Since the `appsettings.Development.json` file contains sensitive information, make sure that it is **not** included in git!
+This can be ensured by adding the `appsettings.Development.json` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
+:::

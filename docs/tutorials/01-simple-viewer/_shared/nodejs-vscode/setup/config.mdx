@@ -1,8 +1,3 @@
-Our Node.js application will need a couple of configuration parameters to run properly, for example,
-the credentials of our Forge app (client ID and secret) for communicating with Autodesk Forge services,
-and the name of a bucket in the [Data Management](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
-service for storing designs. We will pass these parameters to our app using environment variables.
-
 Create a `config.js` file in the root of your project folder, and add the following code:
 
 ```js title="config.js"
@@ -31,4 +26,50 @@ Note that the Data Management service requires bucket names to be **globally uni
 and attempts to create a bucket with an already used name will fail with `409 Conflict`.
 See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
 for more details.
+:::
+
+Now, to pass actual configuration values to our application for debugging purposes, we need to create
+a [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
+Use _Run > Add Configuration_ in the menu to create a new configuration, and when prompted
+for the specific environment, choose _Node.js_. This will create a new `.vscode`
+subfolder in your project with a `launch.json` file where you can define different
+launch configurations. Replace the content of the file with the following:
+
+```json title=".vscode/launch.json"
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "start"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
+        }
+    ]
+}
+```
+
+We are defining a single launch configuration called _Launch Server_ that will start
+our application (using the `npm start` command), and what is more important, it will
+look for a `.env` file in the project folder, and provide any `<key>="<value>"` pairs
+defined in this file as environment variables to our application. Let's create
+the `.env` file in the project folder, and populate it with our environment variables
+(using your own values instead of the placeholders of course):
+
+``` title=".env"
+FORGE_CLIENT_ID="your-client-id"
+FORGE_CLIENT_SECRET="your-client-secret"
+FORGE_BUCKET="optional-name-of-existing-bucket"
+```
+
+:::caution
+Since the `.env` file contains sensitive information, make sure that it is **not** included in git!
+This can be ensured by adding the `.env` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
 :::

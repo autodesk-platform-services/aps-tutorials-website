@@ -9,8 +9,8 @@ app.use(express.static('wwwroot'));
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```
 
-For now the server isn't doing much, just serving static assets from the `public` subfolder
-(which is currently empty), and reporting all errors to the console and back to the client.
+For now the server isn't doing much, just serving static assets from the `wwwroot` subfolder
+(which is currently empty), and reporting any errors to the console and back to the client.
 
 Next, let's add a `"start": "node server.js"` script to the `package.json` file so that we can
 easily run our application later:
