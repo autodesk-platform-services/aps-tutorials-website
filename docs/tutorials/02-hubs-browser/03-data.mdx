@@ -3,15 +3,9 @@ import TabItem from '@theme/TabItem';
 
 import NodeJsVsCodeHubs from './_shared/nodejs-vscode/data/hubs.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
-import NodeJsVsCodeTest from './_shared/nodejs-vscode/data/test.mdx';
 
-import DotNetVsCodeHubs from './_shared/dotnet-vscode/data/hubs.mdx';
-import DotNetVsCodeEndpoints from './_shared/dotnet-vscode/data/endpoints.mdx';
-import DotNetVsCodeTest from './_shared/dotnet-vscode/data/test.mdx';
-
-import DotNetVs2022Hubs from './_shared/dotnet-vs2022/data/hubs.mdx';
-import DotNetVs2022Endpoints from './_shared/dotnet-vs2022/data/endpoints.mdx';
-import DotNetVs2022Test from './_shared/dotnet-vs2022/data/test.mdx';
+import DotNetHubs from './_shared/dotnet/data/hubs.mdx';
+import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
 
 # Data Browsing
 
@@ -20,42 +14,47 @@ applications built with Forge such as BIM 360 Docs or ACC.
 
 ## Browsing hubs
 
+First, let's add a couple of helper methods for browsing through Data Management hubs,
+projects, folders, items, and versions.
+
 <Tabs groupId="development-environment">
     <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
         <NodeJsVsCodeHubs />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeHubs />
+        <DotNetHubs />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Hubs />
+        <DotNetHubs />
     </TabItem>
 </Tabs>
 
 ## Server endpoints
+
+Next, let's expose the new functionality to the client-side code through another
+set of endpoints.
 
 <Tabs groupId="development-environment">
     <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
         <NodeJsVsCodeEndpoints />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeEndpoints />
+        <DotNetEndpoints />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Endpoints />
+        <DotNetEndpoints />
     </TabItem>
 </Tabs>
 
 ## Try it out
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeTest />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeTest />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Test />
-    </TabItem>
-</Tabs>
+And that's it for the server side. Time to try it out!
+
+Start (or restart) the app from Visual Studio Code as usual, and navigate to
+[http://localhost:8080/api/hubs](http://localhost:8080/api/hubs) in the browser.
+The server should respond with a JSON list of all the hubs you have access to.
+Try copying the ID of one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
+In this case the server application should respond with a JSON list of all projects
+available under the specified hub.
+
+![Hubs Response](./_shared/hubs-response.png)
