@@ -5,12 +5,9 @@ import NodeJsVsCodeTokens from './_shared/nodejs-vscode/auth/tokens.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/auth/endpoints.mdx';
 import NodeJsVsCodeTest from './_shared/nodejs-vscode/auth/test.mdx';
 
-import DotNetVsCodeTokens from './_shared/dotnet-vscode/auth/tokens.mdx';
-import DotNetVsCodeEndpoints from './_shared/dotnet-vscode/auth/endpoints.mdx';
+import DotNetTokens from './_shared/dotnet/auth/tokens.mdx';
+import DotNetEndpoints from './_shared/dotnet/auth/endpoints.mdx';
 import DotNetVsCodeTest from './_shared/dotnet-vscode/auth/test.mdx';
-
-import DotNetVs2022Tokens from './_shared/dotnet-vs2022/auth/tokens.mdx';
-import DotNetVs2022Endpoints from './_shared/dotnet-vs2022/auth/endpoints.mdx';
 import DotNetVs2022Test from './_shared/dotnet-vs2022/auth/test.mdx';
 
 # Authentication
@@ -32,28 +29,32 @@ the client-side logic.
         <NodeJsVsCodeTokens />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeTokens />
+        <DotNetTokens />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Tokens />
+        <DotNetTokens />
     </TabItem>
 </Tabs>
 
 ## Server endpoints
+
+Now we can expose this functionality through the first endpoint of our server.
 
 <Tabs groupId="development-environment">
     <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
         <NodeJsVsCodeEndpoints />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeEndpoints />
+        <DotNetEndpoints />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Endpoints />
+        <DotNetEndpoints />
     </TabItem>
 </Tabs>
 
 ## Try it out
+
+Let's see if our new server endpoint works.
 
 <Tabs groupId="development-environment">
     <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
