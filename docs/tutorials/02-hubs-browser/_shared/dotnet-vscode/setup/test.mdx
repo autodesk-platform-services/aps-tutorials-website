@@ -1,14 +1,4 @@
-Now that we have a basic ASP.NET application setup, let's try it out. In the command line,
-setup the required environment variables, `FORGE_CLIENT_ID`, `FORGE_CLIENT_SECRET`, and
-`FORGE_CALLBACK_URL`, and run the application:
-
-```bash
-export FORGE_CLIENT_ID=your-own-forge-client-id
-export FORGE_CLIENT_SECRET=your-own-forge-client-secret
-export FORGE_CALLBACK_URL=http://localhost:8080/api/auth/callback
-dotnet run
-```
-
-When you navigate to [http://localhost:8080](http://localhost:8080) in your browser,
-you should get a 404 response because we haven't implemented any server logic yet.
-That's going to be the goal of the next step.
+Start the application from Visual Studio Code (for example, via the _Run > Start Debugging_
+menu, or by pressing `F5`), and navigate to [http://localhost:8080](http://localhost:8080)
+in the browser. The server should respond with a 404 error because we haven't added any
+logic to it just yet. That's going to be the topic of the next step.
