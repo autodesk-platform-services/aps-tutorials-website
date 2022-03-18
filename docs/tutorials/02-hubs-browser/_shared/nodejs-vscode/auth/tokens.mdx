@@ -62,14 +62,7 @@ module.exports = {
 };
 ```
 
-The script expects a couple of configuration values to be provided via environment variables:
-
-- `FORGE_CLIENT_ID` and `FORGE_CLIENT_SECRET` are the credentials generated for you after
-creating a new Forge application
-- `FORGE_CALLBACK_URL` is the callback URL the user will be redirected to after logging
-in successfully
-
-The code then provides a couple of helper functions:
+The code provides a couple of helper functions:
 
 - the `getAuthorizationUrl` function generates a URL for our users to be redirected to when
 initiating the 3-legged authentication workflow

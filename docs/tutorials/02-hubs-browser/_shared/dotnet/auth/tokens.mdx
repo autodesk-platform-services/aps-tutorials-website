@@ -113,9 +113,9 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        var ForgeClientID = Environment.GetEnvironmentVariable("FORGE_CLIENT_ID");
-        var ForgeClientSecret = Environment.GetEnvironmentVariable("FORGE_CLIENT_SECRET");
-        var ForgeCallbackURL = Environment.GetEnvironmentVariable("FORGE_CALLBACK_URL");
+        var ForgeClientID = Configuration["FORGE_CLIENT_ID"];
+        var ForgeClientSecret = Configuration["FORGE_CLIENT_SECRET"];
+        var ForgeCallbackURL = Configuration["FORGE_CALLBACK_URL"];
         if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret) || string.IsNullOrEmpty(ForgeCallbackURL))
         {
             throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, or FORGE_CALLBACK_URL.");
@@ -132,7 +132,6 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
         }
-        app.UseHttpsRedirection();
         app.UseDefaultFiles();
         app.UseStaticFiles();
         app.UseRouting();
