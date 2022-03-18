@@ -2,17 +2,17 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 import NodeJsVsCodeData from './_shared/nodejs-vscode/data/data.mdx';
-import NodeJsVsCodeConversions from './_shared/nodejs-vscode/data/conversions.mdx';
+import NodeJsVsCodeDerivatives from './_shared/nodejs-vscode/data/derivatives.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
 
 import DotNetData from './_shared/dotnet/data/data.mdx';
-import DotNetConversions from './_shared/dotnet/data/conversions.mdx';
+import DotNetDerivatives from './_shared/dotnet/data/derivatives.mdx';
 import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
 
-# Data & Conversions
+# Data & Derivatives
 
 In this step we will extend our server so that we can list models, upload them,
-and initiate their conversion for viewing.
+and prepare them for viewing.
 
 ## Data management
 
@@ -33,15 +33,16 @@ is available, and use it in other parts of the server app.
     </TabItem>
 </Tabs>
 
-## Conversions
+## Derivatives
 
-Finally, we will implement a couple of helper functions that will extract various types of information
+Next, we will implement a couple of helper functions that will derive/extract various types of information
 from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - that we can later load
-into the Forge Viewer component in our HTML page. To do so, we will need to start a new conversion job
+into Forge Viewer in our webpage. To do so, we will need to start a new conversion job
 in the [Model Derivative](https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
-service, and checking the status of the conversion. Also, the Model Derivative service requires all IDs
-we use in the API calls to be [base64](https://wikipedia.org/wiki/Base64)-encoded, so we include a small
-utility function that will help with that.
+service, and checking the status of the conversion.
+
+Model Derivative service requires all IDs we use in the API calls to be [base64](https://wikipedia.org/wiki/Base64)-encoded,
+so we include a small utility function that will help with that.
 
 :::info
 Base64-encoded IDs are referred to as _URNs_.
@@ -49,13 +50,13 @@ Base64-encoded IDs are referred to as _URNs_.
 
 <Tabs groupId="development-environment">
     <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeConversions />
+        <NodeJsVsCodeDerivatives />
     </TabItem>
     <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetConversions />
+        <DotNetDerivatives />
     </TabItem>
     <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetConversions />
+        <DotNetDerivatives />
     </TabItem>
 </Tabs>
 
