@@ -1,5 +1,4 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import EnvTabs from '../../../src/components/EnvTabs.js';
 
 import NodeJsVsCodeHubs from './_shared/nodejs-vscode/data/hubs.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
@@ -17,34 +16,14 @@ applications built with Forge such as BIM 360 Docs or ACC.
 First, let's add a couple of helper methods for browsing through Data Management hubs,
 projects, folders, items, and versions.
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeHubs />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetHubs />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetHubs />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeHubs} DotNetVsCode={DotNetHubs} DotNetVs2022={DotNetHubs} />
 
 ## Server endpoints
 
 Next, let's expose the new functionality to the client-side code through another
 set of endpoints.
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeEndpoints />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetEndpoints />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetEndpoints />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetEndpoints} DotNetVs2022={DotNetEndpoints} />
 
 ## Try it out
 

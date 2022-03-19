@@ -1,5 +1,4 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import EnvTabs from '../../../src/components/EnvTabs.js';
 
 import NodeJsVsCodeData from './_shared/nodejs-vscode/data/data.mdx';
 import NodeJsVsCodeDerivatives from './_shared/nodejs-vscode/data/derivatives.mdx';
@@ -21,17 +20,7 @@ to store its files in. Typically the bucket would be created just once as part o
 step but in our sample we will implement a helper function that will make sure that the bucket
 is available, and use it in other parts of the server app.
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeData />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetData />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetData />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeData} DotNetVsCode={DotNetData} DotNetVs2022={DotNetData} />
 
 ## Derivatives
 
@@ -48,34 +37,14 @@ so we include a small utility function that will help with that.
 Base64-encoded IDs are referred to as _URNs_.
 :::
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeDerivatives />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetDerivatives />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetDerivatives />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeDerivatives} DotNetVsCode={DotNetDerivatives} DotNetVs2022={DotNetDerivatives} />
 
 ## Server endpoints
 
 Now let's make the new functionality available to the client through another
 set of endpoints.
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeEndpoints />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetEndpoints />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetEndpoints />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetEndpoints} DotNetVs2022={DotNetEndpoints} />
 
 ## Try it out
 

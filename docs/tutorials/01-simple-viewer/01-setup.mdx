@@ -1,5 +1,4 @@
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import EnvTabs from '../../../src/components/EnvTabs.js';
 
 import NodeJsVsCodeProject from './_shared/nodejs-vscode/setup/project.mdx';
 import NodeJsVsCodeConfig from './_shared/nodejs-vscode/setup/config.mdx';
@@ -20,17 +19,7 @@ a basic server application.
 
 ## New project
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeProject />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeProject />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Project />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeProject} DotNetVsCode={DotNetVsCodeProject} DotNetVs2022={DotNetVs2022Project} />
 
 ## Application config
 
@@ -39,46 +28,16 @@ the credentials of our Forge app (client ID and secret) for communicating with A
 and the name of a bucket in the [Data Management](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
 service for storing designs. We will pass these parameters to our app using environment variables.
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeConfig />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetConfig />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetConfig />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeConfig} DotNetVsCode={DotNetConfig} DotNetVs2022={DotNetConfig} />
 
 ## Basic server
 
 Next we'll create a basic server application.
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeServer />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetServer />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetServer />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeServer} DotNetVsCode={DotNetServer} DotNetVs2022={DotNetServer} />
 
 ## Try it out
 
 Now that we have a basic application setup, let's try it out!
 
-<Tabs groupId="development-environment">
-    <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
-        <NodeJsVsCodeTest />
-    </TabItem>
-    <TabItem value="dotnet-vscode" label=".NET 6 & VSCode" default>
-        <DotNetVsCodeTest />
-    </TabItem>
-    <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022" default>
-        <DotNetVs2022Test />
-    </TabItem>
-</Tabs>
+<EnvTabs NodeJsVsCode={NodeJsVsCodeTest} DotNetVsCode={DotNetVsCodeTest} DotNetVs2022={DotNetVs2022Test} />
