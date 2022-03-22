@@ -124,6 +124,23 @@ class HistogramExtension extends Autodesk.Viewing.Extension {
         };
         this._pieChartButton.setToolTip('Show Property Histogram (Pie Chart)');
         group.addControl(this._pieChartButton);
+
+        const style = document.createElement('style');
+        style.innerText = `
+            #histogram-barchart-button {
+                background-image: url(https://img.icons8.com/small/32/bar-chart.png);
+                background-size: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+            #histogram-piechart-button {
+                background-image: url(https://img.icons8.com/small/32/pie-chart.png);
+                background-size: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        `;
+        document.head.appendChild(style);
     }
     // highlight-end
 
@@ -227,6 +244,23 @@ class HistogramExtension extends Autodesk.Viewing.Extension {
         };
         this._pieChartButton.setToolTip('Show Property Histogram (Pie Chart)');
         group.addControl(this._pieChartButton);
+
+        const style = document.createElement('style');
+        style.innerText = `
+            #histogram-barchart-button {
+                background-image: url(https://img.icons8.com/small/32/bar-chart.png);
+                background-size: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+            #histogram-piechart-button {
+                background-image: url(https://img.icons8.com/small/32/pie-chart.png);
+                background-size: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     _removeUI() {

@@ -98,6 +98,17 @@ class AggregatesExtension extends Autodesk.Viewing.Extension {
         };
         this._aggregatesButton.setToolTip('Show Property Aggregates');
         group.addControl(this._aggregatesButton);
+
+        const style = document.createElement('style');
+        style.innerText = `
+            #aggregates-button {
+                background-image: url(https://img.icons8.com/small/32/brief.png);
+                background-size: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        `;
+        document.head.appendChild(style);
     }
     // highlight-end
 
@@ -185,7 +196,7 @@ class AggregatesExtension extends Autodesk.Viewing.Extension {
         this._aggregatesButton.onClick = () => {
             // highlight-start
             if (!this._aggregatesPanel) {
-                this._aggregatesPanel = new AggregatesPanel(this.viewer, 'aggregates-barchart', 'Property Aggregates');
+                this._aggregatesPanel = new AggregatesPanel(this.viewer, 'model-summary', 'Model Summary');
                 if (this.viewer.model) {
                     this.update();
                 }
@@ -195,8 +206,19 @@ class AggregatesExtension extends Autodesk.Viewing.Extension {
             this._aggregatesButton.setState(this._aggregatesPanel.isVisible() ? ACTIVE : INACTIVE);
             // highlight-end
         };
-        this._aggregatesButton.setToolTip('Show Property Aggregates');
+        this._aggregatesButton.setToolTip('Show Model Summary');
         group.addControl(this._aggregatesButton);
+
+        const style = document.createElement('style');
+        style.innerText = `
+            #aggregates-button {
+                background-image: url(https://img.icons8.com/small/32/brief.png);
+                background-size: 24px;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     _removeUI() {
