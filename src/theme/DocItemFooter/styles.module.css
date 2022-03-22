@@ -5,6 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+.container {
+  border-top: solid #eee;
+  padding-top: 0.5em;
+  font-size: smaller;
+}
+
 .questions {
   text-align: right;
 }
