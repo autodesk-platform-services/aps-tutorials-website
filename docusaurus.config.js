@@ -34,15 +34,15 @@ module.exports = {
                     position: 'left',
                     label: 'Tutorials'
                 },
-                {
-                    type: 'localeDropdown',
-                    position: 'right',
-                },
-                {
-                    href: 'https://github.com/petrbroz/forge-samples-docs',
-                    label: 'GitHub',
-                    position: 'right'
-                }
+                // {
+                //     type: 'localeDropdown',
+                //     position: 'right',
+                // },
+                // {
+                //     href: 'https://github.com/petrbroz/forge-samples-docs',
+                //     label: 'GitHub',
+                //     position: 'right'
+                // }
             ]
         },
         footer: {
