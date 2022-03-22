@@ -36,6 +36,13 @@ Try copying the ID of one of the hubs, and use it in another address: http://loc
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
 
+:::info
+If you skipped the login procedure in the previous step, or restarted your server application,
+you may need to go to [http://localhost:8080/api/auth/login](http://localhost:8080/api/auth/login)
+again to make sure that all the authentication data is available in cookies before testing
+the `/api/hubs` endpoint.
+:::
+
 :::tip
 If you are using Google Chrome, consider installing [JSON Formatter](https://chrome.google.com/webstore/detail/json-formatter/bcjindcccaagfpapjjmafapmmgkkhgoa?hl=en)
 or a similar extension to automatically format JSON responses.
