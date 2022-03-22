@@ -11,7 +11,40 @@ Here's a couple of things you want to do before building your first Forge applic
 If you don't have a Forge account yet, sign up for one on https://forge.autodesk.com.
 You can take advantage of a trial subscription that is valid for 3 months.
 
+![Sign Up](./_shared/sign-up.png)
+
 ## Create app credentials
 
-Create a new Forge application under https://forge.autodesk.com/myapps, and store
-the _Client ID_ and _Client Secret_ credentials as we will need them later.
+In order to authenticate ourselves to the Forge platform, we will need to generate
+_app credentials_ (specifically, a _client ID_ and _client secret_) for our application.
+
+After logging into the Forge developer portal, go to _My Apps_:
+
+![My Apps](./_shared/my-apps.png)
+
+And click on the _Create App_ button:
+
+![Create App](./_shared/create-app.png)
+
+Now, let's fill out the basic information about our application. The _App name_,
+_App description_, and _Callback URL_ fields are all required, the rest is optional.
+
+![App Information](./_shared/app-information.png)
+
+:::caution
+Pay close attention to the _Callback URL_ field. This is the address your application's
+users will be redirected to after logging in with their Autodesk credentials. It can be
+any arbitrary URL but it has to match exactly the URL your server application expects.
+In our tutorials we will always use the same address: `http://localhost:8080/api/auth/callback`.
+:::
+
+Finally, enable the APIs you want your application to have access to. Unless you have
+any specific reason for limiting your application's access to the different services,
+enable everything.
+
+![Enable APIs](./_shared/enable-apis.png)
+
+And that's it. Now let's just store your _client ID_ and _client secret_ credentials as
+we will need those **very** soon!
+
+![App Ready](./_shared/app-ready.png)
