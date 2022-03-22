@@ -2,7 +2,9 @@
 sidebar_position: 1
 ---
 
-# Introduction
+# Hubs Browser
+
+## Introduction
 
 In this tutorial we're going to build a Forge application that will let us
 browse through our designs in 3rd party applications built on top of the platform
