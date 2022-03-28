@@ -1,247 +1,261 @@
-# Aggregates Panel
+# Model Summary
 
 In this step we will create another viewer extension, this time introducing custom UI elements
 as well. We will add a custom button to the viewer toolbar, and when the button is clicked,
-we display a docking panel with data collected by the `SummaryExtension`.
+we display a docking panel with the summary of property values in different design elements.
 
 ## Extension skeleton
 
-Just like with the previous extension, let's create a new file under the `extensions`
-subfolder, call it `aggregates.js`, and populate it with the following code:
+Just like with the previous extension, create a new file under the `extensions` subfolder,
+call it `SummaryExtension.js`, and populate it with the following code:
 
-```js
-class AggregatesExtension extends Autodesk.Viewing.Extension {
+```js title="wwwroot/extensions/SummaryExtension.js"
+import { BaseExtension } from './BaseExtension.js';
+
+class SummaryExtension extends BaseExtension {
     constructor(viewer, options) {
         super(viewer, options);
     }
 
-    async load() {
-        console.log('AggregatesExtension loaded.');
+    load() {
+        super.load();
+        console.log('SummaryExtension loaded.');
         return true;
     }
 
-    async unload() {
-        console.log('AggregatesExtension unloaded.');
+    unload() {
+        super.unload();
+        console.log('SummaryExtension unloaded.');
         return true;
+    }
+
+    onModelLoaded(model) {
+        super.onModelLoaded(model);
+        this.update();
+    }
+
+    onSelectionChanged(model, dbids) {
+        super.onSelectionChanged(model, dbids);
+        this.update();
+    }
+
+    onIsolationChanged(model, dbids) {
+        super.onIsolationChanged(model, dbids);
+        this.update();
+    }
+
+    update() {
+        // TODO
     }
 }
 
-Autodesk.Viewing.theExtensionManager.registerExtension('AggregatesExtension', AggregatesExtension);
+Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
 ```
 
-Import the JavaScript file to our application, and pass the extension ID to the viewer
-constructor:
+Next, import the extension code to our application, and pass the extension ID
+to the viewer constructor:
 
 ```js
-import './extensions/summary.js';
+import './extensions/LoggerExtension.js';
 // highlight-start
-import './extensions/aggregates.js';
+import './extensions/SummaryExtension.js';
 // highlight-end
 ```
 
 ```js
 const config = {
     extensions: [
-        'SummaryExtension',
+        'LoggerExtension',
         // highlight-start
-        'AggregatesExtension',
+        'SummaryExtension',
         // highlight-end
     ]
 };
 const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
 ```
 
-## Toolbar
+## Toolbar button
 
-Next, let's update the `AggregatesExtension` class so that it adds a new button to the viewer
-toolbar when the extension gets loaded:
+Now we will create a new button in the viewer toolbar. Since other extensions will need
+this functionality as well, let's update our `BaseExtension` class (in the `BaseExtension.js` file)
+with the following helper methods:
 
-```js
-class AggregatesExtension extends Autodesk.Viewing.Extension {
+```js title="wwwroot/extensions/BaseExtension.js"
+export class BaseExtension extends Autodesk.Viewing.Extension {
     constructor(viewer, options) {
         super(viewer, options);
-        // highlight-start
-        this._aggregatesButton = null;
-        // highlight-end
+        this._onObjectTreeCreated = (ev) => this.onModelLoaded(ev.model);
+        this._onSelectionChanged = (ev) => this.onSelectionChanged(ev.model, ev.dbIdArray);
+        this._onIsolationChanged = (ev) => this.onIsolationChanged(ev.model, ev.nodeIdArray);
     }
 
-    async load() {
-        console.log('AggregatesExtension loaded.');
+    load() {
+        this.viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this._onObjectTreeCreated);
+        this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this._onSelectionChanged);
+        this.viewer.addEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
         return true;
     }
 
-    async unload() {
-        // highlight-start
-        this._removeUI();
-        // highlight-end
-        console.log('AggregatesExtension unloaded.');
+    unload() {
+        this.viewer.removeEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this._onObjectTreeCreated);
+        this.viewer.removeEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this._onSelectionChanged);
+        this.viewer.removeEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
         return true;
     }
 
-    // highlight-start
-    onToolbarCreated() {
-        this._createUI();
+    onModelLoaded(model) {}
+
+    onSelectionChanged(model, dbids) {}
+
+    onIsolationChanged(model, dbids) {}
+
+    findLeafNodes(model) {
+        return new Promise(function (resolve, reject) {
+            model.getObjectTree(function (tree) {
+                let leaves = [];
+                tree.enumNodeChildren(tree.getRootId(), function (dbid) {
+                    if (tree.getChildCount(dbid) === 0) {
+                        leaves.push(dbid);
+                    }
+                }, true);
+                resolve(leaves);
+            }, reject);
+        });
     }
-    // highlight-end
+
+    async findPropertyNames(model) {
+        const dbids = await this.findLeafNodes(model);
+        return new Promise(function (resolve, reject) {
+            model.getBulkProperties(dbids, {}, function (results) {
+                let propNames = new Set();
+                for (const result of results) {
+                    for (const prop of result.properties) {
+                        propNames.add(prop.displayName);
+                    }
+                }
+                resolve(Array.from(propNames.values()));
+            }, reject);
+        });
+    }
 
     // highlight-start
-    _createUI() {
+    createToolbarButton(buttonId, buttonIconUrl, buttonTooltip) {
         let group = this.viewer.toolbar.getControl('dashboard-toolbar-group');
         if (!group) {
             group = new Autodesk.Viewing.UI.ControlGroup('dashboard-toolbar-group');
             this.viewer.toolbar.addControl(group);
         }
-
-        this._aggregatesButton = new Autodesk.Viewing.UI.Button('aggregates-button');
-        this._aggregatesButton.onClick = () => {
-            // TODO
-        };
-        this._aggregatesButton.setToolTip('Show Property Aggregates');
-        group.addControl(this._aggregatesButton);
-
-        const style = document.createElement('style');
-        style.innerText = `
-            #aggregates-button {
-                background-image: url(https://img.icons8.com/small/32/brief.png);
-                background-size: 24px;
-                background-repeat: no-repeat;
-                background-position: center;
-            }
-        `;
-        document.head.appendChild(style);
+        const button = new Autodesk.Viewing.UI.Button(buttonId);
+        button.setToolTip(buttonTooltip);
+        group.addControl(button);
+        const icon = button.container.querySelector('.adsk-button-icon');
+        if (icon) {
+            icon.style.backgroundImage = `url(${buttonIconUrl})`; 
+            icon.style.backgroundSize = `24px`; 
+            icon.style.backgroundRepeat = `no-repeat`; 
+            icon.style.backgroundPosition = `center`; 
+        }
+        return button;
     }
     // highlight-end
 
     // highlight-start
-    _removeUI() {
-        if (this._aggregatesButton) {
-            this.viewer.toolbar.getControl('dashboard-toolbar-group').removeControl(this._aggregatesButton);
-            this._aggregatesButton = null;
-        }
+    removeToolbarButton(button) {
+        const group = this.viewer.toolbar.getControl('dashboard-toolbar-group');
+        group.removeControl(button);
     }
     // highlight-end
 }
-
-Autodesk.Viewing.theExtensionManager.registerExtension('AggregatesExtension', AggregatesExtension);
 ```
+
+The new code is using classes from the `Autodesk.Viewing.UI` namespace to create
+a new toolbar button group, and a new toolbar button with specific ID, icon URL,
+and tooltip message.
+
+Now let's use these helper methods in the `SummaryExtension` class:
+
+```js title="wwwroot/extensions/SummaryExtension.js"
+import { BaseExtension } from './BaseExtension.js';
+
+class SummaryExtension extends BaseExtension {
+    constructor(viewer, options) {
+        super(viewer, options);
+        // highlight-start
+        this._button = null;
+        // highlight-end
+    }
+
+    load() {
+        super.load();
+        console.log('SummaryExtension loaded.');
+        return true;
+    }
+
+    unload() {
+        super.unload();
+        // highlight-start
+        if (this._button) {
+            this.removeToolbarButton(this._button);
+            this._button = null;
+        }
+        // highlight-end
+        console.log('SummaryExtension unloaded.');
+        return true;
+    }
+
+    onToolbarCreated() {
+        // highlight-start
+        this._button = this.createToolbarButton('summary-button', 'https://img.icons8.com/small/32/brief.png', 'Show Model Summary');
+        this._button.onClick = () => {
+            // TODO
+        };
+        // highlight-end
+    }
+
+    onModelLoaded(model) {
+        super.onModelLoaded(model);
+        this.update();
+    }
+
+    onSelectionChanged(model, dbids) {
+        super.onSelectionChanged(model, dbids);
+        this.update();
+    }
+
+    onIsolationChanged(model, dbids) {
+        super.onIsolationChanged(model, dbids);
+        this.update();
+    }
+
+    update() {
+        // TODO
+    }
+}
+
+Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
+```
+
+The `onToolbarCreated` method will be automatically called by the viewer when (and if)
+the toolbar is ready. Note that the viewer may be activated in a "headless" mode,
+in which case no UI will be created, and the `onToolbarCreated` method will not be called.
 
 ## Docking panel
 
-And finally, update the `AggregatesExtension` extension so that when the user clicks on
+And finally, we update the `SummaryExtension` extension so that when the user clicks on
 the toolbar button, we display a custom viewer panel with data aggregated from properites
-of the currently loaded design. We also introduce a couple of event handlers to make sure
-that the panel is updated whenever the user selects or isolates specific design elements:
+of the currently loaded design.
 
-```js
-class AggregatesExtension extends Autodesk.Viewing.Extension {
-    constructor(viewer, options) {
-        super(viewer, options);
-        this._aggregatesButton = null;
-        // highlight-start
-        this._aggregatesPanel = null;
-        // For now, the names of properties we want to compute the aggregates for are hard-coded.
-        // In future these could be retrieved via the extension `options`, or perhaps set in the UI.
-        this._properties = ['Length', 'Area', 'Volume', 'Density', 'Mass', 'Price'];
-        this.update = this.update.bind(this);
-        // highlight-end
-    }
+Start by creating a `SummaryPanel.js` file in the same folder where `SummaryExtension.js`
+is located, and add the following code to it:
 
-    async load() {
-        // highlight-start
-        this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this.update);
-        this.viewer.addEventListener(Autodesk.Viewing.ISOLATE_EVENT, this.update);
-        // highlight-end
-        console.log('AggregatesExtension loaded.');
-        return true;
-    }
-
-    async unload() {
-        this._removeUI();
-        // highlight-start
-        this.viewer.removeEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this.update);
-        this.viewer.removeEventListener(Autodesk.Viewing.ISOLATE_EVENT, this.update);
-        // highlight-end
-        console.log('AggregatesExtension unloaded.');
-        return true;
-    }
-
-    onToolbarCreated() {
-        this._createUI();
-    }
-
-    // highlight-start
-    update() {
-        if (this._aggregatesPanel) {
-            const selectedIds = this.viewer.getSelection();
-            const isolatedIds = this.viewer.getIsolatedNodes();
-            if (selectedIds.length > 0) { // If any nodes are selected, compute the aggregates for them
-                this._aggregatesPanel.update(this.viewer.model, selectedIds, this._properties);
-            } else if (isolatedIds.length > 0) { // Or, if any nodes are isolated, compute the aggregates for those
-                this._aggregatesPanel.update(this.viewer.model, isolatedIds, this._properties);
-            } else { // Otherwise compute the aggregates for all nodes
-                this._aggregatesPanel.update(this.viewer.model, [], this._properties);
-            }
-        }
-    }
-    // highlight-end
-
-    _createUI() {
-        let group = this.viewer.toolbar.getControl('dashboard-toolbar-group');
-        if (!group) {
-            group = new Autodesk.Viewing.UI.ControlGroup('dashboard-toolbar-group');
-            this.viewer.toolbar.addControl(group);
-        }
-
-        this._aggregatesButton = new Autodesk.Viewing.UI.Button('aggregates-button');
-        this._aggregatesButton.onClick = () => {
-            // highlight-start
-            if (!this._aggregatesPanel) {
-                this._aggregatesPanel = new AggregatesPanel(this.viewer, 'model-summary', 'Model Summary');
-                if (this.viewer.model) {
-                    this.update();
-                }
-            }
-            this._aggregatesPanel.setVisible(!this._aggregatesPanel.isVisible());
-            const { ACTIVE, INACTIVE } = Autodesk.Viewing.UI.Button.State;
-            this._aggregatesButton.setState(this._aggregatesPanel.isVisible() ? ACTIVE : INACTIVE);
-            // highlight-end
-        };
-        this._aggregatesButton.setToolTip('Show Model Summary');
-        group.addControl(this._aggregatesButton);
-
-        const style = document.createElement('style');
-        style.innerText = `
-            #aggregates-button {
-                background-image: url(https://img.icons8.com/small/32/brief.png);
-                background-size: 24px;
-                background-repeat: no-repeat;
-                background-position: center;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    _removeUI() {
-        if (this._aggregatesPanel) {
-            this._aggregatesPanel.setVisible(false);
-            this._aggregatesPanel = null;
-        }
-        if (this._aggregatesButton) {
-            this.viewer.toolbar.getControl('dashboard-toolbar-group').removeControl(this._aggregatesButton);
-            this._aggregatesButton = null;
-        }
-    }
-}
-
-// highlight-start
-class AggregatesPanel extends Autodesk.Viewing.UI.PropertyPanel {
-    constructor(viewer, id, title) {
-        super(viewer.container, id, title);
-        this.viewer = viewer;
+```js title="wwwroot/extensions/SummaryPanel.js"
+export class SummaryPanel extends Autodesk.Viewing.UI.PropertyPanel {
+    constructor(extension, id, title) {
+        super(extension.viewer.container, id, title);
+        this.extension = extension;
     }
 
     async update(model, dbids, propNames) {
-        const summaryExt = this.viewer.getExtension('SummaryExtension');
         this.removeAllProperties();
         for (const propName of propNames) {
             const initialValue = { sum: 0, count: 0, min: Infinity, max: -Infinity, units: undefined };
@@ -257,7 +271,7 @@ class AggregatesPanel extends Autodesk.Viewing.UI.PropertyPanel {
                     units: aggregate.units || property.units
                 };
             };
-            const { sum, count, min, max, units } = await summaryExt.aggregatePropertyValues(model, dbids, propName, aggregateFunc, initialValue);
+            const { sum, count, min, max, units } = await this.aggregatePropertyValues(model, dbids, propName, aggregateFunc, initialValue);
             if (count > 0) {
                 const category = propName;
                 const suffix = units ? ' ' + units : '';
@@ -269,17 +283,132 @@ class AggregatesPanel extends Autodesk.Viewing.UI.PropertyPanel {
             }
         }
     }
+
+    async aggregatePropertyValues(model, dbids, propertyName, aggregateFunc, initialValue = 0) {
+        return new Promise(function (resolve, reject) {
+            let aggregatedValue = initialValue;
+            model.getBulkProperties(dbids, { propFilter: [propertyName] }, function (results) {
+                for (const result of results) {
+                    if (result.properties.length > 0) {
+                        const prop = result.properties[0];
+                        aggregatedValue = aggregateFunc(aggregatedValue, prop.displayValue, prop);
+                    }
+                }
+                resolve(aggregatedValue);
+            }, reject);
+        });
+    }
 }
+```
+
+The new class is derived from [Autodesk.Viewing.UI.PropertyPanel](https://forge.autodesk.com/en/docs/viewer/v7/reference/UI/PropertyPanel/)
+which is the standard panel UI used for displaying properties of selected design elements.
+In this case we use the `removeAllProperties` and `addProperty` methods to display different
+kind of data. Given a specific set of object IDs and property names, the `SummaryPanel` will
+display aggregated values (count, sum, average, minimum, and maximum) of these properties
+across all objects.
+
+Finally, let's add the panel to our extension:
+
+```js title="wwwroot/extensions/SummaryExtension.js"
+import { BaseExtension } from './BaseExtension.js';
+// highlight-start
+import { SummaryPanel } from './SummaryPanel.js';
 // highlight-end
 
-Autodesk.Viewing.theExtensionManager.registerExtension('AggregatesExtension', AggregatesExtension);
+// highlight-start
+const SUMMARY_PROPS = ['Length', 'Area', 'Volume', 'Density', 'Mass', 'Price'];
+// highlight-end
+
+class SummaryExtension extends BaseExtension {
+    constructor(viewer, options) {
+        super(viewer, options);
+        this._button = null;
+        // highlight-start
+        this._panel = null;
+        // highlight-end
+    }
+
+    load() {
+        super.load();
+        console.log('SummaryExtension loaded.');
+        return true;
+    }
+
+    unload() {
+        super.unload();
+        if (this._button) {
+            this.removeToolbarButton(this._button);
+            this._button = null;
+        }
+        // highlight-start
+        if (this._panel) {
+            this._panel.setVisible(false);
+            this._panel.uninitialize();
+            this._panel = null;
+        }
+        // highlight-end
+        console.log('SummaryExtension unloaded.');
+        return true;
+    }
+
+    onToolbarCreated() {
+        // highlight-start
+        this._panel = new SummaryPanel(this, 'model-summary-panel', 'Model Summary');
+        // highlight-end
+        this._button = this.createToolbarButton('summary-button', 'https://img.icons8.com/small/32/brief.png', 'Show Model Summary');
+        this._button.onClick = () => {
+            // highlight-start
+            this._panel.setVisible(!this._panel.isVisible());
+            this._button.setState(this._panel.isVisible() ? Autodesk.Viewing.UI.Button.State.ACTIVE : Autodesk.Viewing.UI.Button.State.INACTIVE);
+            if (this._panel.isVisible()) {
+                this.update();
+            }
+            // highlight-end
+        };
+    }
+
+    onModelLoaded(model) {
+        super.onModelLoaded(model);
+        this.update();
+    }
+
+    onSelectionChanged(model, dbids) {
+        super.onSelectionChanged(model, dbids);
+        this.update();
+    }
+
+    onIsolationChanged(model, dbids) {
+        super.onIsolationChanged(model, dbids);
+        this.update();
+    }
+
+    async update() {
+        // highlight-start
+        if (this._panel) {
+            const selectedIds = this.viewer.getSelection();
+            const isolatedIds = this.viewer.getIsolatedNodes();
+            if (selectedIds.length > 0) { // If any nodes are selected, compute the aggregates for them
+                this._panel.update(this.viewer.model, selectedIds, SUMMARY_PROPS);
+            } else if (isolatedIds.length > 0) { // Or, if any nodes are isolated, compute the aggregates for those
+                this._panel.update(this.viewer.model, isolatedIds, SUMMARY_PROPS);
+            } else { // Otherwise compute the aggregates for all nodes
+                const dbids = await this.findLeafNodes(this.viewer.model);
+                this._panel.update(this.viewer.model, dbids, SUMMARY_PROPS);
+            }
+        }
+        // highlight-end
+    }
+}
+
+Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
 ```
 
 ## Try it out
 
 This time we can test our new extension directly in the viewer. Try clicking the new toolbar
-button to open our aggregates panel. The panel shows various aggregates of properties
-we specified in the extension constructor (in our case, _Length_, _Area_, _Volume_, _Density_,
+button to open our summary panel. The panel shows various aggregates of properties
+we hard-coded in the `SUMMARY_PROPS` constant (_Length_, _Area_, _Volume_, _Density_,
 _Mass_, and _Price_) for all objects. And when we isolate or select some of the design
 elements by hand, the aggregated values should reflect that as well.
 

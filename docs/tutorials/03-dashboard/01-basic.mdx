@@ -1,112 +1,141 @@
 # Basic Extension
 
 Forge Viewer provides its own set of [APIs](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Viewer3D)
-that you can use to customize its look and feel, behavior, and even the rendered content. While you _could_ just
-start sprinkling your viewer customization code here and there, it is a good practice to encapsulate
-custom viewer functionality into a _viewer extension_. That way you can easily share the same
+that you can use to customize its look and feel, behavior, and even the rendered content. While you _could_
+simply sprinkle your custom viewer logic in random places of the client-side code, it is a good practice
+to encapsulate any viewer functionality into a _viewer extension_. That way you can easily share the same
 functionality across different pages of your web application, and even across different projects entirely.
 
-Let's start by implementing a simple viewer extension that will extract different types of information
-from the currently loaded design. Later on we will implement additional extensions that will display this
-information in different ways.
+Let's start by implementing a simple viewer extension that will react to various viewer events, and output
+different types of information about the currently loaded design.
 
 ## Extension skeleton
 
+Later in this tutorial we will implement other extensions that may share similar functionality, so we will
+first implement a base class that all the extensions will be derived from.
+
 Go to the folder that contains your client side assets such as the `index.html` page (in our case it's
 the `wwwroot` folder), and create a new subfolder called `extensions`. This is where we will store all
-our viewer extensions. Create a `summary.js` file in the `extensions` folder, and populate it with
+our viewer extensions. Create a `BaseExtension.js` file in the `extensions` folder, and populate it with
 the following content:
 
-```js
-class SummaryExtension extends Autodesk.Viewing.Extension {
+```js title="wwwroot/extensions/BaseExtension.js"
+export class BaseExtension extends Autodesk.Viewing.Extension {
     constructor(viewer, options) {
         super(viewer, options);
     }
 
     load() {
-        console.log('SummaryExtension loaded.');
         return true;
     }
 
     unload() {
-        console.log('SummaryExtension unloaded.');
         return true;
     }
 }
-
-Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
 ```
 
 As you can see, a viewer extension is basically a subclass of [Autodesk.Viewing.Extension](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Extension)
-that overrides some of its lifecycle methods. For now we have only overridden the following methods:
+that overrides some of its lifecycle methods. For now we have overridden the following methods:
 
 - `load` - called when the extension is loaded by the viewer, returning a boolean flag indicating whether the loading was successful
 - `unload` - called when the extension is unloaded by the viewer, returning a boolean flag indicating whether the unloading was successful
 
-We also **register** the extension under a specific unique ID so that the viewer can later find it. This is done via
-a singleton object called `Autodesk.Viewing.theExtensionManager` and its `registerExtension(extensionId, extensionClass)`
-method.
+In its constructor the extension always receives the instance of the viewer that "owns" this extension,
+and optionally another object with extension-specific inputs.
 
-Now, let's make sure the script is loaded by our web application. In our case we can simply add the following
-`import` statement to the top of the `wwwroot/viewer.js` file:
+## Event handling
 
-```js
-import './extensions/summary.js';
-```
+Now, let's update our extension so that it reacts to different kinds of events in the viewer, for example,
+when a new model is loaded, when the user selects one or more elements, or when one or more elements are
+"isolated". Update the `BaseExtension` class with the following code:
 
-:::info
-If you're working with a different application source code, you may need to include the file
-using a `<script>` tag in your `index.html` page, for example, like so:
-
-```html
-<script src="extensions/summary.js"></script>
-```
-:::
-
-Finally, we need to tell the viewer to load this extension when it's initialized. We can do that
-by passing the extension ID to the `Autodesk.Viewing.GuiViewer3D` constructor, like so:
-
-```js
-const config = {
-    extensions: [
-        'SummaryExtension',
-    ]
-};
-const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
-```
-
-## Metadata
-
-Now let's add some custom functionality to our extension. We will start with two helper methods,
-one that will traverse the object hierarchy of a design and return all _leaf objects_ (that is,
-objects that do not have any other children), and another one that will retrieve the names of all
-properties found on all objects in the model. Add the following two methods to your
-`SummaryExtension` class:
-
-```js
-class SummaryExtension extends Autodesk.Viewing.Extension {
+```js title="wwwroot/extensions/BaseExtension.js"
+export class BaseExtension extends Autodesk.Viewing.Extension {
     constructor(viewer, options) {
         super(viewer, options);
+        // highlight-start
+        this._onObjectTreeCreated = (ev) => this.onModelLoaded(ev.model);
+        this._onSelectionChanged = (ev) => this.onSelectionChanged(ev.model, ev.dbIdArray);
+        this._onIsolationChanged = (ev) => this.onIsolationChanged(ev.model, ev.nodeIdArray);
+        // highlight-end
     }
 
     load() {
-        console.log('SummaryExtension loaded.');
+        // highlight-start
+        this.viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this._onObjectTreeCreated);
+        this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this._onSelectionChanged);
+        this.viewer.addEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
+        // highlight-end
         return true;
     }
 
     unload() {
-        console.log('SummaryExtension unloaded.');
+        // highlight-start
+        this.viewer.removeEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this._onObjectTreeCreated);
+        this.viewer.removeEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this._onSelectionChanged);
+        this.viewer.removeEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
+        // highlight-end
         return true;
     }
 
     // highlight-start
-    /**
-     * Finds all leaf objects (that is, objects that do not have any children)
-     * in the object hierarchy of a model.
-     * @async
-     * @param {Autodesk.Viewing.Model} model Forge model.
-     * @returns {Promise<number[]>} IDs of all leaf objects.
-     */
+    onModelLoaded(model) {}
+
+    onSelectionChanged(model, dbids) {}
+
+    onIsolationChanged(model, dbids) {}
+    // highlight-end
+}
+```
+
+As you can see, the viewer provides `addEventListener` and `removeEventListener` methods that we can use
+to handle different viewer events. In this case we're handling the `OBJECT_TREE_CREATED_EVENT`,
+`SELECTION_CHANGED_EVENT`, and `ISOLATE_EVENT` events by calling the `onModelLoaded`, `onSelectionChanged`,
+and `onIsolationChanged` methods respectively. For now these methods don't do anything - we will override
+them in other extensions derived from the `BaseExtension` class.
+
+:::tip
+Full list of viewer events can be found at
+[https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/#events](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/#events).
+:::
+
+## Metadata queries
+
+Most of the extensions in this tutorial will need to access the metadata of the currently loaded design,
+for example, to iterate through the design's logical hierarchy, or to query properties of elements.
+Let's update our `BaseExtension` class with a couple of helper methods for this purpose:
+
+```js title="wwwroot/extensions/BaseExtension.js"
+export class BaseExtension extends Autodesk.Viewing.Extension {
+    constructor(viewer, options) {
+        super(viewer, options);
+        this._onObjectTreeCreated = (ev) => this.onModelLoaded(ev.model);
+        this._onSelectionChanged = (ev) => this.onSelectionChanged(ev.model, ev.dbIdArray);
+        this._onIsolationChanged = (ev) => this.onIsolationChanged(ev.model, ev.nodeIdArray);
+    }
+
+    load() {
+        this.viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this._onObjectTreeCreated);
+        this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this._onSelectionChanged);
+        this.viewer.addEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
+        return true;
+    }
+
+    unload() {
+        this.viewer.removeEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this._onObjectTreeCreated);
+        this.viewer.removeEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this._onSelectionChanged);
+        this.viewer.removeEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
+        return true;
+    }
+
+    onModelLoaded(model) {}
+
+    onSelectionChanged(model, dbids) {}
+
+    onIsolationChanged(model, dbids) {}
+
+    // highlight-start
     findLeafNodes(model) {
         return new Promise(function (resolve, reject) {
             model.getObjectTree(function (tree) {
@@ -123,12 +152,6 @@ class SummaryExtension extends Autodesk.Viewing.Extension {
     // highlight-end
 
     // highlight-start
-    /**
-     * Finds names of all properties available in a model.
-     * @async
-     * @param {Autodesk.Viewing.Model} model Forge model.
-     * @returns {Promise<string[]>} List of property names.
-     */
     async findPropertyNames(model) {
         const dbids = await this.findLeafNodes(model);
         return new Promise(function (resolve, reject) {
@@ -145,11 +168,10 @@ class SummaryExtension extends Autodesk.Viewing.Extension {
     }
     // highlight-end
 }
-
-Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
 ```
 
-Here we're already using some of the first viewer APIs such as:
+Here we're starting to use the [Model](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model) class
+(representing the currently loaded design) and some of its methods, for example:
 
 - [Model#getObjectTree](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model/#getobjecttree-onsuccesscallback-onerrorcallback) - used to
 retrieve the object hierarchy (sometimes called an "instance tree") of the model
@@ -159,146 +181,51 @@ retrieve the metadata for one or more objects
 - [InstanceTree#enumNodeChildren](https://forge.autodesk.com/en/docs/viewer/v7/reference/Private/InstanceTree/#enumnodechildren-node-callback-recursive) - used to
 enumerate (recursively) all children of a specific object
 
-## Aggregation
+## Simple extension
 
-Let's finalize our first extension by adding two more methods: one for finding all the values
-that appear for a specific property (incl. the list of object IDs where this property value is found),
-and another one for aggregating the values of a specific property across a list of objects.
-Add the following methods to the `SummaryExtension` class:
+Alright, now to try this new functionality in the viewer, let's create another extension
+derived from the `BaseExtension` class, and load it in our viewer application. Create a
+`LoggerExtension.js` file in the same folder where `BaseExtension.js` is located, and
+populate it with the following code:
 
-```js
-class SummaryExtension extends Autodesk.Viewing.Extension {
-    constructor(viewer, options) {
-        super(viewer, options);
-    }
+```js title="wwwroot/extensions/LoggerExtension.js"
+import { BaseExtension } from './BaseExtension.js';
 
+class LoggerExtension extends BaseExtension {
     load() {
-        console.log('SummaryExtension loaded.');
+        super.load();
+        console.log('LoggerExtension loaded.');
         return true;
     }
 
     unload() {
-        console.log('SummaryExtension unloaded.');
+        super.unload();
+        console.log('LoggerExtension unloaded.');
         return true;
     }
 
-    /**
-     * Finds all leaf objects (that is, objects that do not have any children)
-     * in the object hierarchy of a model.
-     * @async
-     * @param {Autodesk.Viewing.Model} model Forge model.
-     * @returns {Promise<number[]>} IDs of all leaf objects.
-     */
-    findLeafNodes(model) {
-        return new Promise(function (resolve, reject) {
-            model.getObjectTree(function (tree) {
-                let leaves = [];
-                tree.enumNodeChildren(tree.getRootId(), function (dbid) {
-                    if (tree.getChildCount(dbid) === 0) {
-                        leaves.push(dbid);
-                    }
-                }, true);
-                resolve(leaves);
-            }, reject);
-        });
+    async onModelLoaded(model) {
+        super.onModelLoaded(model);
+        const props = await this.findPropertyNames(this.viewer.model);
+        console.log('New model has been loaded. Its objects contain the following properties:', props);
     }
 
-    /**
-     * Finds names of all properties available in a model.
-     * @async
-     * @param {Autodesk.Viewing.Model} model Forge model.
-     * @returns {Promise<string[]>} List of property names.
-     */
-    async findPropertyNames(model) {
-        const dbids = await this.findLeafNodes(model);
-        return new Promise(function (resolve, reject) {
-            model.getBulkProperties(dbids, {}, function (results) {
-                let propNames = new Set();
-                for (const result of results) {
-                    for (const prop of result.properties) {
-                        propNames.add(prop.displayName);
-                    }
-                }
-                resolve(Array.from(propNames.values()));
-            }, reject);
-        });
+    async onSelectionChanged(model, dbids) {
+        super.onSelectionChanged(model, dbids);
+        console.log('Selection has changed', dbids);
     }
 
-    // highlight-start
-    /**
-     * Finds all the different values that appear for a specific property,
-     * together with a list of IDs of objects that contain these values.
-     * @async
-     * @param {Autodesk.Viewing.Model} model Forge model.
-     * @param {string} propertyName Name of property to compute the histogram for.
-     * @returns {Promise<Map<string, number[]>>} Mapping of property values to lists of object IDs that contain these values.
-     */
-    async computePropertyHistogram(model, propertyName) {
-        const dbids = await this.findLeafNodes(model);
-        return new Promise(function (resolve, reject) {
-            model.getBulkProperties(dbids, { propFilter: [propertyName] }, function (results) {
-                let histogram = new Map();
-                for (const result of results) {
-                    if (result.properties.length > 0) {
-                        const key = result.properties[0].displayValue;
-                        if (histogram.has(key)) {
-                            histogram.get(key).push(result.dbId);
-                        } else {
-                            histogram.set(key, [result.dbId]);
-                        }
-                    }
-                }
-                resolve(histogram);
-            }, reject);
-        });
+    onIsolationChanged(model, dbids) {
+        super.onIsolationChanged(model, dbids);
+        console.log('Isolation has changed', dbids);
     }
-    // highlight-end
-
-    // highlight-start
-    /**
-     * Aggregates values of a specific property from a range of objects, using a specific aggregating function.
-     * @async
-     * @param {Autodesk.Viewing.Model} model Forge model.
-     * @param {number[]} [dbids] Optional list of object IDs to include in the aggregation (by default, all objects are included).
-     * @param {string} propertyName Name of property whose values will be aggregated.
-     * @param {(aggregateValue: number, currentValue: number, property) => number} aggregateFunc Aggregating function for the property values.
-     * For example, `(sum, current, prop) => { return sum + current; }`.
-     * @param {number} initialValue Initial value for the aggregating function.
-     * @returns {Promise<number>} Final aggregated value.
-     */
-    async aggregatePropertyValues(model, dbids, propertyName, aggregateFunc, initialValue = 0) {
-        if (!dbids) {
-            dbids = await this.findLeafNodes(model);
-        }
-        return new Promise(function (resolve, reject) {
-            let aggregatedValue = initialValue;
-            model.getBulkProperties(dbids, { propFilter: [propertyName] }, function (results) {
-                for (const result of results) {
-                    if (result.properties.length > 0) {
-                        const prop = result.properties[0];
-                        aggregatedValue = aggregateFunc(aggregatedValue, prop.displayValue, prop);
-                    }
-                }
-                resolve(aggregatedValue);
-            }, reject);
-        });
-    }
-    // highlight-end
 }
 
-Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
+Autodesk.Viewing.theExtensionManager.registerExtension('LoggerExtension', LoggerExtension);
 ```
 
-## Try it out
-
-Alright, our first extension is now ready to use. It doesn't have any user interface but we can
-test it out directly in the browser console. Start your application as usual, open it in the browser,
-load one of your 3D models, and then run the following commands in the console:
-
-```js
-let summaryExt = NOP_VIEWER.getExtension('SummaryExtension');
-summaryExt.findPropertyNames(NOP_VIEWER.model).then(console.log).catch(console.error);
-```
+The new extension simply overrides methods of the `BaseExtension` class, and outputs some
+useful information to the browser console in reaction to different viewer events.
 
 :::info
 Browser console is essential for web development and debugging. Learn more on how to use it for
@@ -308,18 +235,45 @@ Browser console is essential for web development and debugging. Learn more on ho
 and [Safari](https://developer.apple.com/safari/tools/).
 :::
 
-:::warning
-`NOP_VIEWER` is a reference to the current instance of `Autodesk.Viewing.Viewer3D` that you
-can use to quickly debug or experiment with the viewer APIs in the browser console, but
-we do not recommend using it in production code!
+We also **register** the extension under a specific unique ID so that the viewer can later find it.
+This is done via a singleton object called `Autodesk.Viewing.theExtensionManager` and its
+`registerExtension(extensionId, extensionClass)` method.
+
+Now, let's make sure the extension code is loaded by our web application. In our case we can simply
+add the following `import` statement to the top of the `wwwroot/viewer.js` file:
+
+```js
+import './extensions/LoggerExtension.js';
+```
+
+:::info
+If you're working with a different application source code, you may need to include the file
+using a `<script>` tag in your `index.html` page, for example, like so:
+
+```html
+<script type="module" src="extensions/LoggerExtension.js"></script>
+```
 :::
 
-Since we have already configured the viewer to load our `SummaryExtension` during its
-initialization, we can simply retrieve the extension object using the viewer's
-`getExtension` method. The `findPropertyNames` method on our extension returns a promise,
-so we simply chain the output to either `console.log` (if the promise is fulfilled)
-or `console.error` (if the promise is rejected). You will receive different results
-depending on the type of model you have loaded in the viewer. In our case it was a Revit
-model, and the extension returned the following data:
+Finally, we need to tell the viewer to load this extension. We can do that by passing the extension
+ID in a special config object to the `Autodesk.Viewing.GuiViewer3D` constructor:
+
+```js
+const config = {
+    extensions: [
+        'LoggerExtension'
+    ]
+};
+const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
+```
+
+## Try it out
+
+And with that, our first extension is ready to use. It doesn't have any user interface
+but we can test it out in the browser console. Start your application as usual, view it
+in the browser, open the browser console, and load one of your designs into the viewer.
+When the model finishes loading, our `LoggerExtension` will list all properties used
+in this model to the console. And if we select one or more objects in the viewer,
+the extension will list their IDs.
 
 ![Summary Result](./summary-result.png)

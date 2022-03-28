@@ -1,38 +1,33 @@
 # Data Grid
 
 In this final step we will build a viewer extension that will provide a datagrid view
-of `SummaryExtension` data using the open source [Tabulator](http://tabulator.info) library.
+of our design element properties using the open source [Tabulator](http://tabulator.info) library.
 
 ## Extension skeleton
 
-As usual, let's create a new file under the `extensions` subfolder, call it `datagrid.js`,
+As usual, let's create a new file under the `extensions` subfolder, call it `DataGridExtension.js`,
 and populate it with the following code:
 
-```js
-class DataGridExtension extends Autodesk.Viewing.Extension {
+```js title="wwwroot/extensions/DataGridExtension.js"
+import { BaseExtension } from './BaseExtension.js';
+
+class DataGridExtension extends BaseExtension {
     constructor(viewer, options) {
         super(viewer, options);
     }
 
     async load() {
-        const loadCSS = (href) => new Promise(function (resolve, reject) {
-            const el = document.createElement('link');
-            el.rel = 'stylesheet';
-            el.href = href;
-            el.onload = resolve;
-            el.onerror = reject;
-            document.head.appendChild(el);
-        });
+        super.load();
         await Promise.all([
-            Autodesk.Viewing.Private.theResourceLoader.loadScript('https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js', 'moment'),
-            Autodesk.Viewing.Private.theResourceLoader.loadScript('https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js', 'Tabulator'),
-            loadCSS('https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css')
+            this.loadScript('https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js', 'Tabulator'),
+            this.loadStylesheet('https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css')
         ]);
         console.log('DataGridExtension loaded.');
         return true;
     }
 
-    async unload() {
+    unload() {
+        super.unload();
         console.log('DataGridExtension unloaded.');
         return true;
     }
@@ -41,25 +36,25 @@ class DataGridExtension extends Autodesk.Viewing.Extension {
 Autodesk.Viewing.theExtensionManager.registerExtension('DataGridExtension', DataGridExtension);
 ```
 
-This time we're loading multiple dependencies that are required by the Tabulator library.
+This time we're also loading multiple dependencies that are required by the Tabulator library.
 
 Now let's import the JavaScript file to our application, and pass the extension ID to the viewer
 constructor:
 
 ```js
-import './extensions/summary.js';
-import './extensions/aggregates.js';
-import './extensions/histogram.js';
+import './extensions/LoggerExtension.js';
+import './extensions/SummaryExtension.js';
+import './extensions/HistogramExtension.js';
 // highlight-start
-import './extensions/datagrid.js';
+import './extensions/DataGridExtension.js';
 // highlight-end
 ```
 
 ```js
 const config = {
     extensions: [
+        'LoggerExtension',
         'SummaryExtension',
-        'AggregatesExtension',
         'HistogramExtension',
         // highlight-start
         'DataGridExtension',
@@ -74,37 +69,34 @@ const viewer = new Autodesk.Viewing.GuiViewer3D(container, config);
 Next, let's update the `DataGridExtension` class so that it adds a new button to the viewer
 toolbar when the extension gets loaded:
 
-```js
-// Viewer extension providing a datagrid UI via a 3rd party library (http://tabulator.info)
-class DataGridExtension extends Autodesk.Viewing.Extension {
+```js title="wwwroot/extensions/DataGridExtension.js"
+import { BaseExtension } from './BaseExtension.js';
+
+class DataGridExtension extends BaseExtension {
     constructor(viewer, options) {
         super(viewer, options);
         // highlight-start
-        this._dataGridButton = null;
+        this._button = null;
         // highlight-end
     }
 
     async load() {
-        const loadCSS = (href) => new Promise(function (resolve, reject) {
-            const el = document.createElement('link');
-            el.rel = 'stylesheet';
-            el.href = href;
-            el.onload = resolve;
-            el.onerror = reject;
-            document.head.appendChild(el);
-        });
+        super.load();
         await Promise.all([
-            Autodesk.Viewing.Private.theResourceLoader.loadScript('https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js', 'moment'), // kinda hacky...
-            Autodesk.Viewing.Private.theResourceLoader.loadScript('https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js', 'Tabulator'), // kinda hacky...
-            loadCSS('https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css') // kinda hacky...
+            this.loadScript('https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js', 'Tabulator'),
+            this.loadStylesheet('https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css')
         ]);
         console.log('DataGridExtension loaded.');
         return true;
     }
 
-    async unload() {
+    unload() {
+        super.unload();
         // highlight-start
-        this._removeUI();
+        if (this._button) {
+            this.removeToolbarButton(this._button);
+            this._button = null;
+        }
         // highlight-end
         console.log('DataGridExtension unloaded.');
         return true;
@@ -112,42 +104,10 @@ class DataGridExtension extends Autodesk.Viewing.Extension {
 
     // highlight-start
     onToolbarCreated() {
-        this._createUI();
-    }
-    // highlight-end
-
-    // highlight-start
-    _createUI() {
-        let group = this.viewer.toolbar.getControl('dashboard-toolbar-group');
-        if (!group) {
-            group = new Autodesk.Viewing.UI.ControlGroup('dashboard-toolbar-group');
-            this.viewer.toolbar.addControl(group);
-        }
-        this._dataGridButton = new Autodesk.Viewing.UI.Button('datagrid-button');
-        this._dataGridButton.onClick = () => {
+        this._button = this.createToolbarButton('dashboard-datagrid-button', 'https://img.icons8.com/small/32/activity-grid.png', 'Show Data Grid');
+        this._button.onClick = () => {
+            // TODO
         };
-        this._dataGridButton.setToolTip('Show Data Grid');
-        group.addControl(this._dataGridButton);
-
-        const style = document.createElement('style');
-        style.innerText = `
-            #datagrid-button {
-                background-image: url(https://img.icons8.com/small/32/activity-grid.png);
-                background-size: 24px;
-                background-repeat: no-repeat;
-                background-position: center;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    // highlight-end
-
-    // highlight-start
-    _removeUI() {
-        if (this._dataGridButton) {
-            this.viewer.toolbar.getControl('dashboard-toolbar-group').removeControl(this._dataGridButton);
-            this._dataGridButton = null;
-        }
     }
     // highlight-end
 }
@@ -157,106 +117,35 @@ Autodesk.Viewing.theExtensionManager.registerExtension('DataGridExtension', Data
 
 ## Data grid
 
-Finally, we create a custom docking panel that will host the actual Tabulator grid.
+Now let's create a custom docking panel that will host the actual Tabulator grid. Create
+a `DataGridPanel.js` file in the same folder where `DataGridExtension.js` is located, and
+add the following code to it:
 
-```js
-class DataGridExtension extends Autodesk.Viewing.Extension {
-    constructor(viewer, options) {
-        super(viewer, options);
-        this._dataGridButton = null;
-        // highlight-start
-        this._dataGridPanel = null;
-        // highlight-end
+```js title="wwwroot/extensions/DataGridPanel.js"
+const DATAGRID_CONFIG = {
+    requiredProps: ['name', 'Volume', 'Level'], // Which properties should be requested for each object
+    columns: [ // Definition of individual grid columns (see http://tabulator.info for more details)
+        { title: 'ID', field: 'dbid' },
+        { title: 'Name', field: 'name', width: 150 },
+        { title: 'Volume', field: 'volume', hozAlign: 'left', formatter: 'progress' },
+        { title: 'Level', field: 'level' }
+    ],
+    groupBy: 'level', // Optional column to group by
+    createRow: (dbid, name, props) => { // Function generating grid rows based on recieved object properties
+        const volume = props.find(p => p.displayName === 'Volume')?.displayValue;
+        const level = props.find(p => p.displayName === 'Level' && p.displayCategory === 'Constraints')?.displayValue;
+        return { dbid, name, volume, level };
+    },
+    onRowClick: (row, viewer) => {
+        viewer.isolate([row.dbid]);
+        viewer.fitToView([row.dbid]);
     }
+};
 
-    async load() {
-        const loadCSS = (href) => new Promise(function (resolve, reject) {
-            const el = document.createElement('link');
-            el.rel = 'stylesheet';
-            el.href = href;
-            el.onload = resolve;
-            el.onerror = reject;
-            document.head.appendChild(el);
-        });
-        await Promise.all([
-            Autodesk.Viewing.Private.theResourceLoader.loadScript('https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js', 'moment'), // kinda hacky...
-            Autodesk.Viewing.Private.theResourceLoader.loadScript('https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js', 'Tabulator'), // kinda hacky...
-            loadCSS('https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css') // kinda hacky...
-        ]);
-        // highlight-start
-        this.viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, () => {
-            if (this._dataGridPanel) {
-                this._dataGridPanel.setModel(this.viewer.model);
-            }
-        });
-        // highlight-end
-        console.log('DataGridExtension loaded.');
-        return true;
-    }
-
-    async unload() {
-        this._removeUI();
-        console.log('DataGridExtension unloaded.');
-        return true;
-    }
-
-    onToolbarCreated() {
-        this._createUI();
-    }
-
-    _createUI() {
-        let group = this.viewer.toolbar.getControl('dashboard-toolbar-group');
-        if (!group) {
-            group = new Autodesk.Viewing.UI.ControlGroup('dashboard-toolbar-group');
-            this.viewer.toolbar.addControl(group);
-        }
-        this._dataGridButton = new Autodesk.Viewing.UI.Button('datagrid-button');
-        this._dataGridButton.onClick = () => {
-            // highlight-start
-            if (!this._dataGridPanel) {
-                this._dataGridPanel = new DataGridPanel(this.viewer, 'datagrid', 'Data Grid', { x: 10, y: 10 });
-                if (this.viewer.model) {
-                    this._dataGridPanel.setModel(this.viewer.model);
-                }
-            }
-            this._dataGridPanel.setVisible(!this._dataGridPanel.isVisible());
-            const { ACTIVE, INACTIVE } = Autodesk.Viewing.UI.Button.State;
-            this._dataGridButton.setState(this._dataGridPanel.isVisible() ? ACTIVE : INACTIVE);
-            // highlight-end
-        };
-        this._dataGridButton.setToolTip('Show Data Grid');
-        group.addControl(this._dataGridButton);
-
-        const style = document.createElement('style');
-        style.innerText = `
-            #datagrid-button {
-                background-image: url(https://img.icons8.com/small/32/activity-grid.png);
-                background-size: 24px;
-                background-repeat: no-repeat;
-                background-position: center;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    _removeUI() {
-        if (this._dataGridPanel) {
-            this._dataGridPanel.setVisible(false);
-            this._dataGridPanel.uninitialize();
-            this._dataGridPanel = null;
-        }
-        if (this._dataGridButton) {
-            this.viewer.toolbar.getControl('dashboard-toolbar-group').removeControl(this._dataGridButton);
-            this._dataGridButton = null;
-        }
-    }
-}
-
-// highlight-start
-class DataGridPanel extends Autodesk.Viewing.UI.DockingPanel {
-    constructor(viewer, id, title, options) {
-        super(viewer.container, id, title, options);
-        this.viewer = viewer;
+export class DataGridPanel extends Autodesk.Viewing.UI.DockingPanel {
+    constructor(extension, id, title, options) {
+        super(extension.viewer.container, id, title, options);
+        this.extension = extension;
         this.container.style.left = (options.x || 0) + 'px';
         this.container.style.top = (options.y || 0) + 'px';
         this.container.style.width = (options.width || 500) + 'px';
@@ -273,62 +162,117 @@ class DataGridPanel extends Autodesk.Viewing.UI.DockingPanel {
         this.content.style.backgroundColor = 'white';
         this.content.innerHTML = `<div class="datagrid-container" style="position: relative; height: 350px;"></div>`;
         this.container.appendChild(this.content);
+        // See http://tabulator.info
         this.table = new Tabulator('.datagrid-container', {
             height: '100%',
             layout: 'fitColumns',
-            groupBy: 'material',
-            columns: [
-                { title: 'ID', field: 'dbid' },
-                { title: 'Name', field: 'name', width: 150 },
-                { title: 'Volume', field: 'volume', hozAlign: 'left', formatter: 'progress' },
-                { title: 'Material', field: 'material' }
-            ],
-            rowClick: (e, row) => {
-                const { dbid } = row.getData();
-                this.viewer.isolate([dbid]);
-                this.viewer.fitToView([dbid]);
-            }
+            columns: DATAGRID_CONFIG.columns,
+            groupBy: DATAGRID_CONFIG.groupBy,
+            rowClick: (e, row) => DATAGRID_CONFIG.onRowClick(row.getData(), this.extension.viewer)
         });
     }
 
-    async setModel(model) {
-        this.updateTable(model);
-    }
-
-    async updateTable(model) {
-        const getProps = (model, dbids, props) => new Promise(function (resolve, reject) {
-            model.getBulkProperties(dbids, { propFilter: props }, resolve, reject);
+    update(model, dbids) {
+        model.getBulkProperties(dbids, { propFilter: DATAGRID_CONFIG.requiredProps }, (results) => {
+            this.table.replaceData(results.map((result) => DATAGRID_CONFIG.createRow(result.dbId, result.name, result.properties)));
+        }, (err) => {
+            console.error(err);
         });
-        const summaryExt = this.viewer.getExtension('SummaryExtension');
-        const dbids = await summaryExt.findLeafNodes(model);
-        const results = await getProps(model, dbids, ['Name', 'Volume', 'Structural Material', 'name']);
-        this.table.replaceData(results.map(result => {
-            return {
-                dbid: result.dbId,
-                name: result.name,
-                volume: result.properties.find(item => item.displayName === 'Volume')?.displayValue,
-                material: result.properties.find(item => item.displayName === 'Structural Material')?.displayValue
-            };
-        }));
     }
 }
-// highlight-end
-
-Autodesk.Viewing.theExtensionManager.registerExtension('DataGridExtension', DataGridExtension);
 ```
 
 :::info
 To keep things simple, the `DataGridPanel` class is currently hard-coding the grid columns
 to only show a couple of specific properties of our design metadata (specifically the object ID,
-object name, and `Volume` and `Structural Material` properties). Depending on the type of design
-you will be loading into your application, you may want to change these.
+object name, and `Volume` and `Level` properties). Depending on the type of design you will be
+loading into your application, you may want to change these.
 :::
+
+Finally, add the new panel to our extension:
+
+```js title="wwwroot/extensions/DataGridExtension.js"
+import { BaseExtension } from './BaseExtension.js';
+// highlight-start
+import { DataGridPanel } from './DataGridPanel.js';
+// highlight-end
+
+class DataGridExtension extends BaseExtension {
+    constructor(viewer, options) {
+        super(viewer, options);
+        this._button = null;
+        // highlight-start
+        this._panel = null;
+        // highlight-end
+    }
+
+    async load() {
+        super.load();
+        await Promise.all([
+            this.loadScript('https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js', 'Tabulator'),
+            this.loadStylesheet('https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css')
+        ]);
+        console.log('DataGridExtension loaded.');
+        return true;
+    }
+
+    unload() {
+        super.unload();
+        if (this._button) {
+            this.removeToolbarButton(this._button);
+            this._button = null;
+        }
+        // highlight-start
+        if (this._panel) {
+            this._panel.setVisible(false);
+            this._panel.uninitialize();
+            this._panel = null;
+        }
+        // highlight-end
+        console.log('DataGridExtension unloaded.');
+        return true;
+    }
+
+    onToolbarCreated() {
+        // highlight-start
+        this._panel = new DataGridPanel(this, 'dashboard-datagrid-panel', 'Data Grid', { x: 10, y: 10 });
+        // highlight-end
+        this._button = this.createToolbarButton('dashboard-datagrid-button', 'https://img.icons8.com/small/32/activity-grid.png', 'Show Data Grid');
+        this._button.onClick = () => {
+            // highlight-start
+            this._panel.setVisible(!this._panel.isVisible());
+            this._button.setState(this._panel.isVisible() ? Autodesk.Viewing.UI.Button.State.ACTIVE : Autodesk.Viewing.UI.Button.State.INACTIVE);
+            if (this._panel.isVisible() && this.viewer.model) {
+                this.update();
+            }
+            // highlight-end
+        };
+    }
+
+    // highlight-start
+    onModelLoaded(model) {
+        super.onModelLoaded(model);
+        if (this._panel && this._panel.isVisible()) {
+            this.update();
+        }
+    }
+    // highlight-end
+
+    // highlight-start
+    async update() {
+        const dbids = await this.findLeafNodes(this.viewer.model);
+        this._panel.update(this.viewer.model, dbids);
+    }
+    // highlight-end
+}
+
+Autodesk.Viewing.theExtensionManager.registerExtension('DataGridExtension', DataGridExtension);
+```
 
 ## Try it out
 
 Click on the new toolbar button to bring up the datagrid panel. The grid should list selected
-properties (in our case, object ID, object name, and the `Volume` and `Structural Material` properties)
-of all design elements, and clicking on any row in the grid should isolate the specific design
-element.
+properties of all design elements, and clicking on any row in the grid should isolate the specific
+design element in the viewer.
 
 ![Grid Result](grid-result.png)
