@@ -18,4 +18,4 @@ Once the project is ready, create the following subfolders in your project folde
 
 - `Controllers` - this is where we're going to implement all the server endpoints
 - `Models` - here we're going to keep all the server-side logic that can be shared by different endpoints
-- `wwwrooot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
+- `wwwroot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
