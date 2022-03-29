@@ -48,3 +48,43 @@ And that's it. Now let's just store your _client ID_ and _client secret_ credent
 we will need those **very** soon!
 
 ![App Ready](./_shared/app-ready.png)
+
+## Provision access in other products
+
+In certain cases it is possible for your application to access information from other
+Forge-based products such as [Autodesk BIM 360](https://www.autodesk.com/bim-360).
+However, in order to enable this workflow, the 3rd party product must _provision access_
+for your specific application based on its client ID. Follow the steps below in order
+to provide your application access to a specific product. If you are _not_ planning
+to integrate your application with other Forge-based products, you can skip this step.
+
+### BIM 360
+
+1. Make sure you have _admin_ access to a BIM 360 account
+2. Log into the BIM 360 account and navigate to the _Custom Integrations_ tab
+
+![Custom integrations tab](./_shared/provisioning/custom-integrations.png)
+
+3. Use the _Add Custom Integration_ button on the left side to start a simple wizard
+that will guide you through the process
+4. On the _Select Access_ page, keep both the _BIM 360 Account Administration_
+and the _Document Management_ options checked, and hit the _Next_ button
+
+![Select access](./_shared/provisioning/select-access.png)
+
+5. On the next page of the wizard, choose the _I'm the developer_ option, and hit
+the _Next_ button
+
+![Select role](./_shared/provisioning/i-am-developer.png)
+
+6. On the next and final page, make note of the _BIM 360 Account ID_, check the
+checkbox next to it, and fill out the _Forge Client ID_ and the _App Name_ fields
+exactly as they appear in your application's page on https://forge.autodesk.com/myapps
+
+![BIM 360 info](./_shared/provisioning/bim360-info.png)
+
+7. When ready, scroll down and hit the _Save_ button
+
+And that's it. Now your Forge application can use [Document Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
+or [BIM 360 API](https://forge.autodesk.com/en/docs/bim360/v1/overview/introduction/)
+to access information from this BIM 360 account.
