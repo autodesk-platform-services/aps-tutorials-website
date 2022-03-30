@@ -52,11 +52,16 @@ we will need those **very** soon!
 ## Provision access in other products
 
 In certain cases it is possible for your application to access information from other
-Forge-based products such as [Autodesk BIM 360](https://www.autodesk.com/bim-360).
+Forge-based products such as [Autodesk BIM 360](https://www.autodesk.com/bim-360) or
+[Autodesk Docs](https://www.autodesk.com/products/autodesk-docs/overview).
 However, in order to enable this workflow, the 3rd party product must _provision access_
 for your specific application based on its client ID. Follow the steps below in order
-to provide your application access to a specific product. If you are _not_ planning
-to integrate your application with other Forge-based products, you can skip this step.
+to provide your application access to a specific product.
+
+:::info
+If you are _not_ planning to integrate your application with other products for now,
+you can skip the rest of this page and come back to it later when needed.
+:::
 
 ### BIM 360
 
@@ -77,14 +82,27 @@ the _Next_ button
 
 ![Select role](./_shared/provisioning/i-am-developer.png)
 
+:::info
+Here we assume that the _account admin_ is also the owner of the Forge application.
+If that is not the case, the account administrator can use the _Invite a developer_
+option instead, and the invited developer can input the Forge application details later.
+:::
+
 6. On the next and final page, make note of the _BIM 360 Account ID_, check the
 checkbox next to it, and fill out the _Forge Client ID_ and the _App Name_ fields
 exactly as they appear in your application's page on https://forge.autodesk.com/myapps
 
 ![BIM 360 info](./_shared/provisioning/bim360-info.png)
 
+:::tip
+Consider mentioning your Forge application client ID in _App Description_. The client ID
+will _not_ appear in the custom integration after it has been created, and if the number
+of integrations in your account starts to grow, this will help you quickly identify
+the Forge application a specific integration is associated with.
+:::
+
 7. When ready, scroll down and hit the _Save_ button
 
-And that's it. Now your Forge application can use [Document Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
+And that's it. Now your Forge application can use [Data Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
 or [BIM 360 API](https://forge.autodesk.com/en/docs/bim360/v1/overview/introduction/)
 to access information from this BIM 360 account.

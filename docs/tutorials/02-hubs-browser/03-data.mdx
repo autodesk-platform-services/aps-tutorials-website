@@ -9,12 +9,15 @@ import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
 # Data Browsing
 
 In this step we'll extend our server so that we can browse the content of 3rd party
-applications built with Forge such as BIM 360 Docs or ACC.
+applications built with Forge such as BIM 360 Docs or Autodesk Docs. We will basically
+follow the Data Management service's hierarchy of hubs, projects, folders, items, and versions:
+
+![Data Management structure](./_shared/dm-structure.png)
 
 ## Browsing hubs
 
-First, let's add a couple of helper methods for browsing through Data Management hubs,
-projects, folders, items, and versions.
+First, let's add a couple of helper methods for browsing through the hubs, projects,
+folders, items, and versions:
 
 <EnvTabs NodeJsVsCode={NodeJsVsCodeHubs} DotNetVsCode={DotNetHubs} DotNetVs2022={DotNetHubs} />
 
