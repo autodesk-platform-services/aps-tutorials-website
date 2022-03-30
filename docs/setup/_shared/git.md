@@ -11,4 +11,4 @@ git --version
 
 You should see something like this:
 
-![Checking git in terminal](git.png)
+![Checking git in terminal](git.webp)
