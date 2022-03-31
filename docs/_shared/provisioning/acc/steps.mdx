@@ -1,0 +1,23 @@
+import ProjectDetailImageUrl from './project-detail.webp';
+
+1. Make sure you have _admin_ access to an Autodesk Construction Cloud (ACC for short) account
+2. Log into your account and navigate to _Account Administration_
+  - From the overview of projects
+
+![Project list](./project-list.webp)
+
+  - From the user interface of a specific project
+
+<img src={ProjectDetailImageUrl} alt="Project detail" />
+
+3. On the _Account Admin_ page, go to _BIM 360 Admin_ > _Settings_
+
+![Account admin](./account-admin.webp)
+
+From here, the process is exactly the same as provisioning access to BIM 360,
+so you can follow the steps in the _Autodesk BIM 360_ tab starting from step number 3.
+
+After completing the process, your application will be able to use different Forge services
+such as [Data Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview)
+or [ACC API](https://forge.autodesk.com/en/docs/acc/v1/overview/introduction)
+to access information from all projects under this ACC account.

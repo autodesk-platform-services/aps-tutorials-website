@@ -4,6 +4,8 @@ sidebar_position: 1
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import AccProvisioningSteps from './_shared/provisioning/acc/steps.mdx';
+import Bim360ProvisioningSteps from './_shared/provisioning/bim360/steps.mdx';
 
 # Getting Started
 
@@ -72,59 +74,12 @@ you can skip the rest of this page and come back to it later when needed.
 :::
 
 <Tabs groupId="access-provisioning">
-<TabItem value="acc" label="Autodesk Construction Cloud" default>
-
-1. Make sure you have _admin_ access to an Autodesk Construction Cloud (ACC for short) account
-2. Log into ACC and navigate to _Account Management_ > _BIM 360 Admin_ > _Settings_ > _Custom Integrations_
-3. From here, the process is exactly the same as provisioning access to BIM 360,
-so you can follow the steps in the _Autodesk BIM 360_ tab starting from step number 3.
-
-</TabItem>
-<TabItem value="bim360" label="Autodesk BIM 360">
-
-1. Make sure you have _admin_ access to a BIM 360 account
-2. Log into the BIM 360 account and navigate to the _Custom Integrations_ tab
-
-![Custom integrations tab](./_shared/provisioning/custom-integrations.webp)
-
-3. Use the _Add Custom Integration_ button on the left side to start a simple wizard
-that will guide you through the process
-4. On the _Select Access_ page, keep both the _BIM 360 Account Administration_
-and the _Document Management_ options checked, and hit the _Next_ button
-
-![Select access](./_shared/provisioning/select-access.webp)
-
-5. On the next page of the wizard, choose the _I'm the developer_ option, and hit
-the _Next_ button
-
-![Select role](./_shared/provisioning/i-am-developer.webp)
-
-:::info
-Here we assume that the _account admin_ is also the owner of the Forge application.
-If that is not the case, the account administrator can use the _Invite a developer_
-option instead, and the invited developer will input the Forge application details later.
-:::
-
-6. On the next and final page, make note of the _BIM 360 Account ID_, check the
-checkbox next to it, and fill out the _Forge Client ID_ and the _App Name_ fields
-exactly as they appear in your application's page on https://forge.autodesk.com/myapps
-
-![BIM 360 info](./_shared/provisioning/bim360-info.webp)
-
-:::tip
-Consider storing your Forge application client ID somewhere in _App Description_.
-The client ID will _not_ appear in the custom integration after it has been created,
-and if the number of integrations in your account starts to grow, this will help you
-quickly identify the Forge application each custom integration is associated with.
-:::
-
-7. When ready, scroll down and hit the _Save_ button
-
-And that's it. Now your application can use different Forge services such as
-the [Data Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
-to access information from all projects under this BIM 360 account.
-
-</TabItem>
+    <TabItem value="acc" label="Autodesk Construction Cloud" default>
+        <AccProvisioningSteps />
+    </TabItem>
+    <TabItem value="bim360" label="Autodesk BIM 360">
+        <Bim360ProvisioningSteps />
+    </TabItem>
 <TabItem value="fusion360" label="Autodesk Fusion Team">
 
 No provisioning steps are needed. Your Forge application can automatically access
