@@ -1,10 +1,10 @@
-Create a `models.js` file under the `routes` subfolder with the following
-content:
+Create a `models.js` file under the `routes` subfolder with the following code:
 
 ```js title="routes/models.js"
 const express = require('express');
 const formidable = require('express-formidable');
-const { listObjects, uploadObject, translateObject, getManifest, urnify } = require('../services/forge.js');
+const { listObjects, uploadObject } = require('../services/forge/oss.js');
+const { translateObject, getManifest, urnify } = require('../services/forge/md.js');
 
 let router = express.Router();
 
@@ -66,9 +66,9 @@ module.exports = router;
 ```
 
 :::info
-The `formidable()` middleware used in the `POST` request handler will make sure that
-any `multipart/form-data` content coming with the request is parsed and available
-in the `req.files` and `req.fields` properties.
+The `formidable()` middleware used in the `POST` request handler will make sure that any
+`multipart/form-data` content coming with the request is parsed and available in the `req.files`
+and `req.fields` properties.
 :::
 
 And mount the router to our server application by modifying `server.js`:
