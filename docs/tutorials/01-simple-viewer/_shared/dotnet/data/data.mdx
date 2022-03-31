@@ -1,6 +1,8 @@
-Update the `Models/ForgeService.cs` file with the following code:
+Create a `ForgeService.Oss.cs` file under the `Models` folder. This is where will implement
+all the OSS ([Object Storage Service](https://forge.autodesk.com/en/docs/data/v2/developers_guide/basics/#object-storage-service-oss))
+logic of our server application. Populate the new file with the following code:
 
-```csharp title="Models/ForgeService.cs"
+```csharp title="Models/ForgeService.Oss.cs"
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,134 +11,8 @@ using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-public record Token(string AccessToken, DateTime ExpiresAt);
-
-public class ForgeService
+public partial class ForgeService
 {
-    private readonly string _clientId;
-    private readonly string _clientSecret;
-    // highlight-start
-    private readonly string _bucket;
-    // highlight-end
-    private Token _internalTokenCache;
-    private Token _publicTokenCache;
-
-    public ForgeService(string clientId, string clientSecret, string bucket = null)
-    {
-        _clientId = clientId;
-        _clientSecret = clientSecret;
-        // highlight-start
-        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
-        // highlight-end
-    }
-
-    private async Task<Token> GetToken(Scope[] scopes)
-    {
-        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-        return new Token(auth.access_token, DateTime.UtcNow.AddSeconds(auth.expires_in));
-    }
-
-    public async Task<Token> GetPublicToken()
-    {
-        if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-        return _publicTokenCache;
-    }
-
-    private async Task<Token> GetInternalToken()
-    {
-        if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-        return _internalTokenCache;
-    }
-
-    // highlight-start
-    private async Task EnsureBucketExists(string bucketKey)
-    {
-        var token = await GetInternalToken();
-        var api = new BucketsApi();
-        api.Configuration.AccessToken = token.AccessToken;
-        try
-        {
-            await api.GetBucketDetailsAsync(bucketKey);
-        }
-        catch (ApiException e)
-        {
-            if (e.ErrorCode == 404)
-            {
-                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
-            }
-            else
-            {
-                throw e;
-            }
-        }
-    }
-    // highlight-end
-}
-```
-
-The `EnsureBucketExists` method will simply try and request additional information
-about a specific bucket, and if the response from Forge is `404 Not Found`, it will
-attempt to create a new bucket with that name. If no bucket name is provided through
-environment variables, we generate one by appending the `-basic-app` suffix to the Forge Client ID.
-
-:::caution
-Note that the Data Management service requires bucket names to be **globally unique**,
-and attempts to create a bucket with an already used name will fail with `409 Conflict`.
-See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
-for more details.
-:::
-
-Now we will update the `ForgeService` class with a helper method that will list all objects
-in the preconfigured bucket, and a helper method for uploading additional files to this bucket:
-
-```csharp title="Models/ForgeService.cs"
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Autodesk.Forge;
-using Autodesk.Forge.Client;
-using Autodesk.Forge.Model;
-
-public record Token(string AccessToken, DateTime ExpiresAt);
-
-public class ForgeService
-{
-    private readonly string _clientId;
-    private readonly string _clientSecret;
-    private readonly string _bucket;
-    private Token _internalTokenCache;
-    private Token _publicTokenCache;
-
-    public ForgeService(string clientId, string clientSecret, string bucket = null)
-    {
-        _clientId = clientId;
-        _clientSecret = clientSecret;
-        _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
-    }
-
-    private async Task<Token> GetToken(Scope[] scopes)
-    {
-        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-        return new Token(auth.access_token, DateTime.UtcNow.AddSeconds(auth.expires_in));
-    }
-
-    public async Task<Token> GetPublicToken()
-    {
-        if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
-        return _publicTokenCache;
-    }
-
-    private async Task<Token> GetInternalToken()
-    {
-        if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
-        return _internalTokenCache;
-    }
-
     private async Task EnsureBucketExists(string bucketKey)
     {
         var token = await GetInternalToken();
@@ -159,7 +35,6 @@ public class ForgeService
         }
     }
 
-    // highlight-start
     public async Task<ObjectDetails> UploadModel(string objectName, Stream content, long contentLength)
     {
         await EnsureBucketExists(_bucket);
@@ -188,9 +63,20 @@ public class ForgeService
         }
         return results;
     }
-    // highlight-end
 }
 ```
+
+The `EnsureBucketExists` method will simply try and request additional information
+about a specific bucket, and if the response from Forge is `404 Not Found`, it will
+attempt to create a new bucket with that name. If no bucket name is provided through
+environment variables, we generate one by appending the `-basic-app` suffix to the Forge Client ID.
+
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
 
 The `GetObjects` method pages through all objects in the bucket, and returns their name and URN
 (the base64-encoded ID that will later be used when communicating with the Model Derivative service).
