@@ -2,7 +2,7 @@ Create an `auth.js` file under the `routes` subfolder with the following content
 
 ```js title="routes/auth.js"
 const express = require('express');
-const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile } = require('../services/forge.js');
+const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile } = require('../services/forge/auth.js');
 
 let router = express.Router();
 
@@ -41,7 +41,7 @@ application by modifying `server.js`:
 
 ```js title="server.js"
 const express = require('express');
-const session = require('cookie-session')
+const session = require('cookie-session');
 const { PORT, SERVER_SESSION_SECRET } = require('./config.js');
 
 let app = express();

@@ -1,10 +1,11 @@
-Create a `forge.js` file under the `services` subfolder. This is where we will be implementing
-all the Forge-specific logic that will be used in different areas of our server application. Let's
-start by adding the following code to the file:
+Create a `forge` folder under the `services` folder, and inside this new folder, create a file
+called `auth.js`. This is where we will be implementing all the Forge authentication logic that
+will be used in different areas of our server application. Let's start by adding the following
+code to the file:
 
-```js title="services/forge.js"
+```js title="services/forge/auth.js"
 const { AuthClientThreeLegged, UserProfileApi } = require('forge-apis');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
+const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../../config.js');
 
 const internalAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
 const publicAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, PUBLIC_TOKEN_SCOPES);
@@ -55,10 +56,11 @@ async function getUserProfile(token) {
 }
 
 module.exports = {
+    internalAuthClient,
     getAuthorizationUrl,
     authCallbackMiddleware,
     authRefreshMiddleware,
-    getUserProfile,
+    getUserProfile
 };
 ```
 
