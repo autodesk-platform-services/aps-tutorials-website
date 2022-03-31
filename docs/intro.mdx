@@ -2,6 +2,9 @@
 sidebar_position: 1
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Getting Started
 
 Here's a couple of things you want to do before building your first Forge application.
@@ -51,19 +54,33 @@ we will need those **very** soon!
 
 ## Provision access in other products
 
-In certain cases it is possible for your application to access information from other
-Forge-based products such as [Autodesk BIM 360](https://www.autodesk.com/bim-360) or
-[Autodesk Docs](https://www.autodesk.com/products/autodesk-docs/overview).
-However, in order to enable this workflow, the 3rd party product must _provision access_
-for your specific application based on its client ID. Follow the steps below in order
-to provide your application access to a specific product.
+In certain cases it is possible for your application to integrate with other Forge-based products
+such as [Autodesk Construction Cloud](https://construction.autodesk.com),
+or [Autodesk BIM 360](https://www.autodesk.com/bim-360). We leverage this capability in
+the [Hubs Browser](./tutorials/hubs-browser) tutorial where you can learn about accessing designs
+from [Autodesk Docs](https://www.autodesk.com/products/autodesk-docs/overview),
+[BIM 360 Docs](https://www.autodesk.com/bim-360/construction-document-management-software/),
+or [Fusion Teams](https://www.autodesk.com/products/fusion-360/overview).
+
+However, some of these products must _provision access_ for a specific Forge application
+based on its client ID. Follow the steps below for any specific product you would like
+to integrate your application with.
 
 :::info
 If you are _not_ planning to integrate your application with other products for now,
 you can skip the rest of this page and come back to it later when needed.
 :::
 
-### BIM 360
+<Tabs groupId="access-provisioning">
+<TabItem value="acc" label="Autodesk Construction Cloud" default>
+
+1. Make sure you have _admin_ access to an Autodesk Construction Cloud (ACC for short) account
+2. Log into ACC and navigate to _Account Management_ > _BIM 360 Admin_ > _Settings_ > _Custom Integrations_
+3. From here, the process is exactly the same as provisioning access to BIM 360,
+so you can follow the steps in the _Autodesk BIM 360_ tab starting from step number 3.
+
+</TabItem>
+<TabItem value="bim360" label="Autodesk BIM 360">
 
 1. Make sure you have _admin_ access to a BIM 360 account
 2. Log into the BIM 360 account and navigate to the _Custom Integrations_ tab
@@ -85,7 +102,7 @@ the _Next_ button
 :::info
 Here we assume that the _account admin_ is also the owner of the Forge application.
 If that is not the case, the account administrator can use the _Invite a developer_
-option instead, and the invited developer can input the Forge application details later.
+option instead, and the invited developer will input the Forge application details later.
 :::
 
 6. On the next and final page, make note of the _BIM 360 Account ID_, check the
@@ -95,14 +112,23 @@ exactly as they appear in your application's page on https://forge.autodesk.com/
 ![BIM 360 info](./_shared/provisioning/bim360-info.webp)
 
 :::tip
-Consider mentioning your Forge application client ID in _App Description_. The client ID
-will _not_ appear in the custom integration after it has been created, and if the number
-of integrations in your account starts to grow, this will help you quickly identify
-the Forge application a specific integration is associated with.
+Consider storing your Forge application client ID somewhere in _App Description_.
+The client ID will _not_ appear in the custom integration after it has been created,
+and if the number of integrations in your account starts to grow, this will help you
+quickly identify the Forge application each custom integration is associated with.
 :::
 
 7. When ready, scroll down and hit the _Save_ button
 
-And that's it. Now your Forge application can use [Data Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
-or [BIM 360 API](https://forge.autodesk.com/en/docs/bim360/v1/overview/introduction/)
-to access information from this BIM 360 account.
+And that's it. Now your application can use different Forge services such as
+the [Data Management API](https://forge.autodesk.com/en/docs/data/v2/developers_guide/overview/)
+to access information from all projects under this BIM 360 account.
+
+</TabItem>
+<TabItem value="fusion360" label="Autodesk Fusion Team">
+
+No provisioning steps are needed. Your Forge application can automatically access
+the data of your authenticated users in this product.
+
+</TabItem>
+</Tabs>
