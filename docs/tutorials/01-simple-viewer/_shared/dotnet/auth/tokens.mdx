@@ -18,6 +18,10 @@ public partial class ForgeService
 }
 ```
 
+Notice that the `ForgeService` class is declared as `partial`. We're going to extend it
+in other `*.cs` files later. A `ForgeService` singleton will then be provided to our server
+through ASP.NET's [dependency injection](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0).
+
 Then create another file in the same `Models` subfolder, and call it `ForgeService.Auth.cs`.
 Here we will implement all the authentication logic. Populate the file with the following code:
 
