@@ -53,7 +53,7 @@ module.exports = {
                     items: [
                         {
                             label: 'Tutorials',
-                            to: '/docs/intro'
+                            to: '/'
                         }
                     ]
                 },
@@ -106,6 +106,7 @@ module.exports = {
             '@docusaurus/preset-classic',
             {
                 docs: {
+                    routeBasePath: '/',
                     sidebarPath: require.resolve('./sidebars.js'),
                     editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/master/'
                 },
@@ -115,7 +116,8 @@ module.exports = {
                 gtag: {
                     trackingID: 'G-5DQ48W5MB1',
                     anonymizeIP: true
-                }
+                },
+                blog: false
             }
         ]
     ],
