@@ -3,15 +3,13 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-    title: 'Another Way to Learn Forge',
-    tagline: 'Don\'t worry... This is just a working title :)',
-    url: 'https://petrbroz.github.io',
-    baseUrl: '/forge-samples-docs/',
+    title: 'Autodesk Forge Tutorials',
+    tagline: 'Getting started with Autodesk Forge development.',
+    url: 'https://forge-tutorials.autodesk.io',
+    baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'petrbroz',
-    projectName: 'forge-samples-docs',
     plugins: [
         [
             require.resolve('@easyops-cn/docusaurus-search-local'),
@@ -26,7 +24,7 @@ module.exports = {
     ],
     themeConfig: {
         navbar: {
-            title: 'Another Way to Learn Forge',
+            title: 'Autodesk Forge Tutorials',
             logo: {
                 alt: 'Autodesk Forge',
                 src: 'img/logo.png'
@@ -43,7 +41,7 @@ module.exports = {
                 //     position: 'right',
                 // },
                 // {
-                //     href: 'https://github.com/petrbroz/forge-samples-docs',
+                //     href: 'https://github.com/autodesk-forge/forge-tutorials-website',
                 //     label: 'GitHub',
                 //     position: 'right'
                 // }
@@ -83,7 +81,7 @@ module.exports = {
                         },
                         {
                             label: 'GitHub',
-                            href: 'https://github.com/Autodesk-Forge'
+                            href: 'https://github.com/autodesk-forge'
                         },
                         {
                             label: 'Showroom',
@@ -112,7 +110,7 @@ module.exports = {
                 docs: {
                     routeBasePath: '/',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/master/'
+                    editUrl: 'https://github.com/autodesk-forge/forge-tutorials-website/edit/autodeskio/'
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css')
