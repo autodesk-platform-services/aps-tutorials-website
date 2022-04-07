@@ -16,6 +16,10 @@ module.exports = {
         [
             require.resolve('@easyops-cn/docusaurus-search-local'),
             {
+                docsRouteBasePath: '/',
+                indexDocs: true,
+                indexBlog: false,
+                indexPages: false,
                 hashed: true
             }
         ]
