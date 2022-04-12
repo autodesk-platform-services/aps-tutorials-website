@@ -319,8 +319,10 @@ using a `<script>` tag in your `index.html` page, for example, like so:
 ```
 :::
 
-Finally, we need to tell the viewer to load this extension. We can do that by passing the extension
-ID in a special config object to the `Autodesk.Viewing.GuiViewer3D` constructor:
+Finally, we need to tell the viewer to load this extension. Open the `wwwroot/viewer.js` file,
+find the line where the `GuiViewer3D` class is instantiated, and pass in a custom configuration
+object listed below as the second parameter to the constructor. If you are already passing a custom
+config to the constructor, simply include the `'LoggerExtension'` string to its `extensions` list.
 
 ```js
 const config = {
