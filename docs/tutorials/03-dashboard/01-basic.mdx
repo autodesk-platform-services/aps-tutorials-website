@@ -156,7 +156,19 @@ Full list of viewer events can be found at
 
 Most of the extensions in this tutorial will need to access the metadata of the currently loaded design,
 for example, to iterate through the design's logical hierarchy, or to query properties of elements.
-Let's update our `BaseExtension` class with a couple of helper methods for this purpose:
+
+In the viewer UI, logical hierarchy is what you see in the _Model_ panel:
+
+![Model browser](./model-browser.webp)
+
+To navigate the logical hierarchy programatically, the viewer API provides a structure called
+an _instance tree_ (or an _object tree_) that simply defines parent-child relationships between
+different design elements, called _nodes_. For example, you can use this structure to find
+all children of a specific node, to find a parent of a node, or to _recursively_ enumerate all
+children of a given node. Nodes without any children - we call them _leaf nodes_ - are usually
+more interesting for us as they contain more metadata than the internal nodes.
+
+Let's update our `BaseExtension` class with a couple of helper methods:
 
 ```js title="wwwroot/extensions/BaseExtension.js"
 export class BaseExtension extends Autodesk.Viewing.Extension {
@@ -196,7 +208,7 @@ export class BaseExtension extends Autodesk.Viewing.Extension {
                     if (tree.getChildCount(dbid) === 0) {
                         leaves.push(dbid);
                     }
-                }, true);
+                }, true /* recursively enumerate children's children as well */);
                 resolve(leaves);
             }, reject);
         });
