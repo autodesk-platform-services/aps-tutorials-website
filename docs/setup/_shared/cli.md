@@ -7,5 +7,5 @@ but in our case we're going to be using `bash` which is available _cross-platfor
 
 - On Unix-based systems, `bash` (or one of its flavors like `zsh`) is most likely available
 already, and if not, you can get it from https://www.gnu.org/software/bash.
-- On Windows, `bash` will be installed as part of `git`, the source code management tool
-discussed in the next section.
+- On Windows, you can install [Git for Windows](https://gitforwindows.org) which comes bundled
+with a `bash` terminal
