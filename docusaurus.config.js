@@ -26,18 +26,28 @@ module.exports = {
     ],
     themeConfig: {
         navbar: {
-            title: 'Another Way to Learn Forge',
+            title: 'Forge Tutorials',
             logo: {
                 alt: 'Autodesk Forge',
-                src: 'img/logo.png'
+                src: 'https://developer.static.autodesk.com/forgeunified/releases/current/1.0.0.20220404193108/images/autodesk-logo-primary-rgb-black.svg' // 'img/logo.png'
             },
             items: [
                 {
                     type: 'doc',
                     docId: 'intro',
-                    position: 'left',
-                    label: 'Tutorials'
+                    label: 'Getting Started',
+                    position: 'left'
                 },
+                {
+                    href: 'https://forge.autodesk.com',
+                    label: 'Developer Portal',
+                    position: 'left'
+                },
+                {
+                    href: 'https://forge.autodesk.com/developer/documentation',
+                    label: 'Documentation',
+                    position: 'left'
+                }
                 // {
                 //     type: 'localeDropdown',
                 //     position: 'right',
