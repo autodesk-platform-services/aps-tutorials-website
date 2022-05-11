@@ -3,7 +3,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-    title: 'Another Way to Learn Forge',
+    title: 'Autodesk Forge',
     tagline: 'Don\'t worry... This is just a working title :)',
     url: 'https://petrbroz.github.io',
     baseUrl: '/forge-samples-docs/',
@@ -26,26 +26,65 @@ module.exports = {
     ],
     themeConfig: {
         navbar: {
-            title: 'Forge Tutorials',
             logo: {
                 alt: 'Autodesk Forge',
                 src: 'https://developer.static.autodesk.com/forgeunified/releases/current/1.0.0.20220404193108/images/autodesk-logo-primary-rgb-black.svg' // 'img/logo.png'
             },
             items: [
                 {
-                    type: 'doc',
-                    docId: 'intro',
-                    label: 'Getting Started',
+                    href: 'https://forge.autodesk.com/platform-vision',
+                    label: 'Platform Vision',
                     position: 'left'
                 },
+                // {
+                //     href: 'https://forge.autodesk.com/developer/documentation',
+                //     label: 'Solutions',
+                //     position: 'left',
+                //     type: 'dropdown',
+                //     items: []
+                // },
                 {
-                    href: 'https://forge.autodesk.com',
-                    label: 'Developer Portal',
+                    href: 'https://forge.autodesk.com/developer/getting-started',
+                    label: 'Getting Started',
                     position: 'left'
                 },
                 {
                     href: 'https://forge.autodesk.com/developer/documentation',
                     label: 'Documentation',
+                    position: 'left'
+                },
+                // {
+                //     href: 'https://forge.autodesk.com/developer/documentation',
+                //     label: 'Commnunity',
+                //     position: 'left',
+                //     type: 'dropdown',
+                //     items: []
+                // },
+                {
+                    href: 'https://forge.autodesk.com/developer/documentation',
+                    label: 'Support',
+                    position: 'left',
+                    type: 'dropdown',
+                    items: [
+                        {
+                            label: 'API Status',
+                            href: 'https://health.autodesk.com/',
+                        },
+                        {
+                            label: 'Get Help',
+                            href: 'https://forge.autodesk.com/en/support/get-help',
+                        },
+                        {
+                            label: 'FAQ',
+                            href: 'https://forge.autodesk.com/FAQ',
+                        }
+                        // ... more items
+                    ]
+
+                },
+                {
+                    href: 'https://forge.autodesk.com/pricing',
+                    label: 'Pricing',
                     position: 'left'
                 }
                 // {
