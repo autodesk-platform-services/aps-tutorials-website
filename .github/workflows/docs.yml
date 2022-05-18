@@ -33,20 +33,16 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14.x'
-      - uses: webfactory/ssh-agent@v0.5.0
-        with:
-          ssh-private-key: ${{ secrets.GH_PAGES_DEPLOY }}
       - name: Publish to GitHub Pages
         env:
-          USE_SSH: true
-          GIT_USER: git
+          USE_SSH: false
+          GIT_USER: petrbroz
+          GIT_PASS: ${{ secrets.GH_PAGES_DEPLOY }}
           ENV: development
         run: |
           git config --global user.email "petr.broz@autodesk.com"
           git config --global user.name "petrbroz"
-          if [ -e yarn.lock ]; then
-            yarn install --frozen-lockfile
-          elif [ -e package-lock.json ]; then
+          if [ -e package-lock.json ]; then
             npm ci
           else
             npm i

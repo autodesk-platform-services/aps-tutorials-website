@@ -9,12 +9,12 @@ module.exports = {
     title: 'Forge Tutorials',
     tagline: 'Getting started with Autodesk Forge',
     url: IS_DEV_ENV ? 'https://autodesk-forge.github.io' : 'https://forge-tutorials.autodesk.io',
-    baseUrl: '/',
+    baseUrl: IS_DEV_ENV ? '/forge-tutorials-website/' : '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: IS_DEV_ENV ? 'autodesk-forge' : undefined,
-    projectName: IS_DEV_ENV ? 'forge-tutorials-website' : undefined,
+    organizationName: 'autodesk-forge',
+    projectName: 'forge-tutorials-website',
     plugins: [
         [
             require.resolve('@easyops-cn/docusaurus-search-local'),
