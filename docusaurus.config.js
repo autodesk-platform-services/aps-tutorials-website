@@ -1,17 +1,20 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
+const ENV = process.env.ENV || 'production';
+const IS_DEV_ENV = ENV === 'development';
+
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-    title: 'Another Way to Learn Forge',
-    tagline: 'Don\'t worry... This is just a working title :)',
-    url: 'https://petrbroz.github.io',
-    baseUrl: '/forge-samples-docs/',
+    title: 'Forge Tutorials',
+    tagline: 'Getting started with Autodesk Forge',
+    url: IS_DEV_ENV ? 'https://autodesk-forge.github.io' : 'https://forge-tutorials.autodesk.io',
+    baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
-    organizationName: 'petrbroz',
-    projectName: 'forge-samples-docs',
+    organizationName: IS_DEV_ENV ? 'autodesk-forge' : undefined,
+    projectName: IS_DEV_ENV ? 'forge-tutorials-website' : undefined,
     plugins: [
         [
             require.resolve('@easyops-cn/docusaurus-search-local'),
@@ -26,7 +29,7 @@ module.exports = {
     ],
     themeConfig: {
         navbar: {
-            title: 'Another Way to Learn Forge',
+            title: 'Forge Tutorials',
             logo: {
                 alt: 'Autodesk Forge',
                 src: 'img/logo.png'
