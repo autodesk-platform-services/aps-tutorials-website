@@ -246,6 +246,10 @@ html[data-theme='dark'] .dropdown__link {
   color: #f9f9f9 !important;
 }
 
+html[data-theme='dark'] a{
+  color: #5D3FD3;
+}
+
 
 /* 
 
