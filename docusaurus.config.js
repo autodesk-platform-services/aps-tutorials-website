@@ -12,7 +12,7 @@ module.exports = {
     baseUrl: IS_DEV_ENV ? '/forge-tutorials-website/' : '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
-    favicon: 'img/favicon.ico',
+    favicon: 'https://forge.autodesk.com/themes/custom/forgecms_subtheme_forge/favicon.ico',
     organizationName: 'autodesk-forge',
     projectName: 'forge-tutorials-website',
     plugins: [
