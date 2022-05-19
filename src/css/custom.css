@@ -34,6 +34,12 @@
   --forge-bg-color: rgb(62, 149, 209);
 }
 
+h1{
+  font-family: ArtifaktLegend, sans-serif;
+  font-size: clamp(1.5rem, 1.29rem + 0.926vw, 2.125rem);
+  font-weight: 800;
+}
+
 header>h1 {
   display: none;
 }
@@ -67,9 +73,17 @@ header>h1 {
   background-color: #fff !important;
 }
 
+.menu__link--active::after {
+  display: none;
+}
+
 .menu__link--active:hover {
   color: #5D3FD3;
   background-color: #fff;
+}
+
+.clean-btn{
+  display: none;
 }
 
 /* Navbar */
