@@ -77,6 +77,10 @@ header>h1 {
   display: none;
 }
 
+.menu__link--sublist-caret::after {
+  display: none;
+}
+
 .menu__link--active:hover {
   color: #5D3FD3;
   background-color: #fff;
