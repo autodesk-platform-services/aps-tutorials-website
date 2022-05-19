@@ -11,6 +11,7 @@
   src: url('fonts/Artifakt Element Regular.woff') format('woff');
 }
 
+/* 
 :root {
   --ifm-color-primary: #ee8922;
   --ifm-color-primary-dark: #e37b11;
@@ -23,10 +24,36 @@
   --ifm-font-family-monospace: 'Artifakt Element Regular';
   --ifm-font-family-base: 'Artifakt Element Regular';
   --forge-bg-color: rgb(62, 149, 209);
+} */
+
+:root {
+  --ifm-color-primary: #101010;
+  --ifm-color-primary-dark: #0E0E0E;
+  --ifm-color-primary-darker: #0E0E0E;
+  --ifm-color-primary-darkest: #0B0B0B;
+  --ifm-color-primary-light: #121212;
+  --ifm-color-primary-lighter: #121212;
+  --ifm-color-primary-lightest: #151515;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-monospace: 'Artifakt Element Regular';
+  --ifm-font-family-base: 'Artifakt Element Regular';
+  --forge-bg-color: rgb(62, 149, 209);
 }
 
-.hero {
-    background-color: var(--forge-bg-color);
+.menu__link--active {
+  font-weight: 600;
+}
+
+.navbar__items>.navbar__item>svg {
+  display: none;
+}
+
+.dropdown--hoverable>.navbar__link>svg {
+  display: none;
+}
+
+.dropdown__link>svg {
+  display: none;
 }
 
 .docusaurus-highlight-code-line {
@@ -38,4 +65,25 @@
 
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.navbar {
+  background-color: #f5f5f5;
+}
+
+html[data-theme='dark'] .navbar {
+  background-color: rgb(24, 25, 26);
+}
+
+.navbar__logo,
+.navbar__logo img {
+  height: 19px;
+}
+
+html[data-theme='dark'] .navbar__logo img {
+  filter: invert();
+}
+
+.navbar__link {
+  font-size: 14px;
 }
