@@ -18,8 +18,6 @@ Let's start by implementing the Forge Viewer functionality of our application.
 Create a `viewer.js` file under the `wwwroot` subfolder with the following code:
 
 ```js title="wwwroot/viewer.js"
-/// import * as Autodesk from "@types/forge-viewer";
-
 async function getAccessToken(callback) {
     try {
         const resp = await fetch('/api/auth/token');
