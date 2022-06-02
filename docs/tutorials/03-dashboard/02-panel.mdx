@@ -270,17 +270,19 @@ export class SummaryPanel extends Autodesk.Viewing.UI.PropertyPanel {
                     count: aggregate.count + 1,
                     sum: aggregate.sum + value,
                     min: Math.min(aggregate.min, value),
-                    max: Math.max(aggregate.max, value)
+                    max: Math.max(aggregate.max, value),
+                    units: property.units,
+                    precision: property.precision
                 };
             };
-            const { sum, count, min, max } = await this.aggregatePropertyValues(model, dbids, propName, aggregateFunc, initialValue);
+            const { sum, count, min, max, units, precision } = await this.aggregatePropertyValues(model, dbids, propName, aggregateFunc, initialValue);
             if (count > 0) {
                 const category = propName;
                 this.addProperty('Count', count, category);
-                this.addProperty('Sum', sum.toFixed(2), category);
-                this.addProperty('Avg', (sum / count).toFixed(2), category);
-                this.addProperty('Min', min.toFixed(2), category);
-                this.addProperty('Max', max.toFixed(2), category);
+                this.addProperty('Sum', this.toDisplayUnits(sum, units, precision), category);
+                this.addProperty('Avg', this.toDisplayUnits((sum / count), units, precision), category);
+                this.addProperty('Min', this.toDisplayUnits(min, units, precision), category);
+                this.addProperty('Max', this.toDisplayUnits(max, units, precision), category);
             }
         }
     }
@@ -298,6 +300,10 @@ export class SummaryPanel extends Autodesk.Viewing.UI.PropertyPanel {
                 resolve(aggregatedValue);
             }, reject);
         });
+    }
+
+    toDisplayUnits(value, units, precision) {
+        return Autodesk.Viewing.Private.formatValueWithUnits(value, units, 3, precision);
     }
 }
 ```
