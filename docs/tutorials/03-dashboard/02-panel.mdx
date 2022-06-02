@@ -56,7 +56,7 @@ class SummaryExtension extends BaseExtension {
 Autodesk.Viewing.theExtensionManager.registerExtension('SummaryExtension', SummaryExtension);
 ```
 
-Next, import the extension code to our application, and pass the extension ID
+Next, in `wwwroot/viewer.js`, import the extension code to our application, and pass the extension ID
 to the viewer constructor:
 
 ```js
@@ -106,6 +106,8 @@ export class BaseExtension extends Autodesk.Viewing.Extension {
         this.viewer.removeEventListener(Autodesk.Viewing.ISOLATE_EVENT, this._onIsolationChanged);
         return true;
     }
+
+    onToolbarCreated() {}
 
     onModelLoaded(model) {}
 
