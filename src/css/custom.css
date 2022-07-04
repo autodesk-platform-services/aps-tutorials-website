@@ -11,6 +11,23 @@
   src: url('fonts/Artifakt Element Regular.woff') format('woff');
 }
 
+@font-face {
+  font-family: 'Artifakt Element';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.eot#iefix);
+  src: local("0"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.woff2) format("woff2"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.woff) format("woff"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.ttf) format("truetype"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Element%20Regular.svg#Artifakt%20Element) format("svg")
+}
+
+@font-face {
+  font-family: 'Artifakt Legend';
+  font-style: normal;
+  font-weight: 800;
+  src: url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Black.eot#iefix);
+  src: local("0"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Black.woff2) format("woff2"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Black.woff) format("woff"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Black.ttf) format("truetype"), url(https://cdn.web-platform.io/artifakt/release/v1.2.0/Artifakt%20Legend%20Black.svg#Artifakt%20Legend) format("svg")
+}
+
+
 /* Content */
 
 :root {
@@ -38,6 +55,15 @@ header>h1 {
   display: none;
 }
 
+h1{
+  font-family: 'Artifakt Legend';
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--ifm-color-primary);
+  margin: 0;
+  padding: 0;
+}
+
 .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.1);
   display: block;
@@ -46,6 +72,10 @@ header>h1 {
 }
 
 /* Sidebar */
+
+.theme-doc-sidebar-menu .menu__list{
+  font-family: Artifakt Element;
+}
 
 .menu__list-item-collapsible:hover {
   background-color: #fff;
