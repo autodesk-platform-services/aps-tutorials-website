@@ -12,6 +12,11 @@ Name the project any way you want:
 
 Choose the _.NET 6.0 (Long-term support)_ framework, and disable HTTPS as we don't need it for now:
 
+:::caution
+Disable the use of top-level statements if it appears on the `Additional Information` window.
+:::
+
+
 ![Additional information](additional-info.webp)
 
 Once the project is ready, create the following subfolders in your project folder:
