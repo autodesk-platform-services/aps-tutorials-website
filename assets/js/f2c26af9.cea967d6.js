@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkforge_samples_docs=self.webpackChunkforge_samples_docs||[]).push([[695],{2776:function(s){s.exports=JSON.parse('{"plugin":{"name":"@easyops-cn/docusaurus-search-local","id":"default"}}')}}]);
