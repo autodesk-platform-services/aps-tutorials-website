@@ -186,7 +186,7 @@ module.exports = {
                 //     position: 'right',
                 // },
                 // {
-                //     href: 'https://github.com/petrbroz/forge-samples-docs',
+                //     href: 'https://github.com/autodesk-forge/forge-tutorials-website',
                 //     label: 'GitHub',
                 //     position: 'right'
                 // }
@@ -257,7 +257,7 @@ module.exports = {
                 docs: {
                     routeBasePath: '/',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    editUrl: 'https://github.com/petrbroz/forge-samples-docs/edit/master/'
+                    editUrl: 'https://github.com/autodesk-forge/forge-tutorials-website/edit/master/'
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css')
