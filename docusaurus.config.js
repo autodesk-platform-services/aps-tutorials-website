@@ -1,6 +1,3 @@
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-
 const ENV = process.env.ENV || 'production';
 const IS_DEV_ENV = ENV === 'development';
 
@@ -245,11 +242,13 @@ module.exports = {
             copyright: `Copyright © ${new Date().getFullYear()} Autodesk, Inc. Built with Docusaurus.`
         },
         prism: {
-            theme: lightCodeTheme,
-            darkTheme: darkCodeTheme,
             additionalLanguages: ['csharp']
         },
-        hideableSidebar: true
+        docs: {
+            sidebar: {
+                hideable: true
+            }
+        }
     },
     presets: [
         [
