@@ -14,46 +14,53 @@ Here's a couple of things you want to do before building your first Forge applic
 
 ## Create an account
 
-If you don't have a Forge account yet, sign up for one on https://forge.autodesk.com.
-You can take advantage of a trial subscription that is valid for 3 months.
+If you don't have a Forge account yet, sign up for one on https://forge.autodesk.com
+by clicking on the _SIGN UP TO TRY FORGE_ button.
 
-![Sign Up](./_shared/sign-up.webp)
+:::tip
+You can take advantage of a trial subscription that is valid for 3 months.
+:::
+
+![Sign Up](./_shared/developer-portal-logged-out.webp)
 
 ## Create app credentials
 
 In order to authenticate ourselves to the Forge platform, we will need to generate
 _app credentials_ (specifically, a _client ID_ and _client secret_) for our application.
+After logging into the Forge developer portal, go to your profile menu in the top-right corner,
+and click on _Applications_:
 
-After logging into the Forge developer portal, go to _My Apps_:
+![My Apps](./_shared/developer-portal-logged-in.webp)
 
-![My Apps](./_shared/my-apps.webp)
+Next, click on the _Create application_ button:
 
-And click on the _Create App_ button:
+![Create App](./_shared/my-apps.webp)
 
-![Create App](./_shared/create-app.webp)
+Enter the name of your application, and click the _Create_ button:
 
-Now, let's fill out the basic information about our application. The _App name_,
-_App description_, and _Callback URL_ fields are all required, the rest is optional.
+![App Name](./_shared/create-app.webp)
 
-![App Information](./_shared/app-information.webp)
+And your application is now ready. Let's store your _Client ID_ and _Client Secret_
+credentials as we will need these soon!
+
+![App Overview](./_shared/app-overview.webp)
+
+Finally, set the _Callback URL_ under _General Settings_ to `http://localhost:8080/api/auth/callback`,
+and enable the APIs you want your application to have access to. Unless you have any specific reason
+for limiting your application's access to the different services, enable everything.
+
+![Update App](./_shared/apis.webp)
 
 :::caution
-Pay close attention to the _Callback URL_ field. This is the address your application's
+Pay close attention to the _Callback URL_. This is the address your application's
 users will be redirected to after logging in with their Autodesk credentials. It can be
 any arbitrary URL but it has to match exactly the URL your server application expects.
 In our tutorials we will always use the same address: `http://localhost:8080/api/auth/callback`.
 :::
 
-Finally, enable the APIs you want your application to have access to. Unless you have
-any specific reason for limiting your application's access to the different services,
-enable everything.
+Finally, update the application by clicking on the _Save changes_ button, and you're all set!
 
-![Enable APIs](./_shared/enable-apis.webp)
-
-And that's it. Now let's just store your _client ID_ and _client secret_ credentials as
-we will need those **very** soon!
-
-![App Ready](./_shared/app-ready.webp)
+![Save Changes](./_shared/save-changes.png)
 
 ## Provision access in other products
 
