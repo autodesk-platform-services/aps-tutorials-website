@@ -21,12 +21,12 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        var ForgeClientID = Configuration["FORGE_CLIENT_ID"];
-        var ForgeClientSecret = Configuration["FORGE_CLIENT_SECRET"];
-        var ForgeBucket = Configuration["FORGE_BUCKET"]; // Optional
-        if (string.IsNullOrEmpty(ForgeClientID) || string.IsNullOrEmpty(ForgeClientSecret))
+        var clientID = Configuration["APS_CLIENT_ID"];
+        var clientSecret = Configuration["APS_CLIENT_SECRET"];
+        var bucket = Configuration["APS_BUCKET"]; // Optional
+        if (string.IsNullOrEmpty(clientID) || string.IsNullOrEmpty(clientSecret))
         {
-            throw new ApplicationException("Missing required environment variables FORGE_CLIENT_ID or FORGE_CLIENT_SECRET.");
+            throw new ApplicationException("Missing required environment variables APS_CLIENT_ID or APS_CLIENT_SECRET.");
         }
     }
 
@@ -49,7 +49,7 @@ public class Startup
 ```
 
 The `Startup` class is responsible for configuring our server and its "middleware", for example,
-serving of static files. We also try and retrieve the Forge application client ID and secret
+serving of static files. We also try and retrieve the APS application client ID and secret
 from environment variables (or from other [configuration providers](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-6.0#configuration-providers))
 for later use.
 
@@ -66,9 +66,9 @@ values instead of the placeholders of course):
       "Microsoft.AspNetCore": "Warning"
     }
   },
-  "FORGE_CLIENT_ID": "your-client-id",
-  "FORGE_CLIENT_SECRET": "your-client-secret",
-  "FORGE_BUCKET": "optional-name-of-existing-bucket"
+  "APS_CLIENT_ID": "your-client-id",
+  "APS_CLIENT_SECRET": "your-client-secret",
+  "APS_BUCKET": "optional-name-of-existing-bucket"
 }
 ```
 

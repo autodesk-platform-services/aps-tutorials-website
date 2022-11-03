@@ -1,8 +1,8 @@
-Create another file under the `Models` subfolder, and call it `ForgeService.Deriv.cs`. This is where
+Create another file under the `Models` subfolder, and call it `APS.Deriv.cs`. This is where
 will implement the logic for converting designs for viewing, and for checking the status of
 the conversions. Populate the new file with the following code:
 
-```csharp title="Models/ForgeService.Deriv.cs"
+```csharp title="Models/APS.Deriv.cs"
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autodesk.Forge;
@@ -10,7 +10,7 @@ using Autodesk.Forge.Model;
 
 public record TranslationStatus(string Status, string Progress, IEnumerable<string>? Messages);
 
-public partial class ForgeService
+public partial class APS
 {
     public static string Base64Encode(string plainText)
     {

@@ -11,17 +11,17 @@ public class AuthController : ControllerBase
 {
     public record AccessToken(string access_token, long expires_in);
 
-    private readonly ForgeService _forgeService;
+    private readonly APS _aps;
 
-    public AuthController(ForgeService forgeService)
+    public AuthController(APS aps)
     {
-        _forgeService = forgeService;
+        _aps = aps;
     }
 
     [HttpGet("token")]
     public async Task<AccessToken> GetAccessToken()
     {
-        var token = await _forgeService.GetPublicToken();
+        var token = await _aps.GetPublicToken();
         return new AccessToken(
             token.AccessToken,
             (long)Math.Round((token.ExpiresAt - DateTime.UtcNow).TotalSeconds)
@@ -30,7 +30,7 @@ public class AuthController : ControllerBase
 }
 ```
 
-The controller will receive the instance of `ForgeService` through ASP.NET's
+The controller will receive the instance of `APS` - our Autodesk Platform Services client - through ASP.NET's
 [Dependency injection](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0),
 and it will handle requests to `/api/auth/token` by generating a new access token
 and sending it back to the client as a JSON payload.
