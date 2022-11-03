@@ -10,12 +10,12 @@ import Bim360ProvisioningSteps from './_shared/provisioning/bim360/steps.mdx';
 
 # Getting Started
 
-Here's a couple of things you want to do before building your first Forge application.
+Here's a couple of things you want to do before building your first
+[Autodesk Platform Services](https://aps.autodesk.com) application.
 
 ## Create an account
 
-If you don't have a Forge account yet, sign up for one on https://forge.autodesk.com
-by clicking on the _SIGN UP TO TRY FORGE_ button.
+If you don't have an APS account yet, sign up for one on https://aps.autodesk.com.
 
 :::tip
 You can take advantage of a trial subscription that is valid for 3 months.
@@ -25,9 +25,9 @@ You can take advantage of a trial subscription that is valid for 3 months.
 
 ## Create app credentials
 
-In order to authenticate ourselves to the Forge platform, we will need to generate
+In order to authenticate ourselves to the APS platform, we will need to generate
 _app credentials_ (specifically, a _client ID_ and _client secret_) for our application.
-After logging into the Forge developer portal, go to your profile menu in the top-right corner,
+After logging into the developer portal, go to your profile menu in the top-right corner,
 and click on _Applications_:
 
 ![My Apps](./_shared/developer-portal-logged-in.webp)
@@ -64,7 +64,7 @@ Finally, update the application by clicking on the _Save changes_ button, and yo
 
 ## Provision access in other products
 
-In certain cases it is possible for your application to integrate with other Forge-based products
+In certain cases it is possible for your application to integrate with other APS-based products
 such as [Autodesk Construction Cloud](https://construction.autodesk.com),
 or [Autodesk BIM 360](https://www.autodesk.com/bim-360). We leverage this capability in
 the [Hubs Browser](./tutorials/hubs-browser) tutorial where you can learn about accessing designs
@@ -72,7 +72,7 @@ from [Autodesk Docs](https://www.autodesk.com/products/autodesk-docs/overview),
 [BIM 360 Docs](https://www.autodesk.com/bim-360/construction-document-management-software/),
 or [Fusion Teams](https://www.autodesk.com/products/fusion-360/overview).
 
-However, some of these products must _provision access_ for a specific Forge application
+However, some of these products must _provision access_ for a specific APS application
 based on its client ID. Follow the steps below for any specific product you would like
 to integrate your application with.
 
@@ -90,7 +90,7 @@ you can skip the rest of this page and come back to it later when needed.
     </TabItem>
 <TabItem value="fusion360" label="Autodesk Fusion Team">
 
-No provisioning steps are needed. Your Forge application can automatically access
+No provisioning steps are needed. Your APS application can automatically access
 the data of your authenticated users in this product.
 
 </TabItem>
