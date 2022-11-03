@@ -1,12 +1,12 @@
-Create a `ForgeService.Hubs.cs` under the `Models` subfolder with the following content:
+Create a `APS.Hubs.cs` under the `Models` subfolder with the following content:
 
-```csharp title="Models/ForgeService.Hubs.cs"
+```csharp title="Models/APS.Hubs.cs"
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autodesk.Forge;
 using Autodesk.Forge.Model;
 
-public partial class ForgeService
+public partial class APS
 {
     public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
     {
