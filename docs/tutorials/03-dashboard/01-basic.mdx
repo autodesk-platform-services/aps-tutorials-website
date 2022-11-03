@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 # Basic Extension
 
-Forge Viewer provides its own set of [APIs](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Viewer3D)
+The Viewer component in Autodesk Platform Services provides its own set of [APIs](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Viewer3D)
 that you can use to customize its look and feel, behavior, and even the rendered content. While you _could_
 simply sprinkle your custom viewer logic in random places of the client-side code, it is a good practice
 to encapsulate any viewer functionality into a _viewer extension_. That way you can easily share the same
@@ -17,14 +17,14 @@ Let's start by implementing a simple viewer extension that will react to various
 different types of information about the currently loaded design.
 
 :::tip
-If you don't have an existing Forge application to start with, you can use one of the apps from
+If you don't have an existing APS application to start with, you can use one of the apps from
 previous tutorials. Here's a quick way to get the [Simple Viewer](../simple-viewer) application
 running locally using your preferred programming language:
 
 <Tabs>
 <TabItem value="nodejs" label="Node.js" default>
 
-- Create Forge app credentials if you don't have them already (see [Getting Started](/) for
+- Create APS credentials if you don't have them already (see [Getting Started](/) for
 more details)
 - Make sure you have [Node.js](https://nodejs.org/en/download), [git](https://git-scm.com/),
 and a Unix-like terminal installed
@@ -33,10 +33,10 @@ and a Unix-like terminal installed
 - Open the terminal and run the following commands:
 
 ```bash
-git clone https://github.com/autodesk-forge/forge-simple-viewer-nodejs
-cd forge-simple-viewer-nodejs
+git clone https://github.com/autodesk-platform-services/aps-simple-viewer-nodejs
+cd aps-simple-viewer-nodejs
 npm install
-FORGE_CLIENT_ID="your client id" FORGE_CLIENT_SECRET="your client secret" npm start
+APS_CLIENT_ID="your client id" APS_CLIENT_SECRET="your client secret" npm start
 ```
 
 - Open the browser and navigate to [http://localhost:8080](http://localhost:8080)
@@ -44,7 +44,7 @@ FORGE_CLIENT_ID="your client id" FORGE_CLIENT_SECRET="your client secret" npm st
 </TabItem>
 <TabItem value="dotnet" label=".NET 6">
 
-- Create Forge app credentials if you don't have them already (see [Getting Started](/) for
+- Create APS credentials if you don't have them already (see [Getting Started](/) for
 more details)
 - Make sure you have [.NET 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0),
 [git](https://git-scm.com/), and a Unix-like terminal installed
@@ -53,10 +53,10 @@ more details)
 - Open the terminal and run the following commands:
 
 ```bash
-git clone https://github.com/autodesk-forge/forge-simple-viewer-dotnet
-cd forge-simple-viewer-dotnet
+git clone https://github.com/autodesk-platform-services/aps-simple-viewer-dotnet
+cd aps-simple-viewer-dotnet
 dotnet build
-FORGE_CLIENT_ID="your client id" FORGE_CLIENT_SECRET="your client secret" dotnet run
+APS_CLIENT_ID="your client id" APS_CLIENT_SECRET="your client secret" dotnet run
 ```
 
 - Open the browser and navigate to [http://localhost:8080](http://localhost:8080)
