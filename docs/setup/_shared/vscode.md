@@ -5,7 +5,7 @@ Simply install the latest stable build for your platform.
 
 :::tip
 We've built an extension for Visual Studio Code that provides insight into
-some of the Forge services and data directly from the editor:
+some of the APS services and data directly from the editor:
 [vscode-forge-tools](https://marketplace.visualstudio.com/items?itemName=petrbroz.vscode-forge-tools).
-This could be useful when debugging your own Forge applications.
+This could be useful when debugging your own APS applications.
 :::
