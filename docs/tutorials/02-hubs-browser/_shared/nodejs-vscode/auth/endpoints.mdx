@@ -2,28 +2,28 @@ Create an `auth.js` file under the `routes` subfolder with the following content
 
 ```js title="routes/auth.js"
 const express = require('express');
-const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile } = require('../services/forge/auth.js');
+const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile } = require('../services/aps.js');
 
 let router = express.Router();
 
-router.get('/login', function (req, res) {
+router.get('/api/auth/login', function (req, res) {
     res.redirect(getAuthorizationUrl());
 });
 
-router.get('/logout', function (req, res) {
+router.get('/api/auth/logout', function (req, res) {
     req.session = null;
     res.redirect('/');
 });
 
-router.get('/callback', authCallbackMiddleware, function (req, res) {
+router.get('/api/auth/callback', authCallbackMiddleware, function (req, res) {
     res.redirect('/');
 });
 
-router.get('/token', authRefreshMiddleware, function (req, res) {
+router.get('/api/auth/token', authRefreshMiddleware, function (req, res) {
     res.json(req.publicOAuthToken);
 });
 
-router.get('/profile', authRefreshMiddleware, async function (req, res, next) {
+router.get('/api/auth/profile', authRefreshMiddleware, async function (req, res, next) {
     try {
         const profile = await getUserProfile(req.internalOAuthToken);
         res.json({ name: `${profile.firstName} ${profile.lastName}` });
@@ -48,19 +48,18 @@ let app = express();
 app.use(express.static('wwwroot'));
 app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
 // highlight-start
-app.use('/api/auth', require('./routes/auth.js'));
+app.use(require('./routes/auth.js'));
 // highlight-end
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`));
 ```
 
-Since we've attached the router to the `/api/auth` prefix, the router will now handle the following
-requests:
+The router will now handle the following requests:
 
 - `GET /api/auth/login` will redirect the user to the Autodesk login page
 - `GET /api/auth/callback` is the URL our user will be redirected to after logging in successfully,
 and it is where we're going to generate a new set of tokens for the user
 - `GET /api/auth/logout` will remove any cookie-based session data for the given user, effectively
 logging the user out of our application
-- `GET /api/auth/token` will generate a public access token that will later be used by Forge Viewer
+- `GET /api/auth/token` will generate a public access token that will later be used by the Viewer
 to load our designs
 - `GET /api/auth/profile` will return a simple JSON with additional information about the logged in user

@@ -1,20 +1,19 @@
-Create a `forge` folder under the `services` folder, and inside this new folder, create a file
-called `auth.js`. This is where we will be implementing all the Forge authentication logic that
-will be used in different areas of our server application. Let's start by adding the following
-code to the file:
+Create an `aps.js` file under the `services` folder. This is where we will be implementing
+all the APS logic that will be used in different areas of our server application. Let's start
+by adding the following code to the file:
 
-```js title="services/forge/auth.js"
-const { AuthClientThreeLegged, UserProfileApi } = require('forge-apis');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../../config.js');
+```js title="services/aps.js"
+const APS = require('forge-apis');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
 
-const internalAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
-const publicAuthClient = new AuthClientThreeLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, PUBLIC_TOKEN_SCOPES);
+const internalAuthClient = new APS.AuthClientThreeLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
+const publicAuthClient = new APS.AuthClientThreeLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, PUBLIC_TOKEN_SCOPES);
 
-function getAuthorizationUrl() {
-    return internalAuthClient.generateAuthUrl();
-}
+const service = module.exports = {};
 
-async function authCallbackMiddleware(req, res, next) {
+service.getAuthorizationUrl = () => internalAuthClient.generateAuthUrl();
+
+service.authCallbackMiddleware = async (req, res, next) => {
     const internalCredentials = await internalAuthClient.getToken(req.query.code);
     const publicCredentials = await publicAuthClient.refreshToken(internalCredentials);
     req.session.public_token = publicCredentials.access_token;
@@ -22,9 +21,9 @@ async function authCallbackMiddleware(req, res, next) {
     req.session.refresh_token = publicCredentials.refresh_token;
     req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
     next();
-}
+};
 
-async function authRefreshMiddleware(req, res, next) {
+service.authRefreshMiddleware = async (req, res, next) => {
     const { refresh_token, expires_at } = req.session;
     if (!refresh_token) {
         res.status(401).end();
@@ -48,19 +47,11 @@ async function authRefreshMiddleware(req, res, next) {
         expires_in: Math.round((req.session.expires_at - Date.now()) / 1000)
     };
     next();
-}
+};
 
-async function getUserProfile(token) {
-    const resp = await new UserProfileApi().getUserProfile(internalAuthClient, token);
+service.getUserProfile = async (token) => {
+    const resp = await new APS.UserProfileApi().getUserProfile(internalAuthClient, token);
     return resp.body;
-}
-
-module.exports = {
-    internalAuthClient,
-    getAuthorizationUrl,
-    authCallbackMiddleware,
-    authRefreshMiddleware,
-    getUserProfile
 };
 ```
 
@@ -71,6 +62,6 @@ initiating the 3-legged authentication workflow
 - the `authCallbackMiddleware` function can be used as an Express.js middleware
 when the user logs in successfully and is redirected back to our application
 - the `authRefreshMiddleware` function is then used as an Express.js middleware for all requests
-that will need to make use of the Forge access tokens
+that will need to make use of the APS access tokens
 - the `getUserProfile` function returns additional details about the authenticated user based on
 an existing access token

@@ -1,40 +1,29 @@
-Create another file under the `services/forge` subfolder, and call it `hubs.js`. This is where
-will implement the logic for browsing through the individual hubs, projects, folders, items,
-and versions. Populate the new file with the following code:
+Let's implement the logic for browsing through the individual hubs, projects, folders, items,
+and versions. Add the following code to the end of the `services/aps.js` file:
 
-```js title="services/forge/hubs.js"
-const { HubsApi, ProjectsApi, FoldersApi, ItemsApi } = require('forge-apis');
-const { internalAuthClient } = require('./auth.js');
-
-async function getHubs(token) {
-    const resp = await new HubsApi().getHubs(null, internalAuthClient, token);
+```js title="services/aps.js"
+service.getHubs = async (token) => {
+    const resp = await new APS.HubsApi().getHubs(null, internalAuthClient, token);
     return resp.body.data;
-}
+};
 
-async function getProjects(hubId, token) {
-    const resp = await new ProjectsApi().getHubProjects(hubId, null, internalAuthClient, token);
+service.getProjects = async (hubId, token) => {
+    const resp = await new APS.ProjectsApi().getHubProjects(hubId, null, internalAuthClient, token);
     return resp.body.data;
-}
+};
 
-async function getProjectContents(hubId, projectId, folderId, token) {
+service.getProjectContents = async (hubId, projectId, folderId, token) => {
     if (!folderId) {
-        const resp = await new ProjectsApi().getProjectTopFolders(hubId, projectId, internalAuthClient, token);
+        const resp = await new APS.ProjectsApi().getProjectTopFolders(hubId, projectId, internalAuthClient, token);
         return resp.body.data;
     } else {
-        const resp = await new FoldersApi().getFolderContents(projectId, folderId, null, internalAuthClient, token);
+        const resp = await new APS.FoldersApi().getFolderContents(projectId, folderId, null, internalAuthClient, token);
         return resp.body.data;
     }
-}
+};
 
-async function getItemVersions(projectId, itemId, token) {
-    const resp = await new ItemsApi().getItemVersions(projectId, itemId, null, internalAuthClient, token);
+service.getItemVersions = async (projectId, itemId, token) => {
+    const resp = await new APS.ItemsApi().getItemVersions(projectId, itemId, null, internalAuthClient, token);
     return resp.body.data;
-}
-
-module.exports = {
-    getHubs,
-    getProjects,
-    getProjectContents,
-    getItemVersions
 };
 ```
