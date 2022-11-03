@@ -1,63 +1,52 @@
-Create a new file under the `services/forge` subfolder, and call it `oss.js`. This is where
-will implement all the OSS ([Object Storage Service](https://forge.autodesk.com/en/docs/data/v2/developers_guide/basics/#object-storage-service-oss))
-logic of our server application. Populate the new file with the following code:
+Let's implement the OSS ([Object Storage Service](https://forge.autodesk.com/en/docs/data/v2/developers_guide/basics/#object-storage-service-oss))
+logic of our server application. Add the following code to the end of the `services/aps.js` file:
 
-```js title="services/forge/oss.js"
-const fs = require('fs');
-const { BucketsApi, ObjectsApi } = require('forge-apis');
-const { FORGE_BUCKET } = require('../../config.js');
-const { getInternalToken } = require('./auth.js');
-
-async function ensureBucketExists(bucketKey) {
+```js title="services/aps.js"
+service.ensureBucketExists = async (bucketKey) => {
     try {
-        await new BucketsApi().getBucketDetails(bucketKey, null, await getInternalToken());
+        await new APS.BucketsApi().getBucketDetails(bucketKey, null, await service.getInternalToken());
     } catch (err) {
         if (err.response.status === 404) {
-            await new BucketsApi().createBucket({ bucketKey, policyKey: 'temporary' }, {}, null, await getInternalToken());
+            await new APS.BucketsApi().createBucket({ bucketKey, policyKey: 'temporary' }, {}, null, await service.getInternalToken());
         } else {
             throw err;
         }
     }
-}
+};
 
-async function listObjects() {
-    await ensureBucketExists(FORGE_BUCKET);
-    let resp = await new ObjectsApi().getObjects(FORGE_BUCKET, { limit: 64 }, null, await getInternalToken());
+service.listObjects = async () => {
+    await service.ensureBucketExists(APS_BUCKET);
+    let resp = await new APS.ObjectsApi().getObjects(APS_BUCKET, { limit: 64 }, null, await service.getInternalToken());
     let objects = resp.body.items;
     while (resp.body.next) {
         const startAt = new URL(resp.body.next).searchParams.get('startAt');
-        resp = await new ObjectsApi().getObjects(FORGE_BUCKET, { limit: 64, startAt }, null, await getInternalToken());
+        resp = await new APS.ObjectsApi().getObjects(APS_BUCKET, { limit: 64, startAt }, null, await service.getInternalToken());
         objects = objects.concat(resp.body.items);
     }
     return objects;
-}
+};
 
-async function uploadObject(objectName, filePath) {
-    await ensureBucketExists(FORGE_BUCKET);
+service.uploadObject = async (objectName, filePath) => {
+    await service.ensureBucketExists(APS_BUCKET);
     const buffer = await fs.promises.readFile(filePath);
-    const results = await new ObjectsApi().uploadResources(
-        FORGE_BUCKET,
+    const results = await new APS.ObjectsApi().uploadResources(
+        APS_BUCKET,
         [{ objectKey: objectName, data: buffer }],
         { useAcceleration: false, minutesExpiration: 15 },
         null,
-        await getInternalToken()
+        await service.getInternalToken()
     );
     if (results[0].error) {
         throw results[0].completed;
     } else {
         return results[0].completed;
     }
-}
-
-module.exports = {
-    listObjects,
-    uploadObject
 };
 ```
 
 The `ensureBucketExists` function will simply try and request additional information
-about a specific bucket using the `BucketsApi` class from the Forge SDK, and if the response
-from Forge is `404 Not Found`, it will attempt to create a new bucket with this name.
+about a specific bucket using the `BucketsApi` class from the APS SDK, and if the response
+from APS is `404 Not Found`, it will attempt to create a new bucket with this name.
 
 As you can see, the `getObjects` method of the `ObjectsApi` class (responsible for listing files
 in a Data Management bucket) uses pagination. In our code we simply iterate through all the pages

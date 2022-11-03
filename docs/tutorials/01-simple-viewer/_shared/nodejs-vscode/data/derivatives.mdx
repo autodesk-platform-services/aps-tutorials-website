@@ -1,12 +1,8 @@
-Create another file under the `services/forge` subfolder, and call it `md.js`. This is where
-will implement the logic for converting designs for viewing, and for checking the status of
-the conversions. Populate the new file with the following code:
+Let's implement the logic for converting designs for viewing, and for checking the status of
+the conversions. Add the following code to the end of the `services/aps.js` file:
 
-```js title="services/forge/md.js"
-const { DerivativesApi } = require('forge-apis');
-const { getInternalToken } = require('./auth.js');
-
-async function translateObject(urn, rootFilename) {
+```js title="services/aps.js"
+service.translateObject = async (urn, rootFilename) => {
     const job = {
         input: { urn },
         output: { formats: [{ type: 'svf', views: ['2d', '3d'] }] }
@@ -15,13 +11,13 @@ async function translateObject(urn, rootFilename) {
         job.input.compressedUrn = true;
         job.input.rootFilename = rootFilename;
     }
-    const resp = await new DerivativesApi().translate(job, {}, null, await getInternalToken());
+    const resp = await new APS.DerivativesApi().translate(job, {}, null, await service.getInternalToken());
     return resp.body;
-}
+};
 
-async function getManifest(urn) {
+service.getManifest = async (urn) => {
     try {
-        const resp = await new DerivativesApi().getManifest(urn, {}, null, await getInternalToken());
+        const resp = await new APS.DerivativesApi().getManifest(urn, {}, null, await service.getInternalToken());
         return resp.body;
     } catch (err) {
         if (err.response.status === 404) {
@@ -30,15 +26,7 @@ async function getManifest(urn) {
             throw err;
         }
     }
-}
-
-function urnify(id) {
-    return Buffer.from(id).toString('base64').replace(/=/g, '');
-}
-
-module.exports = {
-    translateObject,
-    getManifest,
-    urnify
 };
+
+service.urnify = (id) => Buffer.from(id).toString('base64').replace(/=/g, '');
 ```

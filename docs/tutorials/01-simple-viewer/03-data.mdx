@@ -26,11 +26,18 @@ is available, and use it in other parts of the server app.
 
 <EnvTabs NodeJsVsCode={NodeJsVsCodeData} DotNetVsCode={DotNetData} DotNetVs2022={DotNetData} />
 
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
+
 ## Derivatives
 
 Next, we will implement a couple of helper functions that will derive/extract various types of information
 from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - that we can later load
-into Forge Viewer in our webpage. To do so, we will need to start a new conversion job
+into the Viewer in our webpage. To do so, we will need to start a new conversion job
 in the [Model Derivative](https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
 service, and checking the status of the conversion.
 
@@ -57,7 +64,7 @@ in the browser. The server should respond with a JSON list with names and URNs o
 available in your configured bucket.
 
 :::info
-If this is your first time working with Forge, you may get a JSON response
+If this is your first time working with APS, you may get a JSON response
 with an empty array (`[]`) which is expected. In the screenshot below we can
 already see a couple of files that were uploaded to our bucket in the past.
 :::

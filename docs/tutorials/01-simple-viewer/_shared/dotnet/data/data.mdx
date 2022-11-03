@@ -1,8 +1,8 @@
-Create a `ForgeService.Oss.cs` file under the `Models` folder. This is where will implement
+Create a `APS.Oss.cs` file under the `Models` folder. This is where will implement
 all the OSS ([Object Storage Service](https://forge.autodesk.com/en/docs/data/v2/developers_guide/basics/#object-storage-service-oss))
 logic of our server application. Populate the new file with the following code:
 
-```csharp title="Models/ForgeService.Oss.cs"
+```csharp title="Models/APS.Oss.cs"
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using Autodesk.Forge;
 using Autodesk.Forge.Client;
 using Autodesk.Forge.Model;
 
-public partial class ForgeService
+public partial class APS
 {
     private async Task EnsureBucketExists(string bucketKey)
     {
@@ -74,16 +74,10 @@ public partial class ForgeService
 ```
 
 The `EnsureBucketExists` method will simply try and request additional information
-about a specific bucket, and if the response from Forge is `404 Not Found`, it will
+about a specific bucket, and if the response from APS is `404 Not Found`, it will
 attempt to create a new bucket with that name. If no bucket name is provided through
-environment variables, we generate one by appending the `-basic-app` suffix to the Forge Client ID.
-
-:::caution
-Note that the Data Management service requires bucket names to be **globally unique**,
-and attempts to create a bucket with an already used name will fail with `409 Conflict`.
-See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
-for more details.
-:::
+environment variables, we generate one by appending the `-basic-app` suffix to our
+application's Client ID.
 
 The `GetObjects` method pages through all objects in the bucket, and returns their name and URN
 (the base64-encoded ID that will later be used when communicating with the Model Derivative service).

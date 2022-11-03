@@ -1,32 +1,29 @@
-Create a `forge` folder under the `services` folder, and inside this new folder, create a file
-called `auth.js`. This is where we will be implementing all the Forge authentication logic that
-will be used in different areas of our server application. Let's start by adding the following
-code to the file:
+Create an `aps.js` file under the `services` folder. This is where we will be implementing
+all the APS logic that will be used in different areas of our server application. Let's start
+by adding the following code to the file:
 
-```js title="services/forge/auth.js"
-const { AuthClientTwoLegged } = require('forge-apis');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET } = require('../../config.js');
+```js title="services/aps.js"
+const fs = require('fs');
+const APS = require('forge-apis');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET } = require('../config.js');
 
-let internalAuthClient = new AuthClientTwoLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, ['bucket:read', 'bucket:create', 'data:read', 'data:write', 'data:create'], true);
-let publicAuthClient = new AuthClientTwoLegged(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, ['viewables:read'], true);
+let internalAuthClient = new APS.AuthClientTwoLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, ['bucket:read', 'bucket:create', 'data:read', 'data:write', 'data:create'], true);
+let publicAuthClient = new APS.AuthClientTwoLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, ['viewables:read'], true);
 
-async function getInternalToken() {
+const service = module.exports = {};
+
+service.getInternalToken = async () => {
     if (!internalAuthClient.isAuthorized()) {
         await internalAuthClient.authenticate();
     }
     return internalAuthClient.getCredentials();
-}
+};
 
-async function getPublicToken() {
+service.getPublicToken = async () => {
     if (!publicAuthClient.isAuthorized()) {
         await publicAuthClient.authenticate();
     }
     return publicAuthClient.getCredentials();
-}
-
-module.exports = {
-    getInternalToken,
-    getPublicToken
 };
 ```
 
