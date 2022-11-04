@@ -3,15 +3,15 @@ const IS_DEV_ENV = ENV === 'development';
 
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
-    title: 'Forge Tutorials',
-    tagline: 'Getting started with Autodesk Forge',
-    url: IS_DEV_ENV ? 'https://autodesk-forge.github.io' : 'https://forge-tutorials.autodesk.io',
-    baseUrl: IS_DEV_ENV ? '/forge-tutorials-website/' : '/',
+    title: 'Autodesk Platform Services Tutorials',
+    tagline: 'Getting started with Autodesk Platform Services',
+    url: IS_DEV_ENV ? 'https://autodesk-platform-services.github.io' : 'https://tutorials.autodesk.io',
+    baseUrl: IS_DEV_ENV ? '/aps-tutorials-website/' : '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
-    favicon: 'https://forge.autodesk.com/themes/custom/forgecms_subtheme_forge/favicon.ico',
-    organizationName: 'autodesk-forge',
-    projectName: 'forge-tutorials-website',
+    favicon: 'https://cdn.autodesk.io/favicon.ico',
+    organizationName: 'autodesk-platform-services',
+    projectName: 'aps-tutorials-website',
     plugins: [
         [
             require.resolve('@easyops-cn/docusaurus-search-local'),
@@ -27,8 +27,8 @@ module.exports = {
     themeConfig: {
         navbar: {
             logo: {
-                alt: 'Autodesk Forge',
-                src: 'https://developer.static.autodesk.com/forgeunified/releases/current/1.0.0.20220404193108/images/autodesk-logo-primary-rgb-black.svg' // 'img/logo.png'
+                alt: 'Autodesk Platform Services',
+                src: 'https://developer.static.autodesk.com/forgeunified/releases/current/1.0.0.20220404193108/images/autodesk-logo-primary-rgb-black.svg'
             },
             items: [
                 {
@@ -186,7 +186,7 @@ module.exports = {
                 //     position: 'right',
                 // },
                 // {
-                //     href: 'https://github.com/autodesk-forge/forge-tutorials-website',
+                //     href: 'https://github.com/autodesk-platform-services/aps-tutorials-website',
                 //     label: 'GitHub',
                 //     position: 'right'
                 // }
@@ -209,11 +209,11 @@ module.exports = {
                     items: [
                         {
                             label: 'Stack Overflow',
-                            href: 'https://stackoverflow.com/questions/tagged/autodesk-forge'
+                            href: 'https://stackoverflow.com/questions/tagged/autodesk-platform-services'
                         },
                         {
                             label: 'Twitter',
-                            href: 'https://twitter.com/autodeskforge'
+                            href: 'https://twitter.com/autodeskaps'
                         }
                     ]
                 },
@@ -222,18 +222,18 @@ module.exports = {
                     items: [
                         {
                             label: 'Developer Portal',
-                            href: 'https://forge.autodesk.com'
+                            href: 'https://aps.autodesk.com'
                         },
                         {
                             label: 'GitHub',
-                            href: 'https://github.com/Autodesk-Forge'
+                            href: 'https://github.com/autodesk-platform-services'
                         },
                         {
                             label: 'Showroom',
                             href: 'https://forge-showroom.autodesk.io'
                         },
                         {
-                            label: 'Learn Forge v1',
+                            label: 'Learn APS v1',
                             href: 'https://learnforge.autodesk.io'
                         }
                     ]
@@ -257,7 +257,7 @@ module.exports = {
                 docs: {
                     routeBasePath: '/',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    editUrl: 'https://github.com/autodesk-forge/forge-tutorials-website/edit/master/'
+                    editUrl: 'https://github.com/autodesk-platform-services/aps-tutorials-website/edit/master/'
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css')

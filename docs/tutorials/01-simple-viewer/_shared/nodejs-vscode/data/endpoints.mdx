@@ -3,12 +3,11 @@ Create a `models.js` file under the `routes` subfolder with the following code:
 ```js title="routes/models.js"
 const express = require('express');
 const formidable = require('express-formidable');
-const { listObjects, uploadObject } = require('../services/forge/oss.js');
-const { translateObject, getManifest, urnify } = require('../services/forge/md.js');
+const { listObjects, uploadObject, translateObject, getManifest, urnify } = require('../services/aps.js');
 
 let router = express.Router();
 
-router.get('/', async function (req, res, next) {
+router.get('/api/models', async function (req, res, next) {
     try {
         const objects = await listObjects();
         res.json(objects.map(o => ({
@@ -20,7 +19,7 @@ router.get('/', async function (req, res, next) {
     }
 });
 
-router.get('/:urn/status', async function (req, res, next) {
+router.get('/api/models/:urn/status', async function (req, res, next) {
     try {
         const manifest = await getManifest(req.params.urn);
         if (manifest) {
@@ -44,7 +43,7 @@ router.get('/:urn/status', async function (req, res, next) {
     }
 });
 
-router.post('/', formidable(), async function (req, res, next) {
+router.post('/api/models', formidable(), async function (req, res, next) {
     const file = req.files['model-file'];
     if (!file) {
         res.status(400).send('The required field ("model-file") is missing.');
@@ -79,9 +78,9 @@ const { PORT } = require('./config.js');
 
 let app = express();
 app.use(express.static('wwwroot'));
-app.use('/api/auth', require('./routes/auth.js'));
+app.use(require('./routes/auth.js'));
 // highlight-start
-app.use('/api/models', require('./routes/models.js'));
+app.use(require('./routes/models.js'));
 // highlight-end
 app.listen(PORT, function () { console.log(`Server listening on port ${PORT}...`); });
 ```

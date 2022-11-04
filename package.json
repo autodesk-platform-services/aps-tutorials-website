@@ -1,5 +1,5 @@
 {
-  "name": "forge-samples-docs",
+  "name": "aps-samples-docs",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -14,9 +14,9 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.1",
-    "@docusaurus/plugin-google-gtag": "^2.0.1",
-    "@docusaurus/preset-classic": "^2.0.1",
+    "@docusaurus/core": "^2.2.0",
+    "@docusaurus/plugin-google-gtag": "^2.2.0",
+    "@docusaurus/preset-classic": "^2.2.0",
     "@easyops-cn/docusaurus-search-local": "^0.23.3",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^6.3.1",
