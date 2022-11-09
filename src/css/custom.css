@@ -151,6 +151,10 @@ html[data-theme='dark'] a[rel="noopener noreferrer"]{
   color: #5D3FD3;
 }
 
+html[data-theme='light'] a[rel="noopener noreferrer"]{
+  color: #5D3FD3;
+}
+
 
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
