@@ -222,3 +222,13 @@ html[data-theme='dark'] .dropdown__link {
 html[data-theme='dark'] a {
   color: #5D3FD3;
 }
+
+html[data-theme='light'] .markdown ul li a[rel="noopener noreferrer"] {
+  color: #5D3FD3;
+}
+
+html[data-theme='light'] .theme-admonition div p a[rel="noopener noreferrer"] {
+  color: #5D3FD3;
+  text-decoration-color: #5D3FD3;
+}
+
