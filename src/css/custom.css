@@ -232,3 +232,12 @@ html[data-theme='light'] .theme-admonition div p a[rel="noopener noreferrer"] {
   text-decoration-color: #5D3FD3;
 }
 
+html[data-theme='light'] ol li a[rel="noopener noreferrer"] {
+  color: #5D3FD3;
+}
+
+html[data-theme='light'] .footer__link-item:hover{
+  color: #fff;
+  text-decoration: underline;
+}
+
