@@ -243,3 +243,10 @@ html[data-theme='dark'] .table-of-contents__link--active{
   color: #fff !important;
   text-decoration: underline;
 } */
+
+/* Navbar */
+
+.navbar {
+  padding: 0;
+  height: 65px;
+}
