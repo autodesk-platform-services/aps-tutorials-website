@@ -1,0 +1,26 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        name: Setup
+        with:
+          node-version: '16.x'
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: ${{ secrets.AWS_BUCKET }}
+          source_dir: 'build'
