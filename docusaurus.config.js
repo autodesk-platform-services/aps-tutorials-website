@@ -1,12 +1,9 @@
-const ENV = process.env.ENV || 'production';
-const IS_DEV_ENV = ENV === 'development';
-
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
     title: 'Autodesk Platform Services Tutorials',
     tagline: 'Getting started with Autodesk Platform Services',
-    url: IS_DEV_ENV ? 'https://autodesk-platform-services.github.io' : 'https://tutorials.autodesk.io',
-    baseUrl: IS_DEV_ENV ? '/aps-tutorials-website/' : '/',
+    url: 'https://tutorials.autodesk.io',
+    baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'https://cdn.autodesk.io/favicon.ico',
