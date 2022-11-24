@@ -2,6 +2,8 @@ import React from 'react';
 import NavbarLayout from '@theme/Navbar/Layout';
 import NavbarContent from '@theme/Navbar/Content';
 
+const USE_BRANDED_NAVBAR = false;
+
 function loadNavbarScript() {
   // Skip this code if we're in Server-Side Rendering mode
   if (typeof window == 'undefined') {
@@ -19,8 +21,7 @@ loadNavbarScript();
 export default function Navbar() {
   return (
     <NavbarLayout>
-      {/* <NavbarContent /> */}
-      <div id="app-navbar" style={{width: '100%'}}></div>
+      {USE_BRANDED_NAVBAR ? <div id="app-navbar" style={{width: '100%'}}></div> : <NavbarContent />}
     </NavbarLayout>
   );
 }
