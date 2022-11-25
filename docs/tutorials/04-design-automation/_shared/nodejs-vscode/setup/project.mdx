@@ -1,0 +1,29 @@
+Create a new folder for your project, navigate to it in the command line, and initialize a new
+Node.js project:
+
+```bash
+mkdir forgeSample
+cd forgeSample
+npm init -y
+```
+
+Next, install all the Node.js dependencies we're going to use. In this case it will be
+the [Express.js](https://expressjs.com) framework, an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
+for handling `multipart/form-data` requests, and finally the [APS SDK](https://www.npmjs.com/package/forge-apis):
+
+```bash
+npm install --save express express-formidable forge-apis
+```
+
+The `"dependencies"` in your `package.json` file should now look something like this
+(potentially with slightly different version numbers):
+
+```json
+// ...
+"dependencies": {
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "forge-apis": "^0.9.1"
+}
+// ...
+```

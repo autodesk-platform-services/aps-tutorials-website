@@ -1,0 +1,48 @@
+From the solution explorer, select `Forgesample` project, under the `Properties`,
+select and open the `launchSettings.json`
+
+- Change the applicationUrl to "http://localhost:8080"
+- Go to profiles\forgeSample\environmentVariables add following environments.
+
+```bash
+ASPNETCORE_URLS: use http://localhost:8080
+APS_CLIENT_ID: use your id here
+APS_CLIENT_SECRET: use your secret here
+APS_WEBHOOK_URL: use the ngrok forwarding URL from previous step
+```
+
+As this is running locally, `sslPort` is set to 0. It should look like as shown below.
+
+```json title="launchSettings.json"
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:8080",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "forgeSample": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "APS_CLIENT_ID": "Uo1RYupnCnPb2WidtW9AqGMzjN6Z41M5",
+        "APS_CLIENt_SECRET": "blahblah",
+        "APS_WEBHOOK_URL": "http://170e-49-206-57-76.ngrok.io"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
+```

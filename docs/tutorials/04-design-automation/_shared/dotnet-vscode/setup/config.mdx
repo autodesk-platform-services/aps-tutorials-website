@@ -1,0 +1,77 @@
+import VSCodeFolderStructure from "../../_images/vscode-dotnet-folderStructure.PNG";
+
+The `*.csproj`file in your project should now look similar to this (possibly with slightly different version numbers, and additional .NET settings):
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Autodesk.Forge" Version="1.9.7" />
+    <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="5.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="6.0.11" />
+  </ItemGroup>
+</Project>
+```
+
+Now, when you open your project folder in Visual Studio Code for the first time, you will be prompted to setup your project for .NET development. Accept the prompt, and the editor will automatically create a .vscode subfolder with additional .NET specific settings such as the default [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
+The folder structure in the editor should look similar to this.
+
+<img src={VSCodeFolderStructure} style={{ width: 200 }} />
+
+Open `launch.json` from .vscode folder, set following environments in `env` object.
+
+```batch
+ASPNETCORE_URLS: use http://localhost:8080
+APS_CLIENT_ID: use your id here
+APS_CLIENT_SECRET: use your secret here
+APS_WEBHOOK_URL: use the ngrok forwarding URL from previous step
+```
+
+The launch.json should look similar to this.
+
+```json title=launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Use IntelliSense to find out which attributes exist for C# debugging
+      // Use hover for the description of the existing attributes
+      // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+      "name": ".NET Core Launch (web)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/bin/x64/Debug/net6.0/forgeSample.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "stopAtEntry": false,
+      // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:8080",
+        "APS_CLIENT_ID": "Uo1RYupnCnPb2WidtW9AqGMzjN6Z41M5",
+        "APS_CLIENT_SECRET": "blahblah",
+        "APS_WEBHOOK_URL": "http://170e-49-206-57-76.ngrok.io"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    }
+  ]
+}
+```
