@@ -1,0 +1,90 @@
+import VsCodeFolderExplorerImg from "../../_images/vscode-node-folderStructure.webp";
+
+### Install packages
+
+By default, a Node.js project is empty, so we need to install a few packages with npm install. Let's start with a basic express server, body-parser for JSON handling, multer for file upload and, of course, APS.
+
+:::caution
+Run one npm install at a time.
+:::
+
+```bash
+npm install express --save
+npm install multer --save
+npm install cookie-session --save
+npm install forge-apis --save
+npm install autodesk.forge.designautomation --save
+npm install body-parser --save
+npm install form-data --save
+npm install socket.io --save
+
+```
+
+> The --save parameter indicates that the module should be included in the package.json file as a dependency.
+
+Finally open the package.json and, inside "scripts", add "start": "node start.js", line. Now your folder should have a node_modules folder and your package.json should look like this
+
+```json title=package.json
+{
+  "name": "forgesample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "autodesk.forge.designautomation": "^3.0.3",
+    "body-parser": "^1.19.0",
+    "cookie-session": "^2.0.0",
+    "express": "^4.17.1",
+    "forge-apis": "^0.9.2",
+    "form-data": "^4.0.0",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.0.1"
+  }
+}
+```
+
+> The version number (e.g. forge-apis 0.9.2) may vary, it was the latest version when this tutorial was created.
+
+### Files and Folders
+
+To create a new folder or file, right-click on the "Explorer" area on the left and select New Folder or New File.
+
+Create a /routes/ folder for all server-side files and a /public/ folder for all client-side files.
+
+At this point, you project should have the following structure
+
+<img src={VsCodeFolderExplorerImg} style={{ width: 300 }} />
+
+This file indicates to Visual Studio Code how we should run our project. Go to menu Run >> Add Configuration... and, in the Select Environment window that appears on the top, choose Node.js. In the /.vscode/launch.json file that is created, enter the following
+
+```json title=launch.json
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/start.js",
+      "env": {
+        "APS_CLIENT_ID": "your id here",
+        "APS_CLIENT_SECRET": "your secret here",
+        "APS_WEBHOOK_URL": "your ngrok url"
+      }
+    }
+  ]
+}
+```
+
+:::note
+It's important to define ID & Secret as environment variables so our project can later be deployed online. More on this later, in Deployment.
+:::
