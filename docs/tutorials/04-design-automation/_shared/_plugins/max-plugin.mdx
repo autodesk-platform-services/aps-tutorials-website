@@ -10,7 +10,7 @@ Remember that for Design Automation, there should be no UI or prompts that canno
 
 ### Create a new .NET project
 
-Right-click on the solution, the **Add** >> **New Project**. Select **Windows Desktop**, then **Class Library** and, finally, name it `UpdateMAXParam`. You will then need to reference the Autodesk.Max.Dll managed assembly (3ds Max .NET API core module). This module is found in the 3dsmax.exe folder and when referencing, make sure to turn off the "Copy Local" flag. There are a few other modules used for .NET API support (see [The 3ds Max .NET SDK](http://help.autodesk.com/view/3DSMAX/2019/ENU/?guid=__developer_3ds_max__net_sdk_html)), but for this tutorial we will use only Autodesk.Max.dll. Then search and install `Newtonsoft.Json` (which is used to parse input data in JSON format).
+Right-click on the solution, the **Add** >> **New Project**. Select **Windows Desktop**, then **Class Library** and, finally, name it `UpdateMAXParam`. You will then need to reference the `Autodesk.Max.Dll` managed assembly (3ds Max .NET API core module). This module is found in the `3dsmax.exe` folder and when referencing, make sure to turn off the "Copy Local" flag. There are a few other modules used for .NET API support (see [The 3ds Max .NET SDK](http://help.autodesk.com/view/3DSMAX/2019/ENU/?guid=__developer_3ds_max__net_sdk_html)), but for this tutorial we will use only Autodesk.Max.dll. Then search and install `Newtonsoft.Json` (which is used to parse input data in JSON format).
 
 > Please select .NET Framework 4.8. If not listed, [please install the Dev Pack](https://dotnet.microsoft.com/download/dotnet-framework/net48).
 
@@ -215,14 +215,14 @@ This file will tell 3ds Max the modules to load (in this case the .NET API plugi
 
 ```
 
-Finally, create a subfolder named Contents and leave it empty. At this point, the project should look like.
+Finally, create a subfolder named `Contents` and leave it empty. At this point, the project should look like.
 ![](../_images/_max/bundle_folders.png)
 
 ## Post-build event
 
 > For Node.js it is required to adjust the AppBundle ZIP output folder.
 
-Now we need to ZIP the .bundle folder. Right-click on the project, select **Properties**, then open **Build Events** and copy the following into **Post-build event command line** field, as shown on the image below.
+Now we need to ZIP the `.bundle` folder. Right-click on the project, select **Properties**, then open **Build Events** and copy the following into **Post-build event command line** field, as shown on the image below.
 
 ```
 xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)UpdateMAXParam.bundle\Contents\"
@@ -230,7 +230,7 @@ del /F "$(ProjectDir)..\forgesample\wwwroot\bundles\UpdateMAXParam.zip"
 "C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../forgesample/wwwroot/bundles/UpdateMAXParam.zip" "$(ProjectDir)UpdateMAXParam.bundle\" -xr0!*.pdb
 ```
 
-This will copy the DLL from /bin/debug/ into .bundle/Contents folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into /bundles folders of the webapp.
+This will copy the DLL from `/bin/debug/` into `.bundle/Contents` folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into /bundles folders of the webapp.
 
 ![](../_images/_max/post_build.png)
 

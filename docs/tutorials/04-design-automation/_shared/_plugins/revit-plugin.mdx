@@ -172,7 +172,7 @@ del /F "$(ProjectDir)..\forgesample\wwwroot\bundles\UpdateRVTParam.zip"
 "C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../forgesample/wwwroot/bundles/UpdateRVTParam.zip" "$(ProjectDir)UpdateRVTParam.bundle\" -xr0!*.pdb
 ```
 
-This will copy the DLL from /bin/debug/ into .bundle/Contents folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into /bundles folders of the webapp.
+This will copy the DLL from `/bin/debug/` into `.bundle/Contents` folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into `/bundles` folders of the webapp.
 
 ![](../_images/_revit/post_build.png)
 

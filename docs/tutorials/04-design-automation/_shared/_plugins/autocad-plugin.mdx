@@ -158,11 +158,11 @@ del /F "$(ProjectDir)..\forgesample\wwwroot\bundles\UpdateDWGParam.zip"
 "C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../forgesample/wwwroot/bundles/UpdateDWGParam.zip" "$(ProjectDir)UpdateDWGParam.bundle\" -xr0!*.pdb
 ```
 
-This will copy the DLL from /bin/debug/ into .bundle/Contents folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into /bundles folders of the webapp.
+This will copy the DLL from `/bin/debug/` into `.bundle/Contents` folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into `/bundles` folders of the webapp.
 ![](../_images/_autocad/post_build.png)
 
 > Note how the **Post-build event** uses the project and folder names, so make sure you're using this names.
 
-If you build the `UpdateDWGParam` project now you should see something like this on the **Output** window. Note the 2 folders and 3 files zipped. The zip file is created directly at the /wwwroot/bundles folder. This means you're doing great!
+If you build the `UpdateDWGParam` project now you should see something like this on the **Output** window. Note the 2 folders and 3 files zipped. The zip file is created directly at the `/wwwroot/bundles` folder. This means you're doing great!
 
 ![](../_images/_autocad/build_output.png)
