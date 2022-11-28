@@ -7,8 +7,13 @@
 /* You can override the default Infima variables here. */
 
 @font-face {
-  font-family: 'Artifakt Element Regular';
+  font-family: 'Artifakt Element';
   src: url('fonts/Artifakt Element Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Artifakt Legend';
+  src: url('fonts/Artifakt Legend Extra Bold.woff') format('woff');
 }
 
 /* Content */
@@ -29,15 +34,35 @@
   --ifm-color-primary-lighter: #3b3b3b;
   --ifm-color-primary-lightest: #424242;
   --ifm-code-font-size: 95%;
-  --ifm-font-family-monospace: 'Artifakt Element Regular';
-  --ifm-font-family-base: 'Artifakt Element Regular';
+  --ifm-font-family-monospace: 'Artifakt Element';
+  --ifm-font-family-base: 'Artifakt Element';
   --forge-bg-color: rgb(62, 149, 209);
 }
 
-h1 {
-  font-family: ArtifaktLegend, sans-serif;
-  font-size: clamp(1.5rem, 1.29rem + 0.926vw, 2.125rem);
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Artifakt Legend', sans-serif;
   font-weight: 800;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
 }
 
 header>h1 {
@@ -236,12 +261,12 @@ html[data-theme='light'] ol li a[rel="noopener noreferrer"] {
   color: #5D3FD3;
 }
 
-html[data-theme='light'] .footer__link-item:hover{
+html[data-theme='light'] .footer__link-item:hover {
   color: #fff;
   text-decoration: underline;
 }
 
-html[data-theme='dark'] .table-of-contents__link--active{
+html[data-theme='dark'] .table-of-contents__link--active {
   color: #fff !important;
   text-decoration: underline;
 }
