@@ -84,7 +84,6 @@ header>h1 {
 
 .menu__link {
   color: #000;
-  font-weight: 200 !important;
 }
 
 .menu__link:hover {
@@ -94,7 +93,7 @@ header>h1 {
 
 .menu__link--active {
   color: #5D3FD3;
-  font-weight: 600 !important;
+  font-weight: 800 !important;
   background-color: #fff !important;
 }
 
