@@ -14,8 +14,8 @@ $(document).ready(function () {
 });
 
 function prepareLists() {
-  list("activity", "/api/forge/designautomation/activities");
-  list("engines", "/api/forge/designautomation/engines");
+  list("activity", "/api/aps/designautomation/activities");
+  list("engines", "/api/aps/designautomation/engines");
   list("localBundles", "/api/appbundles");
 }
 
@@ -58,7 +58,7 @@ function clearAccount() {
     return;
 
   jQuery.ajax({
-    url: "api/forge/designautomation/account",
+    url: "api/aps/designautomation/account",
     method: "DELETE",
     success: function () {
       prepareLists();
@@ -85,7 +85,7 @@ function createAppBundleActivity() {
 
 function createAppBundle(cb) {
   jQuery.ajax({
-    url: "api/forge/designautomation/appbundles",
+    url: "api/aps/designautomation/appbundles",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -109,7 +109,7 @@ function createAppBundle(cb) {
 
 function createActivity(cb) {
   jQuery.ajax({
-    url: "api/forge/designautomation/activities",
+    url: "api/aps/designautomation/activities",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -153,7 +153,7 @@ function startWorkitem() {
     );
     writeLog("Uploading input file...");
     $.ajax({
-      url: "api/forge/designautomation/workitems",
+      url: "api/aps/designautomation/workitems",
       data: formData,
       processData: false,
       contentType: false,

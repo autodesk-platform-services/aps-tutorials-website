@@ -6,15 +6,23 @@ import IndexHtmlForNode from "./_shared/nodejs-vscode/ui/index.mdx";
 import DAJSForNode from "./_shared/nodejs-vscode/ui/design-automation.mdx";
 import IndexHtmlForNET from "./_shared/dotnet-vs2022/ui/index.mdx";
 import DAJSForNET from "./_shared/dotnet-vs2022/ui/design-automation.mdx";
-import CodeBlockTabs from "@site/src/components/CodeBlockTabs.js";
+import EnvTabs from "@site/src/components/EnvTabs.js";
 
-The interface is based on vanilla HTML5 & JavaScript. It essentially the same for any server-side, but there are a few differences: the Websocket implementation uses socket.io (Node.js) or SignalR (.NET 6).
-Let's start with the UI (HTML and JavaScript) files. Under wwwroot folder, create bundles and js folder.
+The interface is based on vanilla HTML5 & `JavaScript`. It essentially the same for any server-side, but there are a few differences: the Websocket implementation uses socket.io (`Node.js`) or SignalR (`.NET 6`).
+Let's start with the UI (`HTML` and `JavaScript`) files. Under `wwwroot` folder, create `bundles` and `js` folder.
 
-<CodeBlockTabs NET6={IndexHtmlForNET} NodeJS={IndexHtmlForNode} />
+<EnvTabs
+  NodeJsVsCode={IndexHtmlForNode}
+  DotNetVsCode={IndexHtmlForNET}
+  DotNetVs2022={IndexHtmlForNET}
+/>
 
 ## ApsDesignAutomation.js
 
 Create `js` folder under `public` folder and under `public/js` folder create the `ApsDesignAutomation.js` file with the following content
 
-<CodeBlockTabs NET6={DAJSForNET} NodeJS={DAJSForNode} />
+<EnvTabs
+  NodeJsVsCode={DAJSForNode}
+  DotNetVsCode={DAJSForNET}
+  DotNetVs2022={DAJSForNET}
+/>

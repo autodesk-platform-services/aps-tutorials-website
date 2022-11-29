@@ -31,15 +31,15 @@ const cookieSession = require("cookie-session");
 const config = require("./config");
 if (!config.credentials.client_id || !config.credentials.client_secret)
   return console.error(
-    "Missing FORGE_CLIENT_ID or FORGE_CLIENT_SECRET env variables."
+    "Missing APS_CLIENT_ID or APS_CLIENT_SECRET env variables."
   );
 
 let app = express();
 app.use(express.static(_path.join(__dirname, "./public")));
 app.use(
   cookieSession({
-    name: "forge_session",
-    keys: ["forge_secure_key"],
+    name: "aps_session",
+    keys: ["aps_secure_key"],
     maxAge: 60 * 60 * 1000, // 1 hour, same as the 2 legged lifespan token
   })
 );
@@ -89,10 +89,10 @@ In the root folder, create a file named config.js with the following content.
 module.exports = {
   // Set environment variables or hard-code here
   credentials: {
-    client_id: process.env.FORGE_CLIENT_ID,
-    client_secret: process.env.FORGE_CLIENT_SECRET,
-    callback_url: process.env.FORGE_CALLBACK || process.env.FORGE_CALLBACK_URL,
-    webhook_url: process.env.FORGE_WEBHOOK_URL,
+    client_id: process.env.APS_CLIENT_ID,
+    client_secret: process.env.APS_CLIENT_SECRET,
+    callback_url: process.env.APS_CALLBACK || process.env.APS_CALLBACK_URL,
+    webhook_url: process.env.APS_WEBHOOK_URL,
   },
   scopes: {
     // Required scopes for the server-side application

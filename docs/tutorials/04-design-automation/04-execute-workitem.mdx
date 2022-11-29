@@ -2,11 +2,13 @@
 title: Execute Workitem
 ---
 
-import CodeBlockTabs from "@site/src/components/CodeBlockTabs.js";
+import EnvTabs from "@site/src/components/EnvTabs.js";
 import WorkitemForNet from "./_shared/dotnet-vs2022/setup/workitem.mdx";
 import WorkitemForNodejs from "./_shared/nodejs-vscode/setup/workitem.mdx";
 import DebugForNet from "./_shared/dotnet-vs2022/setup/debug.mdx";
 import DebugForNodejs from "./_shared/nodejs-vscode/setup/debug.mdx";
+import ResponsiveVideo from "@site/src/components/ResponsiveVideo.js";
+import PreviewUrl from "@site/static/videos/modify-your-models.mp4";
 
 A job that executes a specified Activity, using specified input files and generating appropriate output files.
 
@@ -14,7 +16,11 @@ The relationship between an Activity and WorkItem can be thought of as a “func
 
 In this tutorial sample, the workitem specifies the input file URL, the input JSON data with the new parameter values, and the destination URL for the output file. This sample will upload the input file to a OSS bucket before starting the workitem.
 
-<CodeBlockTabs NET6={WorkitemForNet} NodeJS={WorkitemForNodejs} />
+<EnvTabs
+  NodeJsVsCode={WorkitemForNodejs}
+  DotNetVsCode={WorkitemForNet}
+  DotNetVs2022={WorkitemForNet}
+/>
 
 Everything ready!
 
@@ -26,13 +32,13 @@ Now that your app is ready, it's time to run it. This is where we can test and c
 
 At the top-roght, click on **Configure** to define AppBundle & Activity. This only need to be done once. Specify the new `width` and `height` on the left panel, select the `input file` and click on `Start workitem`. The right panel should show the results.
 
-You can find [sample files here](https://github.com/Developer-Autodesk/learn.forge.designautomation/tree/master/sample%20files).
+You can find [sample files here](https://github.com/autodesk-platform-services/aps-design-automation-dotnet/tree/master/sample%20files).
 
 !> If the plugin code changes, then you need to upload a new AppBundle and increase the version (e.g. v1 to v2). This sample will create a new version every time a new AppBundle is uploaded.
 
-> Both input and output files are saved in OSS Buckets, you can use [View Models](https://tutorials.autodesk.io/tutorials/simple-viewer/) tutorial to view them.
+> Both input and output files are saved in OSS Buckets, you can use [View Models](../simple-viewer/) tutorial to view them.
 
-![](./_shared/_images/run_sample_modifymodels.gif)
+<ResponsiveVideo src={PreviewUrl} />
 
 ## Troubleshooting
 
@@ -62,4 +68,8 @@ LogTrace("DLL {0} compiled on {1}",
 
 Ready? Let's run it!
 
-<CodeBlockTabs NET6={DebugForNet} NodeJS={DebugForNodejs} />
+<EnvTabs
+  NodeJsVsCode={DebugForNodejs}
+  DotNetVsCode={DebugForNet}
+  DotNetVs2022={DebugForNet}
+/>

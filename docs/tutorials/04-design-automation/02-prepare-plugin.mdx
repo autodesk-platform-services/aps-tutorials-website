@@ -10,9 +10,9 @@ import InventorPlugin from "./_shared/_plugins/inventor-plugin.mdx";
 import RevitPlugin from "./_shared/_plugins/revit-plugin.mdx";
 import MaxPlugin from "./_shared/_plugins/max-plugin.mdx";
 import EngineTabs from "@site/src/components/EngineTabs.js";
-import CodeBlockTabs from "@site/src/components/CodeBlockTabs.js";
+import EnvTabs from "@site/src/components/EnvTabs.js";
 
-Design Automation uses .bundle just like the [Autodesk App Store](https://www.autodesk.com/developer-network/app-store), meaning you need to create a PackageContents.xml and a ZIP with the DLL (and other required files). For detailed information on how to create them, please visit Autodesk App Store Developer Center.
+Design Automation uses `.bundle` just like the [Autodesk App Store](https://www.autodesk.com/developer-network/app-store), meaning you need to create a PackageContents.xml and a ZIP with the DLL (and other required files). For detailed information on how to create them, please visit Autodesk App Store Developer Center.
 
 At this section we will create a basic plugin that update width and height parameter and save the resulting file. Also the supporting files (PackageContents.xml) and the folder structure to place them. Finally create a .ZIP file ready to upload to Design Automation.
 
@@ -45,7 +45,11 @@ For the next step, choose the **Engine**, which is the Autodesk application wher
 
 Now the ZIP bundle is ready, let's upload to Design Automation.
 
-<CodeBlockTabs NET6={BundleNet6} NodeJS={BundleNodeJS} />
+<EnvTabs
+  NodeJsVsCode={BundleNodeJS}
+  DotNetVsCode={BundleNet6}
+  DotNetVs2022={BundleNet6}
+/>
 
 If you run the webapp now and click on Configure (top-right), you should see your AppBundle and a list of all available engines. Buttons do not work yet... let's move forward.
 
