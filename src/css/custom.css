@@ -270,9 +270,9 @@ html[data-theme='dark'] .table-of-contents__link--active {
   text-decoration: underline;
 }
 
-/* Navbar */
+/* External/Branded Navbar */
 
-/* .navbar {
+.navbar {
   padding: 0;
   height: 65px;
-} */
+}

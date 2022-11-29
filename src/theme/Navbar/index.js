@@ -2,7 +2,7 @@ import React from 'react';
 import NavbarLayout from '@theme/Navbar/Layout';
 import NavbarContent from '@theme/Navbar/Content';
 
-const USE_BRANDED_NAVBAR = false;
+const USE_BRANDED_NAVBAR = true;
 
 function loadNavbarScript() {
   // Skip this code if we're in Server-Side Rendering mode
