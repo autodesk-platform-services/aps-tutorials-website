@@ -22,6 +22,11 @@ module.exports = {
         ]
     ],
     themeConfig: {
+        colorMode: {
+            defaultMode: 'light',
+            disableSwitch: true,
+            respectPrefersColorScheme: false,
+        },
         navbar: {
             logo: {
                 alt: 'Autodesk Platform Services',
