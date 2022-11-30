@@ -1,0 +1,56 @@
+---
+title: Create Plugin
+---
+
+import ActivityBundleConfigureImg from "./_shared/_images/activity-bundle-configure.webp";
+import BundleNet6 from "./_shared/dotnet-vs2022/setup/upload-bundle.mdx";
+import BundleNodeJS from "./_shared/nodejs-vscode/setup/upload-bundle.mdx";
+import AutoCADPlugin from "./_shared/_plugins/autocad-plugin.mdx";
+import InventorPlugin from "./_shared/_plugins/inventor-plugin.mdx";
+import RevitPlugin from "./_shared/_plugins/revit-plugin.mdx";
+import MaxPlugin from "./_shared/_plugins/max-plugin.mdx";
+import EngineTabs from "@site/src/components/EngineTabs.js";
+import EnvTabs from "@site/src/components/EnvTabs.js";
+
+Design Automation uses `.bundle` just like the [Autodesk App Store](https://www.autodesk.com/developer-network/app-store), meaning you need to create a PackageContents.xml and a ZIP with the DLL (and other required files). For detailed information on how to create them, please visit Autodesk App Store Developer Center.
+
+At this section we will create a basic plugin that update width and height parameter and save the resulting file. Also the supporting files (PackageContents.xml) and the folder structure to place them. Finally create a .ZIP file ready to upload to Design Automation.
+
+### Prerequisites
+
+- 7zip: use to create the .ZIP with bundle files, please install from here. This tutorial assumes 7zip is installed on the default folder: `C:\Program Files\7-Zip\7z.exe`.
+
+### Additional prerequisites
+
+For the next session you can use the pre-build plugin. Or if you decide to build it, you will need
+
+- **Visual Studio**: Visual Studio 2019 or newer is required, please visit [this link](https://visualstudio.microsoft.com/vs/).
+
+- **AutoCAD, Inventor, Revit or 3ds Max**: In order to develop, test and debug your Design Automation plugin: [AutoCAD](https://www.autodesk.com/products/autocad/overview) | [Inventor](https://www.autodesk.com/products/inventor/overview) | [Revit](https://www.autodesk.com/products/revit/overview) | [3ds Max](https://www.autodesk.com/products/3ds-max/overview).
+
+---
+
+For the next step, choose the **Engine**, which is the Autodesk application where you plugin will run. You'll need the respective application installed in order to compile, debug and test locally.
+
+### Choose the engine
+
+<EngineTabs
+  AutoCAD={AutoCADPlugin}
+  Inventor={InventorPlugin}
+  Revit={RevitPlugin}
+  Max={MaxPlugin}
+/>
+
+### Upload Plugin Bundle
+
+Now the ZIP bundle is ready, let's upload to Design Automation.
+
+<EnvTabs
+  NodeJsVsCode={BundleNodeJS}
+  DotNetVsCode={BundleNet6}
+  DotNetVs2022={BundleNet6}
+/>
+
+If you run the webapp now and click on Configure (top-right), you should see your AppBundle and a list of all available engines. Buttons do not work yet... let's move forward.
+
+<img src={ActivityBundleConfigureImg} style={{ width: 800 }} />

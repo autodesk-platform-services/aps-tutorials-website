@@ -6,15 +6,15 @@ If you haven't worked with Docusaurus before, I'd also suggest checking out its
 
 ## Adding New Tutorials
 
-> Tip: look at the structure of existing tutorials under _docs/tutorials_ for reference.
+> Tip: look at the structure of existing tutorials under `docs/tutorials` for reference.
 
-1. Create a new folder for your tutorial under _docs/tutorials_. The name of the folder
+1. Create a new folder for your tutorial under `docs/tutorials`. The name of the folder
 should be short, with comma-separated words (it will appear in the URL), and it should
 be prefixed with a number (used to control the ordering in the UI). For example,
-_04-my-cool-tutorial_ would be the 4th tutorial in the sidebar accessible via the following
+`04-my-cool-tutorial` would be the 4th tutorial in the sidebar accessible via the following
 URL: https://forge-tutorials.autodesk.io/tutorials/my-cool-tutorial/.
 
-2. Inside the new folder, create a file called _\_category\_.json_, and populate it with
+2. Inside the new folder, create a file called `_category_.json`, and populate it with
 a JSON specifying the display name of the tutorial, for example:
 
 ```json
@@ -23,15 +23,15 @@ a JSON specifying the display name of the tutorial, for example:
 }
 ```
 
-3. Create an _index.md_ or _index.mdx_ (Markdown with JSX syntax) file in the new folder.
+3. Create an `index.md` or `index.mdx` (Markdown with JSX syntax) file in the new folder.
 This will be the main page of your tutorial. Use it to describe what the tutorial is about,
 which parts of the platform it's using, etc. Consider adding a screenshot or a video
 showing the result of the tutorial as well.
 
-4. Create an _*.md_ or _*.mdx_ file for each step of the tutorial. The name of the file
+4. Create an `*.md` or `*.mdx` file for each step of the tutorial. The name of the file
 should be short, with comma-separated words (it will appear in the URL), and it should
 be prefixed with a number (used to control the ordering in the UI). For example,
-_02-basic-server.md_ would be the 2nd step in the sidebar accessible via the following
+`02-basic-server.md` would be the 2nd step in the sidebar accessible via the following
 URL: https://forge-tutorials.autodesk.io/tutorials/my-cool-tutorial/basic-server.
 
 5. Add a [front matter](https://docusaurus.io/docs/markdown-features#front-matter) header
@@ -53,7 +53,7 @@ to build and preview the Docusaurus website locally.
 not just at the very end.
 
 - If there are any assets (images, MDX files, etc.) that you want to share across multiple pages,
-store them in a _\_shared_ subfolder.
+store them in a `_shared` subfolder.
 
 - Whenever you are referring to a code element (class, variable, etc.), file, or folder, use the
 backtick notation. For example:
@@ -85,7 +85,7 @@ is useful when you need to use some React components like [tabs](https://docusau
 
 ### Importing Markdown
 
-In Docusaurus you can import an _*.md_ or _*.mdx_ file as a React component into another _*.mdx_ file:
+In Docusaurus you can import an `*.md` or `*.mdx` file as a React component into another `*.mdx` file:
 
 ```mdx
 import SomeMarkdownPiece from './_shared/some/other.mdx';
