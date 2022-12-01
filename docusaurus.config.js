@@ -1,3 +1,5 @@
+const lazyImages = require('rehype-plugin-image-native-lazy-loading');
+
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
     title: 'Autodesk Platform Services Tutorials',
@@ -259,7 +261,8 @@ module.exports = {
                 docs: {
                     routeBasePath: '/',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    editUrl: 'https://github.com/autodesk-platform-services/aps-tutorials-website/edit/master/'
+                    editUrl: 'https://github.com/autodesk-platform-services/aps-tutorials-website/edit/master/',
+                    rehypePlugins: [lazyImages]
                 },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css')
