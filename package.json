@@ -1,6 +1,6 @@
 {
-  "name": "aps-samples-docs",
-  "version": "0.0.1",
+  "name": "aps-tutorials-website",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
