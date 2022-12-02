@@ -2,26 +2,40 @@ import React from 'react';
 import NavbarLayout from '@theme/Navbar/Layout';
 import NavbarContent from '@theme/Navbar/Content';
 
-const USE_BRANDED_NAVBAR = true;
+let customNavbarInitialized = false;
 
-function loadNavbarScript() {
-  // Skip this code if we're in Server-Side Rendering mode
-  if (typeof window == 'undefined') {
+function initializeCustomNavbar() {
+  if (typeof window === 'undefined' || customNavbarInitialized) {
     return;
   }
-  let s = document.createElement('script');
-  s.src = 'https://developer.static.autodesk.com/forgeunified/releases/current/adskf.common.entry.js';
-  s.dataset.resolveMenuUrl = 'https://forge.autodesk.com';
-  s.dataset.resolveFooterUrl = 'https://forge.autodesk.com';
-  document.head.appendChild(s);
+
+  let script = document.createElement('script');
+  script.src = 'https://developer.static.autodesk.com/forgeunified/releases/current/adskf.common.entry.js';
+  script.dataset.resolveMenuUrl = 'https://forge.autodesk.com';
+  script.dataset.resolveFooterUrl = 'https://forge.autodesk.com';
+  document.head.appendChild(script);
+
+  let style = document.createElement('style');
+  style.innerText = `.navbar { padding: 0; height: 65px; }`;
+  document.head.appendChild(style);
+
+  customNavbarInitialized = true;
 }
 
-loadNavbarScript();
-
 export default function Navbar() {
+  let useDefaultNavbar = false;
+
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    useDefaultNavbar = params.has('navbar') && params.get('navbar') == 'default';
+    if (!useDefaultNavbar) {
+      initializeCustomNavbar();
+    }
+  }
+
   return (
     <NavbarLayout>
-      {USE_BRANDED_NAVBAR ? <div id="app-navbar" style={{width: '100%'}}></div> : <NavbarContent />}
+      {useDefaultNavbar ? <NavbarContent /> : <div id="app-navbar" style={{width: '100%'}}></div>}
     </NavbarLayout>
   );
 }
