@@ -186,6 +186,27 @@ Be careful!
 :::
 ```
 
+### Images
+
+The standard Markdown syntax for images is supported but these images are not optimized in any way.
+Consider using the `<Image>` component from `@theme/IdealImage` which supports lazy loading, automated
+generation of lower-res images, etc.:
+
+```mdx
+import Image from '@theme/IdealImage';
+
+...
+
+<Image img={require('./_shared/developer-portal-logged-out.png')} />
+
+...
+```
+
+> Note that currently the `<Image>` component only supports PNG and JPEG formats. Other formats (for example, WEBP)
+> will be rendered as a regular `<img>` element without any optimizations.
+
+To learn more about this React component, check out https://docusaurus.io/docs/api/plugins/@docusaurus/plugin-ideal-image.
+
 ### Videos
 
 There's a `<ResponsiveVideo>` React component you can use to embed static videos:

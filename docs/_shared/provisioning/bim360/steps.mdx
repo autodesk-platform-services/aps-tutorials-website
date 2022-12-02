@@ -1,3 +1,5 @@
+import Image from '@theme/IdealImage';
+
 :::caution
 Make sure you have _admin_ access to a BIM 360 account.
 :::
@@ -6,7 +8,7 @@ Make sure you have _admin_ access to a BIM 360 account.
 
 2. On the _Account Admin_ page, go to _Settings_, and navigate to the _Custom Integrations_ tab
 
-![Custom integrations tab](./custom-integrations.webp)
+<Image img={require('./custom-integrations.jpeg')} />
 
 3. Use the _Add Custom Integration_ button on the left side to start a simple wizard
 that will guide you through the process
@@ -14,12 +16,12 @@ that will guide you through the process
 4. On the _Select Access_ page, keep both the _BIM 360 Account Administration_
 and the _Document Management_ options checked, and hit the _Next_ button
 
-![Select access](../select-access.webp)
+<Image img={require('../select-access.jpeg')} />
 
 5. On the next page of the wizard, choose the _I'm the developer_ option, and hit
 the _Next_ button
 
-![Select role](../i-am-developer.webp)
+<Image img={require('../i-am-developer.jpeg')} />
 
 :::info
 Here we assume that the _account admin_ is also the owner of the APS application.
@@ -31,7 +33,7 @@ option instead, and the invited developer will input the APS application details
 checkbox next to it, and fill out the _Client ID_ and the _App Name_ fields
 exactly as they appear in your application's page on https://forge.autodesk.com/myapps
 
-![BIM 360 info](../bim360-info.webp)
+<Image img={require('../bim360-info.jpeg')} />
 
 :::tip
 Consider storing your client ID somewhere in _App Description_. The client ID will _not_

@@ -3,6 +3,7 @@ slug: '/'
 sidebar_position: 1
 ---
 
+import Image from '@theme/IdealImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import AccProvisioningSteps from './_shared/provisioning/acc/steps.mdx';
@@ -21,7 +22,7 @@ If you don't have an APS account yet, sign up for one on https://aps.autodesk.co
 You can take advantage of a trial subscription that is valid for 3 months.
 :::
 
-![Sign Up](./_shared/developer-portal-logged-out.webp)
+<Image img={require('./_shared/developer-portal-logged-out.png')} />
 
 ## Create app credentials
 
@@ -30,26 +31,26 @@ _app credentials_ (specifically, a _client ID_ and _client secret_) for our appl
 After logging into the developer portal, go to your profile menu in the top-right corner,
 and click on _Applications_:
 
-![My Apps](./_shared/developer-portal-logged-in.webp)
+<Image img={require('./_shared/developer-portal-logged-in.png')} />
 
 Next, click on the _Create application_ button:
 
-![Create App](./_shared/my-apps.webp)
+<Image img={require('./_shared/my-apps.png')} />
 
 Enter the name of your application, and click the _Create_ button:
 
-![App Name](./_shared/create-app.webp)
+<Image img={require('./_shared/create-app.png')} />
 
 And your application is now ready. Let's store your _Client ID_ and _Client Secret_
 credentials as we will need these soon!
 
-![App Overview](./_shared/app-overview.webp)
+<Image img={require('./_shared/app-overview.png')} />
 
 Finally, set the _Callback URL_ under _General Settings_ to `http://localhost:8080/api/auth/callback`,
 and enable the APIs you want your application to have access to. Unless you have any specific reason
 for limiting your application's access to the different services, enable everything.
 
-![Update App](./_shared/apis.webp)
+<Image img={require('./_shared/apis.png')} />
 
 :::caution
 Pay close attention to the _Callback URL_. This is the address your application's
@@ -60,7 +61,7 @@ In our tutorials we will always use the same address: `http://localhost:8080/api
 
 Finally, update the application by clicking on the _Save changes_ button, and you're all set!
 
-![Save Changes](./_shared/save-changes.png)
+<Image img={require('./_shared/save-changes.png')} />
 
 ## Provision access in other products
 

@@ -13,6 +13,14 @@ module.exports = {
     projectName: 'aps-tutorials-website',
     plugins: [
         [
+            '@docusaurus/plugin-ideal-image',
+            {
+              quality: 90,
+              sizes: [500, 1000, 1500],
+              disableInDev: false
+            },
+        ],
+        [
             require.resolve('@easyops-cn/docusaurus-search-local'),
             {
                 docsRouteBasePath: '/',
