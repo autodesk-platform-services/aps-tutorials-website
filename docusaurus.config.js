@@ -44,130 +44,130 @@ module.exports = {
             },
             items: [
                 {
-                    href: 'https://forge.autodesk.com/platform-vision',
+                    href: 'https://aps.autodesk.com/platform-vision',
                     label: 'Platform Vision',
                     position: 'left'
                 },
                 {
-                    href: 'https://forge.autodesk.com/developer/documentation',
+                    href: 'https://aps.autodesk.com/developer/documentation',
                     label: 'Solutions',
                     position: 'left',
                     type: 'dropdown',
                     items: [
                         {
                             label: 'Online Viewer',
-                            href: 'https://forge.autodesk.com/developer/idea/viewer-app',
+                            href: 'https://aps.autodesk.com/developer/idea/viewer-app',
                         },
                         {
                             label: 'Photo to 3D',
-                            href: 'https://forge.autodesk.com/developer/idea/recap-app',
+                            href: 'https://aps.autodesk.com/developer/idea/recap-app',
                         },
                         {
                             label: 'Autodesk Construction Cloud',
-                            href: 'https://forge.autodesk.com/acc-cover-page',
+                            href: 'https://aps.autodesk.com/acc-cover-page',
                         },
                         {
                             label: 'BIM 360',
-                            href: 'https://forge.autodesk.com/api/bim-360-cover-page/',
+                            href: 'https://aps.autodesk.com/api/bim-360-cover-page/',
                         },
                         {
                             label: 'Data Exchange (New)',
-                            href: 'https://forge.autodesk.com/data-exchange-cover-page',
+                            href: 'https://aps.autodesk.com/data-exchange-cover-page',
                         },
                         {
                             label: 'Data Management',
-                            href: 'https://forge.autodesk.com/api/data-management-cover-page/',
+                            href: 'https://aps.autodesk.com/api/data-management-cover-page/',
                         },
                         {
                             label: 'Data Visualization',
-                            href: 'https://forge.autodesk.com/data-visualization-cover-page',
+                            href: 'https://aps.autodesk.com/data-visualization-cover-page',
                         },
                         {
                             label: 'Design Automation',
-                            href: 'https://forge.autodesk.com/api/design-automation-cover-page/',
+                            href: 'https://aps.autodesk.com/api/design-automation-cover-page/',
                         },
                         {
                             label: 'Fusion Data (New)',
-                            href: 'https://forge.autodesk.com/fusion-data-cover-page',
+                            href: 'https://aps.autodesk.com/fusion-data-cover-page',
                         },
                         {
                             label: 'Model Derivative',
-                            href: 'https://forge.autodesk.com/api/model-derivative-cover-page/',
+                            href: 'https://aps.autodesk.com/api/model-derivative-cover-page/',
                         },
                         {
                             label: 'Reality Capture',
-                            href: 'https://forge.autodesk.com/api/reality-capture-cover-page/',
+                            href: 'https://aps.autodesk.com/api/reality-capture-cover-page/',
                         },
                         {
                             label: 'Token Flex',
-                            href: 'https://forge.autodesk.com/api/token-flex-cover-page/',
+                            href: 'https://aps.autodesk.com/api/token-flex-cover-page/',
                         },
                         {
                             label: 'Viewer',
-                            href: 'https://forge.autodesk.com/api/viewer-cover-page/',
+                            href: 'https://aps.autodesk.com/api/viewer-cover-page/',
                         },
                         {
                             label: 'Webhooks',
-                            href: 'https://forge.autodesk.com/api/webhooks-cover-page/',
+                            href: 'https://aps.autodesk.com/api/webhooks-cover-page/',
                         }
                     ]
                 },
                 {
-                    href: 'https://forge.autodesk.com/developer/getting-started',
+                    href: 'https://aps.autodesk.com/developer/getting-started',
                     label: 'Getting Started',
                     position: 'left'
                 },
                 {
-                    href: 'https://forge.autodesk.com/developer/documentation',
+                    href: 'https://aps.autodesk.com/developer/documentation',
                     label: 'Documentation',
                     position: 'left'
                 },
                 {
-                    href: 'https://forge.autodesk.com/developer/documentation',
+                    href: 'https://aps.autodesk.com/developer/documentation',
                     label: 'Commnunity',
                     position: 'left',
                     type: 'dropdown',
                     items: [
                         {
                             label: 'Success Stories',
-                            href: 'https://forge.autodesk.com/customers',
+                            href: 'https://aps.autodesk.com/customers',
                         },
                         {
                             label: 'Solution Showcase',
-                            href: 'https://forge.autodesk.com/solution-showcase',
+                            href: 'https://aps.autodesk.com/solution-showcase',
                         },
                         {
                             label: 'Blog',
-                            href: 'https://forge.autodesk.com/blog',
+                            href: 'https://aps.autodesk.com/blog',
                         },
                         {
                             label: 'System Integrators',
-                            href: 'https://forge.autodesk.com/systemsintegrators',
+                            href: 'https://aps.autodesk.com/systemsintegrators',
                         },
                         {
                             label: 'Partnerships',
-                            href: 'https://forge.autodesk.com/partnerships',
+                            href: 'https://aps.autodesk.com/partnerships',
                         },
                         {
                             label: 'All Events',
-                            href: 'https://forge.autodesk.com/events',
+                            href: 'https://aps.autodesk.com/events',
                         },
                         {
-                            label: 'Forge Data Days',
-                            href: 'https://forge.autodesk.com/forge-data-days',
+                            label: 'APS Data Days',
+                            href: 'https://aps.autodesk.com/aps-data-days',
                         },
                         {
                             label: 'Accelerator',
-                            href: 'https://forge.autodesk.com/accelerator-program',
+                            href: 'https://aps.autodesk.com/accelerator-program',
                         },
                         {
                             label: 'Lightning Talks',
-                            href: 'https://forge.autodesk.com/lightning-talks',
+                            href: 'https://aps.autodesk.com/lightning-talks',
                         }
                     ]
                 },
                 {
-                    href: 'https://forge.autodesk.com/developer/documentation',
+                    href: 'https://aps.autodesk.com/developer/documentation',
                     label: 'Support',
                     position: 'left',
                     type: 'dropdown',
@@ -178,18 +178,18 @@ module.exports = {
                         },
                         {
                             label: 'Get Help',
-                            href: 'https://forge.autodesk.com/en/support/get-help',
+                            href: 'https://aps.autodesk.com/en/support/get-help',
                         },
                         {
                             label: 'FAQ',
-                            href: 'https://forge.autodesk.com/FAQ',
+                            href: 'https://aps.autodesk.com/FAQ',
                         }
                         // ... more items
                     ]
 
                 },
                 {
-                    href: 'https://forge.autodesk.com/pricing',
+                    href: 'https://aps.autodesk.com/pricing',
                     label: 'Pricing',
                     position: 'left'
                 }

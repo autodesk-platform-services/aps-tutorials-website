@@ -11,8 +11,8 @@ function initializeCustomNavbar() {
 
   let script = document.createElement('script');
   script.src = 'https://developer.static.autodesk.com/forgeunified/releases/current/adskf.common.entry.js';
-  script.dataset.resolveMenuUrl = 'https://forge.autodesk.com';
-  script.dataset.resolveFooterUrl = 'https://forge.autodesk.com';
+  script.dataset.resolveMenuUrl = 'https://aps.autodesk.com';
+  script.dataset.resolveFooterUrl = 'https://aps.autodesk.com';
   document.head.appendChild(script);
 
   let style = document.createElement('style');

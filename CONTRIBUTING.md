@@ -12,7 +12,7 @@ If you haven't worked with Docusaurus before, I'd also suggest checking out its
 should be short, with comma-separated words (it will appear in the URL), and it should
 be prefixed with a number (used to control the ordering in the UI). For example,
 `04-my-cool-tutorial` would be the 4th tutorial in the sidebar accessible via the following
-URL: https://forge-tutorials.autodesk.io/tutorials/my-cool-tutorial/.
+URL: https://tutorials.autodesk.io/tutorials/my-cool-tutorial/.
 
 2. Inside the new folder, create a file called `_category_.json`, and populate it with
 a JSON specifying the display name of the tutorial, for example:
@@ -32,7 +32,7 @@ showing the result of the tutorial as well.
 should be short, with comma-separated words (it will appear in the URL), and it should
 be prefixed with a number (used to control the ordering in the UI). For example,
 `02-basic-server.md` would be the 2nd step in the sidebar accessible via the following
-URL: https://forge-tutorials.autodesk.io/tutorials/my-cool-tutorial/basic-server.
+URL: https://tutorials.autodesk.io/tutorials/my-cool-tutorial/basic-server.
 
 5. Add a [front matter](https://docusaurus.io/docs/markdown-features#front-matter) header
 at the beginning of each tutorial step Markdown to control the display name in the UI,

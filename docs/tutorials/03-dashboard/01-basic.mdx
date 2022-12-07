@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 # Basic Extension
 
-The Viewer component in Autodesk Platform Services provides its own set of [APIs](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Viewer3D)
+The Viewer component in Autodesk Platform Services provides its own set of [APIs](https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/Viewer3D)
 that you can use to customize its look and feel, behavior, and even the rendered content. While you _could_
 simply sprinkle your custom viewer logic in random places of the client-side code, it is a good practice
 to encapsulate any viewer functionality into a _viewer extension_. That way you can easily share the same
@@ -91,7 +91,7 @@ export class BaseExtension extends Autodesk.Viewing.Extension {
 }
 ```
 
-As you can see, a viewer extension is basically a subclass of [Autodesk.Viewing.Extension](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Extension)
+As you can see, a viewer extension is basically a subclass of [Autodesk.Viewing.Extension](https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/Extension)
 that overrides some of its lifecycle methods. For now we have overridden the following methods:
 
 - `load` - called when the extension is loaded by the viewer, returning a boolean flag indicating whether the loading was successful
@@ -153,7 +153,7 @@ them in other extensions derived from the `BaseExtension` class.
 
 :::tip
 Full list of viewer events can be found at
-[https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/#events](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/#events).
+[https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/#events](https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/#events).
 :::
 
 ## Metadata queries
@@ -238,15 +238,15 @@ export class BaseExtension extends Autodesk.Viewing.Extension {
 }
 ```
 
-Here we're starting to use the [Model](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model) class
+Here we're starting to use the [Model](https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model) class
 (representing the currently loaded design) and some of its methods, for example:
 
-- [Model#getObjectTree](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model/#getobjecttree-onsuccesscallback-onerrorcallback) - used to
+- [Model#getObjectTree](https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model/#getobjecttree-onsuccesscallback-onerrorcallback) - used to
 retrieve the model's instance tree
-- [Model#getBulkProperties](https://forge.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model/#getbulkproperties-dbids-options-onsuccesscallback-onerrorcallback) - used to
+- [Model#getBulkProperties](https://aps.autodesk.com/en/docs/viewer/v7/reference/Viewing/Model/#getbulkproperties-dbids-options-onsuccesscallback-onerrorcallback) - used to
 retrieve the metadata for one or more objects
-- [InstanceTree#getRootId](https://forge.autodesk.com/en/docs/viewer/v7/reference/Private/InstanceTree/#getrootid) - returning the ID of the root object
-- [InstanceTree#enumNodeChildren](https://forge.autodesk.com/en/docs/viewer/v7/reference/Private/InstanceTree/#enumnodechildren-node-callback-recursive) - used to
+- [InstanceTree#getRootId](https://aps.autodesk.com/en/docs/viewer/v7/reference/Private/InstanceTree/#getrootid) - returning the ID of the root object
+- [InstanceTree#enumNodeChildren](https://aps.autodesk.com/en/docs/viewer/v7/reference/Private/InstanceTree/#enumnodechildren-node-callback-recursive) - used to
 recursively enumerate all children of a specific object
 
 ## Simple extension

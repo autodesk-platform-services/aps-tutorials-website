@@ -29,7 +29,7 @@ is available, and use it in other parts of the server app.
 :::caution
 Note that the Data Management service requires bucket names to be **globally unique**,
 and attempts to create a bucket with an already used name will fail with `409 Conflict`.
-See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+See the [documentation](https://aps.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
 for more details.
 :::
 
@@ -38,7 +38,7 @@ for more details.
 Next, we will implement a couple of helper functions that will derive/extract various types of information
 from the uploaded files - for example, 2D drawings, 3D geometry, and metadata - that we can later load
 into the Viewer in our webpage. To do so, we will need to start a new conversion job
-in the [Model Derivative](https://forge.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
+in the [Model Derivative](https://aps.autodesk.com/en/docs/model-derivative/v2/developers_guide/overview)
 service, and checking the status of the conversion.
 
 Model Derivative service requires all IDs we use in the API calls to be [base64](https://wikipedia.org/wiki/Base64)-encoded,
