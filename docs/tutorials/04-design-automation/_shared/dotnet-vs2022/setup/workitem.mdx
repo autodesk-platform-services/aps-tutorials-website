@@ -1,10 +1,14 @@
-The following apis should be added to the `DesignAutomationController.cs` file before the last line `module.exports = router;`
+The following apis should be added to the `DesignAutomationController.cs` file before the last line `GetDefinedActivities` method.
 
 - StartWorkitem
 
 This is where we actually start the Design Automation. This endpoint also uploads the input file to an OSS Bucket and define that the output should be saved at the same bucket. To help you identify the files, both input and output uses the same original file name, but with a suffix (input or output) plus a time stamp.
 
 ```cs
+    /// <summary>
+    /// Direct To S3
+    /// ref : https://aps.autodesk.com/blog/new-feature-support-direct-s3-migration-inputoutput-files-design-automation
+    /// </summary>
     static void onUploadProgress(float progress, TimeSpan elapsed, List<UploadItemDesc> objects)
     {
         Console.WriteLine("progress: {0} elapsed: {1} objects: {2}", progress, elapsed, string.Join(", ", objects));
@@ -33,6 +37,15 @@ This is where we actually start the Design Automation. This endpoint also upload
             Console.WriteLine($"Exception when preparing input url:{ex.Message}");
             throw;
         }
+    }
+
+    /// <summary>
+    /// Input for StartWorkitem
+    /// </summary>
+    public class StartWorkitemInput
+    {
+        public IFormFile inputFile { get; set; }
+        public string data { get; set; }
     }
 
     /// <summary>
@@ -97,7 +110,7 @@ This is where we actually start the Design Automation. This endpoint also upload
         string outputFileNameOSS = string.Format("{0}_output_{1}",
                                                     DateTime.Now.ToString("yyyyMMddhhmmss"),
                                                     Path.GetFileName(input.inputFile.FileName)); // avoid overriding
-        string outputUrl = await PrepareOutputUrl(bucketKey, outputFileNameOSS, oauth);
+
         XrefTreeArgument outputFileArgument = new XrefTreeArgument()
         {
             Url = await GetObjectId(bucketKey, outputFileNameOSS, oauth, fileSavePath),
