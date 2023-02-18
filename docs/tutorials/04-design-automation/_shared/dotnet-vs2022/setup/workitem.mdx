@@ -94,8 +94,10 @@ This is where we actually start the Design Automation. This endpoint also upload
         XrefTreeArgument inputFileArgument = new XrefTreeArgument()
         {
             Url = await GetObjectId(bucketKey, inputFileNameOSS, oauth, fileSavePath),
-            Headers = new Dictionary<string, string>(){
-                { "Authorization", oauth.access_token} }
+            Headers = new Dictionary<string, string>()
+            {
+               { "Authorization", "Bearer " + oauth.access_token}
+            }
         };
 
         // 2. input json
@@ -116,7 +118,7 @@ This is where we actually start the Design Automation. This endpoint also upload
             Url = await GetObjectId(bucketKey, outputFileNameOSS, oauth, fileSavePath),
             Headers = new Dictionary<string, string>()
             {
-                { "Authorization", oauth.access_token}
+                { "Authorization", "Bearer " + oauth.access_token}
             },
             Verb = Verb.Put
         };
