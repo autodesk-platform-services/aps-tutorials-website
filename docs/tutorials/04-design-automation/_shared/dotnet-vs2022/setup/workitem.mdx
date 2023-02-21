@@ -1,213 +1,200 @@
-The following apis should be added to the `DesignAutomation.js` file before the last line `module.exports = router;`
+The following apis should be added to the `DesignAutomationController.cs` file before the last line `GetDefinedActivities` method.
 
 - StartWorkitem
 
 This is where we actually start the Design Automation. This endpoint also uploads the input file to an OSS Bucket and define that the output should be saved at the same bucket. To help you identify the files, both input and output uses the same original file name, but with a suffix (input or output) plus a time stamp.
 
 ```cs
-/// <summary>
-/// Direct To S3
-/// </summary>
-const prepareInputUrl = async (bucketKey, objectKey, opts, oAuthClient, oAuthToken) => {
-    let objectS3Download = await new ForgeAPI.ObjectsApi().getS3DownloadURL(bucketKey, objectKey,
-        opts,
-        oAuthClient, oAuthToken);
-    return (objectS3Download.body.url);
-
-}
-const prepareOutputUrl = async (bucketKey, objectKey, opts, oAuthClient, oAuthToken) => {
-
-    let objectS3Upload = await new ForgeAPI.ObjectsApi().getS3UploadURL(bucketKey, objectKey,
-        opts,
-        oAuthClient, oAuthToken);
-    return ({
-        outputUrl: objectS3Upload.body.urls[0],
-        uploadKey: objectS3Upload.body.uploadKey
-    });
-}
-
-/// <summary>
-/// Start a new workitem
-/// </summary>
-router.post('/forge/designautomation/workitems', multer({
-    dest: 'uploads/'
-}).single('inputFile'), async /*StartWorkitem*/ (req, res) => {
-    const input = req.body;
-
-    // basic input validation
-    const workItemData = JSON.parse(input.data);
-    const widthParam = parseFloat(workItemData.width);
-    const heigthParam = parseFloat(workItemData.height);
-    const activityName = `${Utils.NickName}.${workItemData.activityName}`;
-    const browerConnectionId = workItemData.browerConnectionId;
-
-    // save the file on the server
-    const ContentRootPath = _path.resolve(_path.join(__dirname, '../..'));
-    const fileSavePath = _path.join(ContentRootPath, _path.basename(req.file.originalname));
-    //const stream = _fs.createReasStream(fileSavePath, FileMode.Create)) await input.inputFile.CopyToAsync(stream);
-
-    // upload file to OSS Bucket
-    // 1. ensure bucket existis
-    const bucketKey = Utils.NickName.toLowerCase() + '-designautomation';
-    try {
-        let payload = new ForgeAPI.PostBucketsPayload();
-        payload.bucketKey = bucketKey;
-        payload.policyKey = 'transient'; // expires in 24h
-        await new ForgeAPI.BucketsApi().createBucket(payload, {}, req.oauth_client, req.oauth_token);
-    } catch (ex) {
-        // in case bucket already exists
+    /// <summary>
+    /// Direct To S3
+    /// ref : https://aps.autodesk.com/blog/new-feature-support-direct-s3-migration-inputoutput-files-design-automation
+    /// </summary>
+    static void onUploadProgress(float progress, TimeSpan elapsed, List<UploadItemDesc> objects)
+    {
+        Console.WriteLine("progress: {0} elapsed: {1} objects: {2}", progress, elapsed, string.Join(", ", objects));
     }
-    // 2. upload inputFile
-    const inputFileNameOSS = `${new Date().toISOString().replace(/[-T:\.Z]/gm, '').substring(0, 14)}_input_${_path.basename(req.file.originalname)}`; // avoid overriding
-    try {
-        let contentStream = _fs.createReadStream(req.file.path);
-        await new ForgeAPI.ObjectsApi().uploadResources(
-            bucketKey,
-            {
-                objectKey: inputFileNameOSS,
-                data: contentStream,
-                length: req.file.size
-            },
-            {
-                useAcceleration: false,
-                minutesExpiration: 20,
-                onUploadProgress: (data) => console.warn(data)
-            },
-            req.oauth_client, req.oauth_token,
-        );
-    } catch (ex) {
-        console.error(ex);
-        return (res.status(500).json({
-            diagnostic: 'Failed to upload file for workitem'
-        }));
-    }
+    public static async Task<string> GetObjectId(string bucketKey, string objectKey, dynamic oauth, string fileSavePath)
+    {
+        try
+        {
+            ObjectsApi objectsApi = new ObjectsApi();
+            objectsApi.Configuration.AccessToken = oauth.access_token;
+            List<UploadItemDesc> uploadRes = await objectsApi.uploadResources(bucketKey,
+                new List<UploadItemDesc> {
+                    new UploadItemDesc(objectKey, await System.IO.File.ReadAllBytesAsync(fileSavePath))
+                },
+                null,
+                onUploadProgress,
+                null);
+            Console.WriteLine("**** Upload object(s) response(s):");
+            DynamicDictionary objValues = uploadRes[0].completed;
+            objValues.Dictionary.TryGetValue("objectId", out var id);
 
-    // prepare workitem arguments
-    // 1. input file
-    const inputFileArgument = {
-        url: await prepareInputUrl(bucketKey, inputFileNameOSS,
-            {
-                useAcceleration: false,
-                minutesExpiration: 60/*intentionaly kept max duration, this url will be sent to DA service*/
-            },
-            req.oauth_client, req.oauth_token)
-    };
-    // 2. input json
-    const inputJson = {
-        width: widthParam,
-        height: heigthParam
-    };
-    const inputJsonArgument = {
-        url: "data:application/json, " + JSON.stringify(inputJson).replace(/"/g, "'")
-    };
-    // 3. output file
-
-    // Better to use a presigned url to avoid the token to expire
-    const outputFileNameOSS = `${new Date().toISOString().replace(/[-T:\.Z]/gm, '').substring(0, 14)}_output_${_path.basename(req.file.originalname)}`; // avoid overriding
-    let signedUrl = null;
-    let s3UploadObject = null;
-    try {
-        // write signed resource requires the object to already exist :(
-        s3UploadObject = await prepareOutputUrl(bucketKey, outputFileNameOSS,
-            {
-                useAcceleration: false,
-                minutesExpiration: 60/*intentionaly kept max duration, this url will be sent to DA service*/
-            },
-            req.oauth_client, req.oauth_token);
-        signedUrl = s3UploadObject.outputUrl;
-    } catch (ex) {
-        console.error(ex);
-        return (res.status(500).json({
-            diagnostic: 'Failed to create a signed URL for output file'
-        }));
-    }
-    const outputFileArgument = {
-        url: signedUrl,
-        verb: dav3.Verb.put,
-    };
-
-    // prepare & submit workitem
-    // the callback contains the connectionId (used to identify the client) and the outputFileName of this workitem
-    const callbackUrl = `${config.credentials.webhook_url}/api/forge/callback/designautomation?id=${browerConnectionId}&outputFileName=${outputFileNameOSS}&inputFileName=${inputFileNameOSS}&uploadKey=${s3UploadObject.uploadKey}`;
-    const workItemSpec = {
-        activityId: activityName,
-        arguments: {
-            inputFile: inputFileArgument,
-            inputJson: inputJsonArgument,
-            outputFile: outputFileArgument,
-            onComplete: {
-                verb: dav3.Verb.post,
-                url: callbackUrl
-            }
+            return id?.ToString();
         }
-    };
-    let workItemStatus = null;
-    try {
-        const api = await Utils.dav3API(req.oauth_token);
-        workItemStatus = await api.createWorkItem(workItemSpec);
-    } catch (ex) {
-        console.error(ex);
-        return (res.status(500).json({
-            diagnostic: 'Failed to create a workitem'
-        }));
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception when preparing input url:{ex.Message}");
+            throw;
+        }
     }
-    res.status(200).json({
-        workItemId: workItemStatus.id
-    });
-});
+
+    /// <summary>
+    /// Input for StartWorkitem
+    /// </summary>
+    public class StartWorkitemInput
+    {
+        public IFormFile inputFile { get; set; }
+        public string data { get; set; }
+    }
+
+    /// <summary>
+    /// Start a new workitem
+    /// </summary>
+    [HttpPost]
+    [Route("api/aps/designautomation/workitems")]
+    public async Task<IActionResult> StartWorkitem([FromForm] StartWorkitemInput input)
+    {
+        // basic input validation
+        JObject workItemData = JObject.Parse(input.data);
+        string widthParam = workItemData["width"].Value<string>();
+        string heigthParam = workItemData["height"].Value<string>();
+        string activityName = string.Format("{0}.{1}",
+                                    NickName, workItemData["activityName"].Value<string>());
+        string browserConnectionId = workItemData["browserConnectionId"].Value<string>();
+
+        // save the file on the server
+        var fileSavePath = Path.Combine(_env.ContentRootPath, Path.GetFileName(input.inputFile.FileName));
+        using (var stream = new FileStream(fileSavePath, FileMode.Create))
+        await input.inputFile.CopyToAsync(stream);
+
+        // OAuth token
+        dynamic oauth = await OAuthController.GetInternalAsync();
+
+        // upload file to OSS Bucket
+        // 1. ensure bucket existis
+        string bucketKey = NickName.ToLower() + "-designautomation";
+        BucketsApi buckets = new BucketsApi();
+        buckets.Configuration.AccessToken = oauth.access_token;
+        try
+        {
+            PostBucketsPayload bucketPayload = new PostBucketsPayload(bucketKey, null,
+                                                    PostBucketsPayload.PolicyKeyEnum.Transient);
+            await buckets.CreateBucketAsync(bucketPayload, "US");
+        }
+        catch { }; // in case bucket already exists
+                    // 2. upload inputFile
+        string inputFileNameOSS = string.Format("{0}_input_{1}",
+                                                DateTime.Now.ToString("yyyyMMddhhmmss"),
+                                                Path.GetFileName(input.inputFile.FileName));// avoid overriding
+
+
+        // prepare workitem arguments
+        // 1. input file
+        XrefTreeArgument inputFileArgument = new XrefTreeArgument()
+        {
+            Url = await GetObjectId(bucketKey, inputFileNameOSS, oauth, fileSavePath),
+            Headers = new Dictionary<string, string>()
+            {
+               { "Authorization", "Bearer " + oauth.access_token}
+            }
+        };
+
+        // 2. input json
+        dynamic inputJson = new JObject();
+        inputJson.Width = widthParam;
+        inputJson.Height = heigthParam;
+        XrefTreeArgument inputJsonArgument = new XrefTreeArgument()
+        {
+            Url = "data:application/json, " + ((JObject)inputJson).ToString(Formatting.None).Replace("\"", "'")
+        };
+        // 3. output file
+        string outputFileNameOSS = string.Format("{0}_output_{1}",
+                                                    DateTime.Now.ToString("yyyyMMddhhmmss"),
+                                                    Path.GetFileName(input.inputFile.FileName)); // avoid overriding
+
+        XrefTreeArgument outputFileArgument = new XrefTreeArgument()
+        {
+            Url = await GetObjectId(bucketKey, outputFileNameOSS, oauth, fileSavePath),
+            Headers = new Dictionary<string, string>()
+            {
+                { "Authorization", "Bearer " + oauth.access_token}
+            },
+            Verb = Verb.Put
+        };
+
+        if (System.IO.File.Exists(fileSavePath))
+        {
+            System.IO.File.Delete(fileSavePath);
+        }
+
+        // prepare & submit workitem
+        string callbackUrl = string.Format("{0}/api/aps/callback/designautomation?id={1}&outputFileName={2}",
+                                            OAuthController.GetAppSetting("APS_WEBHOOK_URL"),
+                                            browserConnectionId, outputFileNameOSS);
+        WorkItem workItemSpec = new WorkItem()
+        {
+            ActivityId = activityName,
+            Arguments = new Dictionary<string, IArgument>()
+            {
+                { "inputFile", inputFileArgument },
+                { "inputJson",  inputJsonArgument },
+                { "outputFile", outputFileArgument },
+                { "onComplete", new XrefTreeArgument { Verb = Verb.Post, Url = callbackUrl } }
+            }
+        };
+        WorkItemStatus workItemStatus = await _designAutomation.CreateWorkItemAsync(workItemSpec);
+
+        return Ok(new { WorkItemId = workItemStatus.Id });
+    }
 ```
 
 - OnCallback
 
 ```cs
-/// <summary>
-        /// Callback from Design Automation Workitem (onProgress or onComplete)
-        /// </summary>
-        [HttpPost]
-        [Route("/api/aps/callback/designautomation")]
-        public async Task<IActionResult> OnCallback(string id, string outputFileName, [FromBody] dynamic body)
+    /// <summary>
+    /// Callback from Design Automation Workitem (onProgress or onComplete)
+    /// </summary>
+    [HttpPost]
+    [Route("/api/aps/callback/designautomation")]
+    public async Task<IActionResult> OnCallback(string id, string outputFileName, [FromBody] dynamic body)
+    {
+        try
         {
-            try
+            // your webhook should return immediately! we can use Hangfire to schedule a job
+            JObject bodyJson = JObject.Parse((string)body.ToString());
+            await _hubContext.Clients.Client(id).SendAsync("onComplete", bodyJson.ToString());
+
+            using (var httpClient = new HttpClient())
             {
-                // your webhook should return immediately! we can use Hangfire to schedule a job
-                JObject bodyJson = JObject.Parse((string)body.ToString());
-                await _hubContext.Clients.Client(id).SendAsync("onComplete", bodyJson.ToString());
-
-                using (var httpClient = new HttpClient())
-                {
-                    byte[] bs = await httpClient.GetByteArrayAsync(bodyJson["reportUrl"].Value<string>());
-                    string report = System.Text.Encoding.Default.GetString(bs);
-                    await _hubContext.Clients.Client(id).SendAsync("onComplete", report);
-                }
-
-                // OAuth token
-                dynamic oauth = await OAuthController.GetInternalAsync();
-
-                ObjectsApi objectsApi = new ObjectsApi();
-                objectsApi.Configuration.AccessToken = oauth.access_token;
-
-                //finalize upload in the callback.
-                ApiResponse<dynamic> res = await objectsApi.completeS3UploadAsyncWithHttpInfo(NickName.ToLower() + "-designautomation", outputFileName, S3UploadPayload, new Dictionary<string, object> {
-                { "minutesExpiration", 2.0 },
-                { "useCdn", true }
-                });
-                HttpErrorHandler(res, $"Failed to complete S3 posting");
-
-                res = await objectsApi.getS3DownloadURLAsyncWithHttpInfo(NickName.ToLower() + "-designautomation", outputFileName, new Dictionary<string, object> {
-                { "minutesExpiration", 15.0 },
-                { "useCdn", true }
-                });
-                await _hubContext.Clients.Client(id).SendAsync("downloadResult", (string)(res.Data.url));
-                Console.WriteLine("Congrats!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                byte[] bs = await httpClient.GetByteArrayAsync(bodyJson["reportUrl"]?.Value<string>());
+                string report = System.Text.Encoding.Default.GetString(bs);
+                await _hubContext.Clients.Client(id).SendAsync("onComplete", report);
             }
 
-            // ALWAYS return ok (200)
-            return Ok();
+            // OAuth token
+            dynamic oauth = await OAuthController.GetInternalAsync();
+
+            ObjectsApi objectsApi = new ObjectsApi();
+            objectsApi.Configuration.AccessToken = oauth.access_token;
+
+            ApiResponse<dynamic> res = await objectsApi.getS3DownloadURLAsyncWithHttpInfo(
+                                        NickName.ToLower()+"-designautomation",
+                                        outputFileName, new Dictionary<string, object> {
+                                        { "minutesExpiration", 15.0 },
+                                        { "useCdn", true }
+                                        });
+            await _hubContext.Clients.Client(id).SendAsync("downloadResult", (string)(res.Data.url));
+            Console.WriteLine("Congrats!");
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        // ALWAYS return ok (200)
+        return Ok();
+    }
 ```
 
 - ClearAccount
@@ -215,15 +202,15 @@ router.post('/forge/designautomation/workitems', multer({
 Last, but not least, to help you test, this api removes all appbundles and activities from your account.
 
 ```cs
- /// <summary>
-        /// Clear the accounts (for debugging purposes)
-        /// </summary>
-        [HttpDelete]
-        [Route("api/aps/designautomation/account")]
-        public async Task<IActionResult> ClearAccount()
-        {
-            // clear account
-            await _designAutomation.DeleteForgeAppAsync("me");
-            return Ok();
-        }
+    /// <summary>
+    /// Clear the accounts (for debugging purposes)
+    /// </summary>
+    [HttpDelete]
+    [Route("api/aps/designautomation/account")]
+    public async Task<IActionResult> ClearAccount()
+    {
+        // clear account
+        await _designAutomation.DeleteForgeAppAsync("me");
+        return Ok();
+    }
 ```
