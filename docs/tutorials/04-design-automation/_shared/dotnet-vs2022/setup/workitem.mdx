@@ -61,7 +61,7 @@ This is where we actually start the Design Automation. This endpoint also upload
         string heigthParam = workItemData["height"].Value<string>();
         string activityName = string.Format("{0}.{1}",
                                     NickName, workItemData["activityName"].Value<string>());
-        string browerConnectionId = workItemData["browerConnectionId"].Value<string>();
+        string browserConnectionId = workItemData["browserConnectionId"].Value<string>();
 
         // save the file on the server
         var fileSavePath = Path.Combine(_env.ContentRootPath, Path.GetFileName(input.inputFile.FileName));
@@ -131,7 +131,7 @@ This is where we actually start the Design Automation. This endpoint also upload
         // prepare & submit workitem
         string callbackUrl = string.Format("{0}/api/aps/callback/designautomation?id={1}&outputFileName={2}",
                                             OAuthController.GetAppSetting("APS_WEBHOOK_URL"),
-                                            browerConnectionId, outputFileNameOSS);
+                                            browserConnectionId, outputFileNameOSS);
         WorkItem workItemSpec = new WorkItem()
         {
             ActivityId = activityName,

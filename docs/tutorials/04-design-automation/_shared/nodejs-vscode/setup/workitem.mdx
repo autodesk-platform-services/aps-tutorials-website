@@ -61,7 +61,7 @@ router.post(
     const widthParam = parseFloat(workItemData.width);
     const heigthParam = parseFloat(workItemData.height);
     const activityName = `${Utils.NickName}.${workItemData.activityName}`;
-    const browerConnectionId = workItemData.browerConnectionId;
+    const browserConnectionId = workItemData.browserConnectionId;
 
     // save the file on the server
     const ContentRootPath = _path.resolve(_path.join(__dirname, "../.."));
@@ -121,7 +121,7 @@ router.post(
 
     // prepare & submit workitem
     // the callback contains the connectionId (used to identify the client) and the outputFileName of this workitem
-    const callbackUrl = `${config.credentials.webhook_url}/api/aps/callback/designautomation?id=${browerConnectionId}&outputFileName=${outputFileNameOSS}&inputFileName=${inputFileNameOSS}`;
+    const callbackUrl = `${config.credentials.webhook_url}/api/aps/callback/designautomation?id=${browserConnectionId}&outputFileName=${outputFileNameOSS}&inputFileName=${inputFileNameOSS}`;
     const workItemSpec = {
       activityId: activityName,
       arguments: {
