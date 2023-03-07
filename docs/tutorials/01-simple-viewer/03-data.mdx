@@ -24,6 +24,18 @@ to store its files in. Typically the bucket would be created just once as part o
 step but in our sample we will implement a helper function that will make sure that the bucket
 is available, and use it in other parts of the server app.
 
+When creating buckets, it is required that applications set a retention policy for objects stored in the bucket. This cannot be changed at a later time. The retention policy on the bucket applies to all objects stored within. When creating a bucket, specifically set the **policyKey** to **transient**, **temporary**, or **persistent**.
+
+:::info
+**Data Retention Policy**
+
+**Transient** - Objects older than 24 hours are removed automatically.
+
+**Temporary** - When an object has reached 30 days of age, it is deleted.
+
+**Persistent** - Available until a user deletes the object.
+:::
+
 <EnvTabs NodeJsVsCode={NodeJsVsCodeData} DotNetVsCode={DotNetData} DotNetVs2022={DotNetData} />
 
 :::caution
