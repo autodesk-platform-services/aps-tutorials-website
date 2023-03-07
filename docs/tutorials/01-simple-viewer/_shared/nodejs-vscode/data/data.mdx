@@ -7,7 +7,7 @@ service.ensureBucketExists = async (bucketKey) => {
         await new APS.BucketsApi().getBucketDetails(bucketKey, null, await service.getInternalToken());
     } catch (err) {
         if (err.response.status === 404) {
-            await new APS.BucketsApi().createBucket({ bucketKey, policyKey: 'temporary' }, {}, null, await service.getInternalToken());
+            await new APS.BucketsApi().createBucket({ bucketKey, policyKey: 'persistent' }, {}, null, await service.getInternalToken());
         } else {
             throw err;
         }

@@ -26,7 +26,7 @@ public partial class APS
         {
             if (e.ErrorCode == 404)
             {
-                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Temporary));
+                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Persistent));
             }
             else
             {
