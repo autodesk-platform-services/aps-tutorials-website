@@ -1,0 +1,74 @@
+Create a `HubsController.cs` file under the `Controllers` subfolder with the following content:
+
+```csharp title="Controllers/HubsController.cs"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+
+[ApiController]
+[Route("api/[controller]")]
+public class HubsController : ControllerBase
+{
+    private readonly ILogger<HubsController> _logger;
+    private readonly APS _aps;
+
+    public HubsController(ILogger<HubsController> logger, APS aps)
+    {
+        _logger = logger;
+        _aps = aps;
+    }
+
+    [HttpGet()]
+    public async Task<ActionResult<string>> ListHubs()
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        var hubs = await _aps.GetHubs(tokens);
+        return JsonConvert.SerializeObject(hubs);
+    }
+
+    [HttpGet("{hub}/projects")]
+    public async Task<ActionResult<string>> ListProjects(string hub)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        var projects = await _aps.GetProjects(hub, tokens);
+        return JsonConvert.SerializeObject(projects);
+    }
+
+    [HttpGet("{hub}/projects/{project}/contents")]
+    public async Task<ActionResult<string>> ListItems(string hub, string project, [FromQuery] string? folder_id)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        var contents = await _aps.GetContents(hub, project, folder_id, tokens);
+        return JsonConvert.SerializeObject(contents);
+    }
+
+    [HttpGet("{hub}/projects/{project}/contents/{item}/versions")]
+    public async Task<ActionResult<string>> ListVersions(string hub, string project, string item)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        var versions = await _aps.GetVersions(hub, project, item, tokens);
+        return JsonConvert.SerializeObject(versions);
+    }
+}
+```
+
+The controller handles several endpoints for browsing the content in other APS-based
+applications such as BIM 360 Docs and ACC. We will make use of these endpoints when
+building the UI part of the application.

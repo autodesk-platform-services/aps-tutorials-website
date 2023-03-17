@@ -1,0 +1,26 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Tutorials": {
+    "message": "Tutorials",
+    "description": "The label for category Tutorials in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Simple Viewer": {
+    "message": "Simple Viewer",
+    "description": "The label for category Simple Viewer in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Hubs Browser": {
+    "message": "Hubs Browser",
+    "description": "The label for category Hubs Browser in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Dashboard": {
+    "message": "Dashboard",
+    "description": "The label for category Dashboard in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Design Automation": {
+    "message": "Design Automation",
+    "description": "The label for category Design Automation in sidebar tutorialSidebar"
+  }
+}

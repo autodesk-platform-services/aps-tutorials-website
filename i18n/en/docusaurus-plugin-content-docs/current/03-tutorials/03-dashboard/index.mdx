@@ -1,0 +1,43 @@
+import ResponsiveVideo from '@site/src/components/ResponsiveVideo.js';
+import PreviewUrl from '@site/static/videos/dashboards.mp4';
+
+# Dashboard
+
+## Introduction
+
+In this tutorial we will enhance the [Simple Viewer](../simple-viewer) application
+with dashboard-like functionality, for example, retrieving and aggregating information
+from our design metadata, displaying the results in charts and data grids, and controlling
+the state of the viewer based on the interaction with these new visuals.
+
+All the functionality in this tutorial is implemented as viewer extensions, and will only use
+the viewer UI, so you're free to use any APS application you want as your starting point.
+Note however that the names of folders, and the way you import JavaScript files into your
+web application, might be a little bit different.
+
+:::caution
+Some parts of this tutorial's code assume that your design elements contain specific properties
+such as _Volume_, _Level_, or _Price_. If you have a specific design you want to work with, you can
+of course modify the code to use other properties, otherwise we recommend using one of the official
+[Revit 2022 sample project files](https://knowledge.autodesk.com/support/revit/getting-started/caas/CloudHelp/cloudhelp/2022/ENU/Revit-GetStarted/files/GUID-61EF2F22-3A1F-4317-B925-1E85F138BE88-htm.html)
+where these properties are always present.
+:::
+
+<ResponsiveVideo src={PreviewUrl} />
+
+We will be using the [Viewer](https://aps.autodesk.com/en/docs/viewer/v7/developers_guide/overview)
+API and its various features such as:
+
+- Creating and loading viewer extensions
+- Querying metadata of loaded models
+- Reacting to viewer events
+- Controlling the state of the viewer
+- Customizing the viewer toolbar
+- Creating custom UI elements
+
+:::tip
+Complete implementation of this tutorial is available in the [dashboard](https://github.com/autodesk-platform-services/aps-simple-viewer-nodejs/tree/dashboards)
+branch of https://github.com/autodesk-platform-services/aps-simple-viewer-nodejs.
+:::
+
+Alright, let's get started!

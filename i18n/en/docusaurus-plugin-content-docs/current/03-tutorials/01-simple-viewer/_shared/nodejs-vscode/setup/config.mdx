@@ -1,0 +1,75 @@
+Create a `config.js` file in the root of your project folder, and add the following code:
+
+```js title="config.js"
+let { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET, PORT } = process.env;
+if (!APS_CLIENT_ID || !APS_CLIENT_SECRET) {
+    console.warn('Missing some of the environment variables.');
+    process.exit(1);
+}
+APS_BUCKET = APS_BUCKET || `${APS_CLIENT_ID.toLowerCase()}-basic-app`;
+PORT = PORT || 8080;
+
+module.exports = {
+    APS_CLIENT_ID,
+    APS_CLIENT_SECRET,
+    APS_BUCKET,
+    PORT
+};
+```
+
+We simply read the environment variables from `process.env`, and exit the application
+immediately if any of the required properties are missing. And if no bucket name is provided,
+we generate one by appending the `-basic-app` suffix to our application Client ID.
+
+:::caution
+Note that the Data Management service requires bucket names to be **globally unique**,
+and attempts to create a bucket with an already used name will fail with `409 Conflict`.
+See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/http/buckets-POST)
+for more details.
+:::
+
+Now, to pass actual configuration values to our application for debugging purposes, we need to create
+a [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
+Use _Run > Add Configuration_ in the menu to create a new configuration, and when prompted
+for the specific environment, choose _Node.js_. This will create a new `.vscode`
+subfolder in your project with a `launch.json` file where you can define different
+launch configurations. Replace the content of the file with the following:
+
+```json title=".vscode/launch.json"
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "start"
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ]
+        }
+    ]
+}
+```
+
+We are defining a single launch configuration called _Launch Server_ that will start
+our application (using the `npm start` command), and what is more important, it will
+look for a `.env` file in the project folder, and provide any `<key>="<value>"` pairs
+defined in this file as environment variables to our application. Let's create
+the `.env` file in the project folder, and populate it with our environment variables
+(using your own values instead of the placeholders of course):
+
+``` title=".env"
+APS_CLIENT_ID="your-client-id"
+APS_CLIENT_SECRET="your-client-secret"
+APS_BUCKET="optional-name-of-existing-bucket"
+```
+
+:::caution
+Since the `.env` file contains sensitive information, make sure that it is **not** included in git!
+This can be ensured by adding the `.env` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
+:::

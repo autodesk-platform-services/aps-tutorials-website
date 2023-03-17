@@ -1,0 +1,83 @@
+Create a `APS.Oss.cs` file under the `Models` folder. This is where will implement
+all the OSS ([Object Storage Service](https://aps.autodesk.com/en/docs/data/v2/developers_guide/basics/#object-storage-service-oss))
+logic of our server application. Populate the new file with the following code:
+
+```csharp title="Models/APS.Oss.cs"
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Autodesk.Forge;
+using Autodesk.Forge.Client;
+using Autodesk.Forge.Model;
+
+public partial class APS
+{
+    private async Task EnsureBucketExists(string bucketKey)
+    {
+        var token = await GetInternalToken();
+        var api = new BucketsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        try
+        {
+            await api.GetBucketDetailsAsync(bucketKey);
+        }
+        catch (ApiException e)
+        {
+            if (e.ErrorCode == 404)
+            {
+                await api.CreateBucketAsync(new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Persistent));
+            }
+            else
+            {
+                throw e;
+            }
+        }
+    }
+
+    public async Task<ObjectDetails> UploadModel(string objectName, Stream content)
+    {
+        await EnsureBucketExists(_bucket);
+        var token = await GetInternalToken();
+        var api = new ObjectsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        var results = await api.uploadResources(_bucket, new List<UploadItemDesc> {
+            new UploadItemDesc(objectName, content)
+        });
+        if (results[0].Error) {
+            throw new Exception(results[0].completed.ToString());
+        } else {
+            var json = results[0].completed.ToJson();
+            return json.ToObject<ObjectDetails>();
+        }
+    }
+
+    public async Task<IEnumerable<ObjectDetails>> GetObjects()
+    {
+        const int PageSize = 64;
+        await EnsureBucketExists(_bucket);
+        var token = await GetInternalToken();
+        var api = new ObjectsApi();
+        api.Configuration.AccessToken = token.AccessToken;
+        var results = new List<ObjectDetails>();
+        var response = (await api.GetObjectsAsync(_bucket, PageSize)).ToObject<BucketObjects>();
+        results.AddRange(response.Items);
+        while (!string.IsNullOrEmpty(response.Next))
+        {
+            var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(new Uri(response.Next).Query);
+            response = (await api.GetObjectsAsync(_bucket, PageSize, null, queryParams["startAt"])).ToObject<BucketObjects>();
+            results.AddRange(response.Items);
+        }
+        return results;
+    }
+}
+```
+
+The `EnsureBucketExists` method will simply try and request additional information
+about a specific bucket, and if the response from APS is `404 Not Found`, it will
+attempt to create a new bucket with that name. If no bucket name is provided through
+environment variables, we generate one by appending the `-basic-app` suffix to our
+application's Client ID.
+
+The `GetObjects` method pages through all objects in the bucket, and returns their name and URN
+(the base64-encoded ID that will later be used when communicating with the Model Derivative service).
