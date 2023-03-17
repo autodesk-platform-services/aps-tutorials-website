@@ -1,9 +1,9 @@
 import React from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import NavbarLayout from '@theme/Navbar/Layout';
 import NavbarContent from '@theme/Navbar/Content';
 
 let customNavbarInitialized = false;
-
 function initializeCustomNavbar() {
   if (typeof window === 'undefined' || customNavbarInitialized) {
     return;
@@ -23,14 +23,11 @@ function initializeCustomNavbar() {
 }
 
 export default function Navbar() {
-  let useDefaultNavbar = false;
+  const { siteConfig, siteMetadata } = useDocusaurusContext();
 
-  if (typeof window !== 'undefined') {
-    const params = new URLSearchParams(window.location.search);
-    useDefaultNavbar = params.has('navbar') && params.get('navbar') == 'default';
-    if (!useDefaultNavbar) {
-      initializeCustomNavbar();
-    }
+  const useDefaultNavbar = !!siteConfig.themeConfig.useDefaultNavbar;
+  if (typeof window !== 'undefined' && !useDefaultNavbar) {
+    initializeCustomNavbar();
   }
 
   return (

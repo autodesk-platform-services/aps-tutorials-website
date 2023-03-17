@@ -18,6 +18,8 @@ $ npm run start
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
+> Note: if you need to debug something using the default navbar (for example, to get access to the language dropdown), you can temporarily toggle the `themeConfig.useDefaultNavbar` value in _docusaurus.config.js_.
+
 ### Build
 
 ```
