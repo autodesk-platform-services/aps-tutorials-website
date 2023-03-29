@@ -32,17 +32,20 @@ module.exports = {
         ]
     ],
     themeConfig: {
+        useDefaultNavbar: false, // Enable the original Docusaurus navbar
         colorMode: {
             defaultMode: 'light',
             disableSwitch: true,
             respectPrefersColorScheme: false,
         },
         navbar: {
+            title: 'Tutorials',
             logo: {
                 alt: 'Autodesk Platform Services',
-                src: 'https://developer.static.autodesk.com/forgeunified/releases/current/1.0.0.20220404193108/images/autodesk-logo-primary-rgb-black.svg'
+                src: 'https://cdn.autodesk.io/logo/black/stacked.png'
             },
             items: [
+                /*
                 {
                     href: 'https://aps.autodesk.com/platform-vision',
                     label: 'Platform Vision',
@@ -186,22 +189,22 @@ module.exports = {
                         }
                         // ... more items
                     ]
-
                 },
                 {
                     href: 'https://aps.autodesk.com/pricing',
                     label: 'Pricing',
                     position: 'left'
+                },
+                */
+                {
+                    type: 'localeDropdown',
+                    position: 'right',
+                },
+                {
+                    href: 'https://github.com/autodesk-platform-services/aps-tutorials-website',
+                    label: 'GitHub',
+                    position: 'right'
                 }
-                // {
-                //     type: 'localeDropdown',
-                //     position: 'right',
-                // },
-                // {
-                //     href: 'https://github.com/autodesk-platform-services/aps-tutorials-website',
-                //     label: 'GitHub',
-                //     position: 'right'
-                // }
             ]
         },
         footer: {
