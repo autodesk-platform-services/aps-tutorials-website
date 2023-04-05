@@ -1,9 +1,8 @@
-Inside `route/` folder create `DesignAutomation.js` file. In this file we will write all the endpoints.
+Inside `routes/` folder create `DesignAutomation.js` file. 
 
-- Utils
-  Before creating endpoints, we will add Utils class consisting of all the utility functions like creating design automation SDK instance, uploading file and few more helpfull functions which are used in this sample.
+- In this file we will write all the endpoints, we will add Utils class consisting of all the utility functions like creating design automation SDK instance, uploading file and few more helpfull functions which are used in this sample.
 
-```js title=Utils.js
+```js title=routes/DesignAutomation.js
 const _path = require("path");
 const _fs = require("fs");
 const _url = require("url");
@@ -197,7 +196,8 @@ class Utils {
 ```
 
 - App Bundle
-  Before creating activity, we need to define app bundle with plugin and selecting the appropriate engine. Copy & paste the following endpoint after the utils class.
+
+  Before creating activity, we need to define app bundle with plugin and selecting the appropriate engine. Copy & paste the following endpoints after the utils class.
 
 ```js
 /// <summary>
@@ -385,4 +385,38 @@ router.post(
 );
 
 module.exports = router;
+```
+Now let's "mount" the router to our server application by modifying the server.js:
+
+```js title=server.js
+const _path = require("path");
+const express = require("express");
+const cookieSession = require("cookie-session");
+const config = require("./config");
+if (!config.credentials.client_id || !config.credentials.client_secret)
+  return console.error(
+    "Missing APS_CLIENT_ID or APS_CLIENT_SECRET env variables."
+  );
+
+let app = express();
+app.use(express.static(_path.join(__dirname, "./wwwroot")));
+app.use(
+  cookieSession({
+    name: "aps_session",
+    keys: ["aps_secure_key"],
+    maxAge: 60 * 60 * 1000, // 1 hour, same as the 2 legged lifespan token
+  })
+);
+app.use(
+  express.json({
+    limit: "50mb",
+  })
+);
+
+// highlight-start
+app.use("/api", require("./routes/DesignAutomation"));
+// highlight-end
+app.set("port", process.env.PORT || 8080);
+
+module.exports = app;
 ```
