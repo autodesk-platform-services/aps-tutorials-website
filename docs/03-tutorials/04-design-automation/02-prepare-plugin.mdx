@@ -1,4 +1,5 @@
 import ActivityBundleConfigureImg from "./_shared/_images/activity-bundle-configure.webp";
+import VsCodeFolderExplorerImg from "./_shared/_images/vscode_nodejsfs.webp";
 import BundleNet6 from "./_shared/dotnet-vs2022/setup/upload-bundle.mdx";
 import BundleNodeJS from "./_shared/nodejs-vscode/setup/upload-bundle.mdx";
 import AutoCADPlugin from "./_shared/_plugins/autocad-plugin.mdx";
@@ -13,6 +14,10 @@ import EnvTabs from "@site/src/components/EnvTabs.js";
 Design Automation uses `.bundle` just like the [Autodesk App Store](https://www.autodesk.com/developer-network/app-store), meaning you need to create a PackageContents.xml and a ZIP with the DLL (and other required files). For detailed information on how to create them, please visit Autodesk App Store Developer Center.
 
 At this section we will create a basic plugin that update width and height parameter and save the resulting file. Also the supporting files (PackageContents.xml) and the folder structure to place them. Finally create a .ZIP file ready to upload to Design Automation.
+
+In the root folder, create a `bundles` folder.
+
+<img src={VsCodeFolderExplorerImg} style={{ width: 300 }} />
 
 ### Prerequisites
 

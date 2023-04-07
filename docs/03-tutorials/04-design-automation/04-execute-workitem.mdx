@@ -32,7 +32,9 @@ At the top-roght, click on **Configure** to define AppBundle & Activity. This on
 
 You can find [sample files here](https://github.com/autodesk-platform-services/aps-design-automation-dotnet/tree/master/sample%20files).
 
-!> If the plugin code changes, then you need to upload a new AppBundle and increase the version (e.g. v1 to v2). This sample will create a new version every time a new AppBundle is uploaded.
+:::caution
+If the plugin code changes, then you need to upload a new AppBundle and increase the version (e.g. v1 to v2). This sample will create a new version every time a new AppBundle is uploaded.
+:::
 
 > Both input and output files are saved in OSS Buckets, you can use [View Models](../simple-viewer/) tutorial to view them.
 
@@ -50,7 +52,7 @@ Consider use the **Clear Account** button. This removes all AppBundles & Activit
 
 **3. Cannot see my AppBundle at the Configuration form**
 
-The ZIP bundles are copied to the `wwwroot/bundles` after you Build the respective plugin. Make sure the `Post-build` event is properly defined and executed after build.
+The ZIP bundles are copied to the `bundles` after you Build the respective plugin. Make sure the `Post-build` event is properly defined and executed after build.
 
 **4. Ensuring the correct DLL was uploaded**
 

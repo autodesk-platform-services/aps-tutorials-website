@@ -7,7 +7,8 @@ import EnvTabs from "@site/src/components/EnvTabs.js";
 # Basic UI
 
 The interface is based on vanilla HTML5 & `JavaScript`. It essentially the same for any server-side, but there are a few differences: the Websocket implementation uses socket.io (`Node.js`) or SignalR (`.NET 6`).
-Let's start with the UI (`HTML` and `JavaScript`) files. Under `wwwroot` folder, create `bundles` and `js` folder.
+Let's start with the UI (`HTML` and `JavaScript`) files. Under `wwwroot` folder, create `js` folder.
+
 
 <EnvTabs
   NodeJsVsCode={IndexHtmlForNode}
@@ -17,7 +18,7 @@ Let's start with the UI (`HTML` and `JavaScript`) files. Under `wwwroot` folder,
 
 ## ApsDesignAutomation.js
 
-Create `js` folder under `public` folder and under `public/js` folder create the `ApsDesignAutomation.js` file with the following content
+Create `js` folder under `wwwroot` folder and under `wwwroot/js` folder create the `ApsDesignAutomation.js` file with the following content
 
 <EnvTabs
   NodeJsVsCode={DAJSForNode}
