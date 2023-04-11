@@ -10,6 +10,7 @@ Run one npm install at a time.
 
 ```bash
 npm install express --save
+npm install express-formidable --save
 npm install multer --save
 npm install cookie-session --save
 npm install forge-apis --save
@@ -55,7 +56,7 @@ Finally open the package.json and, inside "scripts", add "start": "node start.js
 
 To create a new folder or file, right-click on the "Explorer" area on the left and select New Folder or New File.
 
-Create a `/routes/` folder for all server-side files and a `/public/` folder for all client-side files.
+Create a `/routes/` folder for all server-side files and a `/wwwroot/` folder for all client-side files.
 
 At this point, you project should have the following structure
 
@@ -71,7 +72,7 @@ This file indicates to Visual Studio Code how we should run our project. Go to m
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/start.js",

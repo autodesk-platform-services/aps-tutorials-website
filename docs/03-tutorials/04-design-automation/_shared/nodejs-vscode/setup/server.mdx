@@ -35,7 +35,7 @@ if (!config.credentials.client_id || !config.credentials.client_secret)
   );
 
 let app = express();
-app.use(express.static(_path.join(__dirname, "./public")));
+app.use(express.static(_path.join(__dirname, "./wwwroot")));
 app.use(
   cookieSession({
     name: "aps_session",
@@ -48,9 +48,8 @@ app.use(
     limit: "50mb",
   })
 );
-app.use("/api", require("./routes/DesignAutomation"));
 
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 8080);
 
 module.exports = app;
 ```
@@ -82,10 +81,10 @@ module.exports = (app) => {
 };
 ```
 
-In the root folder, create a file named config.js with the following content.
+In the root folder, create a file named `config.js` with the following content.
 
 ```js title=config.js
-// Autodesk Forge configuration
+// Autodesk Platform Services configuration
 module.exports = {
   // Set environment variables or hard-code here
   credentials: {
@@ -123,9 +122,9 @@ module.exports = {
 };
 ```
 
-We are using the environment variables here. At the time of running our Express server, the values of these variables will be used to connect to Autodesk Forge. com
+We are using the environment variables here. At the time of running our Express server, the values of these variables will be used to connect to APS.
 
-Now create a `common` subfolder in the routes folder, and prepare a `routes/common/oauth.js` file that will actually request the access token from Forge. This will be reused in other parts of this tutorial.
+Now create a `common` subfolder in the routes folder, and prepare a `routes/common/oauth.js` file that will actually request the access token from APS. This will be reused in other parts of this tutorial.
 
 - routes/common/oauth.js
 
@@ -141,7 +140,7 @@ let cache = {};
 getClient(/*config.scopes.internal*/);
 
 /**
- * Initializes a Forge client for 2-legged authentication.
+ * Initializes a APS client for 2-legged authentication.
  * @param {string[]} scopes List of resource access scopes.
  * @returns {AuthClientTwoLegged} 2-legged authentication client.
  */
