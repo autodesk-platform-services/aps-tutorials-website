@@ -249,7 +249,7 @@ module.exports = {
                         },
                         {
                             label: 'Learn APS v1',
-                            href: 'https://learnforge.autodesk.io'
+                            href: 'https://tutorials.autodesk.io'
                         }
                     ]
                 }

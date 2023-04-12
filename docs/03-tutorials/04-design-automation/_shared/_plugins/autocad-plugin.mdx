@@ -1,6 +1,6 @@
 This step will help you create a basic AutoCAD plugin for Design Automation. For more information, please visit [My First AutoCAD Plugin](https://knowledge.autodesk.com/support/autocad/learn-explore/caas/simplecontent/content/my-first-autocad-plug-overview.html) tutorial.
 
-> You may [download the Bundle ZIP](https://github.com/autodesk-platform-services/aps-design-automation-dotnet/blob/master/forgeSample/wwwroot/bundles/UpdateDWGParam.zip) into the `bundles/` (Node.js) or `/forgeSample/wwwroot/bundles` (.NET 6) folder and [skip to **Upload Plugin Bundle** section](#upload-plugin-bundle).
+> You may [download the Bundle ZIP](https://github.com/autodesk-platform-services/aps-design-automation-dotnet/blob/master/designAutomationSample/wwwroot/bundles/UpdateDWGParam.zip) into the `bundles/` (Node.js) or `/designAutomationSample/wwwroot/bundles` (.NET 6) folder and [skip to **Upload Plugin Bundle** section](#upload-plugin-bundle).
 
 ### Create a new project
 
@@ -129,8 +129,8 @@ This is the main code that will run with AutoCAD. Copy the following content int
 
 ```xml title=PackageContents.xml
 <?xml version="1.0" encoding="utf-8" ?>
-<ApplicationPackage SchemaVersion="1.0" Version="1.0" ProductCode="{F11EA57A-1E7E-4B6D-8E81-986B071E3E07}" Name="AutoCADDesignAutomation" Description="Sample Plugin for AutoCAD" Author="learnforge.autodesk.io>">
-  <CompanyDetails Name="Autodesk, Inc" Url="http://learnforge.autodesk.io" Email="forge.help@autodesk.com"/>
+<ApplicationPackage SchemaVersion="1.0" Version="1.0" ProductCode="{F11EA57A-1E7E-4B6D-8E81-986B071E3E07}" Name="AutoCADDesignAutomation" Description="Sample Plugin for AutoCAD" Author="tutorials.autodesk.io>">
+  <CompanyDetails Name="Autodesk, Inc" Url="http://tutorials.autodesk.io" Email="forge.help@autodesk.com"/>
   <Components>
     <RuntimeRequirements OS="Win64" Platform="AutoCAD"/>
     <ComponentEntry AppName="UpdateWindowParameters" ModuleName="./Contents/UpdateDWGParam.dll" AppDescription="AutoCAD .NET App to update parameters of Dynamic blockreference in AutoCAD Drawing" LoadOnCommandInvocation="True" LoadOnAutoCADStartup="True">
@@ -154,8 +154,8 @@ Now we need to ZIP the .bundle folder. Right-click on the project, select **Prop
 
 ```bash
 xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)UpdateDWGParam.bundle\Contents\"
-del /F "$(ProjectDir)..\forgesample\wwwroot\bundles\UpdateDWGParam.zip"
-"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../forgesample/wwwroot/bundles/UpdateDWGParam.zip" "$(ProjectDir)UpdateDWGParam.bundle\" -xr0!*.pdb
+del /F "$(ProjectDir)..\designAutomationSample\wwwroot\bundles\UpdateDWGParam.zip"
+"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../designAutomationSample/wwwroot/bundles/UpdateDWGParam.zip" "$(ProjectDir)UpdateDWGParam.bundle\" -xr0!*.pdb
 ```
 
 This will copy the DLL from `/bin/debug/` into `.bundle/Contents` folder, then use [7zip](https://www.7-zip.org/) to create a zip, then finally copy the ZIP into `/bundles` folders of the webapp.
