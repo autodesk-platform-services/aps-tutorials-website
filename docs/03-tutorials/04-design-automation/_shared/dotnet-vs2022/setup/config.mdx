@@ -1,14 +1,14 @@
-From the solution explorer, select `designAutomationsample` project, under the `Properties`,
+From the solution explorer, select `designAutomationSample` project, under the `Properties`,
 select and open the `launchSettings.json`
 
 - Change the `applicationUrl` to "http://localhost:8080"
-- Go to profiles\forgeSample\environmentVariables add following environments.
+- Inside the `launchSettings.json` go to `profiles\designAutomationSample\environmentVariables` add following environments.
 
 ```bash
-ASPNETCORE_URLS: use http://localhost:8080
-APS_CLIENT_ID: use your id here
-APS_CLIENT_SECRET: use your secret here
-APS_WEBHOOK_URL: use the ngrok forwarding URL from previous step
+ASPNETCORE_URLS:"http://localhost:8080"
+APS_CLIENT_ID:"Your Id Here"
+APS_CLIENT_SECRET:"Your Secret Here"
+APS_WEBHOOK_URL:"Your ngrok forwarding URL from previous step"
 ```
 
 - Select `designAutomationSample` project, right-click `Add`->`New Item`, select `JSON`.
@@ -38,7 +38,7 @@ As this is running locally, `sslPort` is set to 0. It should look like as shown 
     }
   },
   "profiles": {
-    "forgeSample": {
+    "designAutomationSample": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
@@ -46,7 +46,7 @@ As this is running locally, `sslPort` is set to 0. It should look like as shown 
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APS_CLIENT_ID": "your client id here",
-        "APS_CLIENt_SECRET": "your secret here",
+        "APS_CLIENT_SECRET": "your secret here",
         "APS_WEBHOOK_URL": "your ngrok url here"
       }
     },
