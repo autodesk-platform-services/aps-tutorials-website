@@ -8,10 +8,20 @@ using Autodesk.Forge.DesignAutomation;
 
 ```
 
-Then replace the `Program.cs` Main() method content with the following. This tells our application to load Forge Client ID & Secret from the environment variables defined above.
+Then replace the `Program.cs` content with the following. This tells our application to load Forge Client ID & Secret from the environment variables defined above.
 
 ```cs
-CreateHostBuilder(args).ConfigureAppConfiguration(builder =>
+using Autodesk.Forge.Core;
+using Autodesk.Forge.DesignAutomation;
+using Microsoft.AspNetCore;
+
+namespace designAutomationSample
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).ConfigureAppConfiguration(builder =>
             {
                 builder.AddJsonFile($"appsettings.user.json", optional: true);
                 builder.AddEnvironmentVariables();
@@ -20,6 +30,13 @@ CreateHostBuilder(args).ConfigureAppConfiguration(builder =>
             {
                 services.AddDesignAutomation(hostContext.Configuration);
             }).Build().Run();
+        }
+
+        public static IWebHostBuilder CreateHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>();
+    }
+}
 ```
 
 Now open the Startup.cs and add the following namespace
