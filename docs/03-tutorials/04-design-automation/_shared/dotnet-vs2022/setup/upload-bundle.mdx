@@ -41,7 +41,7 @@ namespace designAutomationSample.Controllers
         // Local folder for bundles
         public string LocalBundlesFolder { get { return Path.Combine(_env.WebRootPath, "bundles"); } }
         /// Prefix for AppBundles and Activities
-        public static string NickName { get { return OAuthController.GetAppSetting("FORGE_CLIENT_ID"); } }
+        public static string NickName { get { return OAuthController.GetAppSetting("APS_CLIENT_ID"); } }
         /// Alias for the app (e.g. DEV, STG, PROD). This value may come from an environment variable
         public static string Alias { get { return "dev"; } }
         //This property manager S3 Upload Payload
