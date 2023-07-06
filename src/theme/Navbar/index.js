@@ -9,6 +9,8 @@ function initializeCustomNavbar() {
     return;
   }
 
+  window.navigation_rebranding = true;
+
   let script = document.createElement('script');
   script.src = 'https://developer.static.autodesk.com/forgeunified/releases/current/adskf.common.entry.js';
   script.dataset.resolveMenuUrl = 'https://aps.autodesk.com';
@@ -16,7 +18,7 @@ function initializeCustomNavbar() {
   document.head.appendChild(script);
 
   let style = document.createElement('style');
-  style.innerText = `.navbar { padding: 0; height: 65px; }`;
+  style.innerText = `.navbar { padding: 0; height: var(--aps-header-h); }`;
   document.head.appendChild(style);
 
   customNavbarInitialized = true;
