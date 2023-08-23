@@ -12,7 +12,7 @@ function initializeCustomNavbar() {
   window.navigation_rebranding = true;
 
   let script = document.createElement('script');
-  script.src = 'https://developer.static.autodesk.com/forgeunified/releases/current/adskf.common.entry.js';
+  script.src = 'https://aps.autodesk.com/static/adskf.common.entry.js';
   script.dataset.resolveMenuUrl = 'https://aps.autodesk.com';
   script.dataset.resolveFooterUrl = 'https://aps.autodesk.com';
   document.head.appendChild(script);
