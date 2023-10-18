@@ -56,7 +56,7 @@ public class ModelsController : ControllerBase
         public IFormFile File { get; set; }
     }
 
-    [HttpPost(), DisableRequestSizeLimit]
+    [HttpPost()]
     public async Task<BucketObject> UploadAndTranslateModel([FromForm] UploadModelForm form)
     {
         using (var stream = new MemoryStream())
