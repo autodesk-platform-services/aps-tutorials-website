@@ -16,28 +16,6 @@ Your `Client ID` & `Secret` should be protected and keep confidential as all you
 
 Please review [Environment Setup](../../setup/) section for required software.
 
-## Prerequisites
-
-### ngrok
-
-When Design Automation finishes modifying your model, it notifies back. As your machine is not exposed on the web, the [ngrok tool](https://ngrok.com/) create a temporary address to receive notifications. This tool is only required locally.
-After download, unzip it. Open the Windows Command Line Prompt `cmd.exe` and navigate to the folder.
-Then run `ngrok http 8080 --host-header="localhost:8080"`.
-Copy the forwarding URL value ex:`http://1ab2c3d4.ngrok.com`
-
-:::note
-If running on non-Windows (e.g. MacOS), open the **Terminal** instead and follow the same steps.
-:::
-
-<ResponsiveVideo src={PreviewUrl} />
-
-:::note
-Setting up ngrok is an optional, to intercept webhook you can also use online tools like https://requestcatcher.com/
-:::
-:::warning
-ngrok exposes your localhost server to the web while it is in use. Be sure to turn it off when your testing it done. Do not use this outside development environment
-:::
-
 ## Setup Project
 
 <EnvTabs
