@@ -166,6 +166,10 @@ async function monitorWorkItem(oauthClient, oauthToken, workItemId, browserConne
 }
 ```
 
+:::note
+In the case of a real-world application you would rely on the [callback mechanism](https://aps.autodesk.com/en/docs/design-automation/v3/developers_guide/callbacks/) of Design Automation instead of using polling to know when the work item finished
+:::
+
 - ClearAccount
 
 ```js
