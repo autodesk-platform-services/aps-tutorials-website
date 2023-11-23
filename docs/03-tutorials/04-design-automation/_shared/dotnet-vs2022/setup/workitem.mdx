@@ -59,14 +59,12 @@ This is where we actually start the Design Automation. This endpoint also upload
         JObject workItemData = JObject.Parse(input.data);
         string widthParam = workItemData["width"].Value<string>();
         string heigthParam = workItemData["height"].Value<string>();
-        string activityName = string.Format("{0}.{1}",
-                                    NickName, workItemData["activityName"].Value<string>());
+        string activityName = string.Format("{0}.{1}", NickName, workItemData["activityName"].Value<string>());
         string browserConnectionId = workItemData["browserConnectionId"].Value<string>();
 
         // save the file on the server
         var fileSavePath = Path.Combine(_env.ContentRootPath, Path.GetFileName(input.inputFile.FileName));
-        using (var stream = new FileStream(fileSavePath, FileMode.Create))
-        await input.inputFile.CopyToAsync(stream);
+        using (var stream = new FileStream(fileSavePath, FileMode.Create)) await input.inputFile.CopyToAsync(stream);
 
         // OAuth token
         dynamic oauth = await OAuthController.GetInternalAsync();
@@ -78,26 +76,19 @@ This is where we actually start the Design Automation. This endpoint also upload
         buckets.Configuration.AccessToken = oauth.access_token;
         try
         {
-            PostBucketsPayload bucketPayload = new PostBucketsPayload(bucketKey, null,
-                                                    PostBucketsPayload.PolicyKeyEnum.Transient);
+            PostBucketsPayload bucketPayload = new PostBucketsPayload(bucketKey, null, PostBucketsPayload.PolicyKeyEnum.Transient);
             await buckets.CreateBucketAsync(bucketPayload, "US");
         }
         catch { }; // in case bucket already exists
                     // 2. upload inputFile
-        string inputFileNameOSS = string.Format("{0}_input_{1}",
-                                                DateTime.Now.ToString("yyyyMMddhhmmss"),
-                                                Path.GetFileName(input.inputFile.FileName));// avoid overriding
-
-
+        string inputFileNameOSS = string.Format("{0}_input_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), Path.GetFileName(input.inputFile.FileName));// avoid overriding
         // prepare workitem arguments
         // 1. input file
         XrefTreeArgument inputFileArgument = new XrefTreeArgument()
         {
             Url = await GetObjectId(bucketKey, inputFileNameOSS, oauth, fileSavePath),
-            Headers = new Dictionary<string, string>()
-            {
-               { "Authorization", "Bearer " + oauth.access_token}
-            }
+            Headers = new Dictionary<string, string>(){
+                { "Authorization", "Bearer " + oauth.access_token} }
         };
 
         // 2. input json
@@ -109,10 +100,7 @@ This is where we actually start the Design Automation. This endpoint also upload
             Url = "data:application/json, " + ((JObject)inputJson).ToString(Formatting.None).Replace("\"", "'")
         };
         // 3. output file
-        string outputFileNameOSS = string.Format("{0}_output_{1}",
-                                                    DateTime.Now.ToString("yyyyMMddhhmmss"),
-                                                    Path.GetFileName(input.inputFile.FileName)); // avoid overriding
-
+        string outputFileNameOSS = string.Format("{0}_output_{1}", DateTime.Now.ToString("yyyyMMddhhmmss"), Path.GetFileName(input.inputFile.FileName)); // avoid overriding            
         XrefTreeArgument outputFileArgument = new XrefTreeArgument()
         {
             Url = await GetObjectId(bucketKey, outputFileNameOSS, oauth, fileSavePath),
@@ -128,10 +116,7 @@ This is where we actually start the Design Automation. This endpoint also upload
             System.IO.File.Delete(fileSavePath);
         }
 
-        // prepare & submit workitem
-        string callbackUrl = string.Format("{0}/api/aps/callback/designautomation?id={1}&outputFileName={2}",
-                                            OAuthController.GetAppSetting("APS_WEBHOOK_URL"),
-                                            browserConnectionId, outputFileNameOSS);
+        // prepare & submit workitem            
         WorkItem workItemSpec = new WorkItem()
         {
             ActivityId = activityName,
@@ -139,61 +124,56 @@ This is where we actually start the Design Automation. This endpoint also upload
             {
                 { "inputFile", inputFileArgument },
                 { "inputJson",  inputJsonArgument },
-                { "outputFile", outputFileArgument },
-                { "onComplete", new XrefTreeArgument { Verb = Verb.Post, Url = callbackUrl } }
+                { "outputFile", outputFileArgument }
+                
             }
         };
         WorkItemStatus workItemStatus = await _designAutomation.CreateWorkItemAsync(workItemSpec);
-
+        MonitorWorkitem(oauth, browserConnectionId, workItemStatus, outputFileNameOSS);
         return Ok(new { WorkItemId = workItemStatus.Id });
     }
 ```
 
-- OnCallback
+- MonitorWorkitem
 
 ```cs
-    /// <summary>
-    /// Callback from Design Automation Workitem (onProgress or onComplete)
-    /// </summary>
-    [HttpPost]
-    [Route("/api/aps/callback/designautomation")]
-    public async Task<IActionResult> OnCallback(string id, string outputFileName, [FromBody] dynamic body)
+    private async Task MonitorWorkitem(dynamic oauth, string browserConnectionId, WorkItemStatus workItemStatus, string outputFileNameOSS)
     {
         try
-        {
-            // your webhook should return immediately! we can use Hangfire to schedule a job
-            JObject bodyJson = JObject.Parse((string)body.ToString());
-            await _hubContext.Clients.Client(id).SendAsync("onComplete", bodyJson.ToString());
-
+        { 
+            while (!workItemStatus.Status.IsDone())
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2));
+                workItemStatus = await _designAutomation.GetWorkitemStatusAsync(workItemStatus.Id);
+                await _hubContext.Clients.Client(browserConnectionId).SendAsync("onComplete", workItemStatus.ToString());
+            }
             using (var httpClient = new HttpClient())
             {
-                byte[] bs = await httpClient.GetByteArrayAsync(bodyJson["reportUrl"]?.Value<string>());
+                byte[] bs = await httpClient.GetByteArrayAsync(workItemStatus.ReportUrl);
                 string report = System.Text.Encoding.Default.GetString(bs);
-                await _hubContext.Clients.Client(id).SendAsync("onComplete", report);
+                await _hubContext.Clients.Client(browserConnectionId).SendAsync("onComplete", report);
             }
 
-            // OAuth token
-            dynamic oauth = await OAuthController.GetInternalAsync();
+            if (workItemStatus.Status == Status.Success)
+            {
+                ObjectsApi objectsApi = new ObjectsApi();
+                objectsApi.Configuration.AccessToken = oauth.access_token;
 
-            ObjectsApi objectsApi = new ObjectsApi();
-            objectsApi.Configuration.AccessToken = oauth.access_token;
-
-            ApiResponse<dynamic> res = await objectsApi.getS3DownloadURLAsyncWithHttpInfo(
-                                        NickName.ToLower()+"-designautomation",
-                                        outputFileName, new Dictionary<string, object> {
-                                        { "minutesExpiration", 15.0 },
-                                        { "useCdn", true }
-                                        });
-            await _hubContext.Clients.Client(id).SendAsync("downloadResult", (string)(res.Data.url));
-            Console.WriteLine("Congrats!");
+                ApiResponse<dynamic> res = await objectsApi.getS3DownloadURLAsyncWithHttpInfo(
+                                            NickName.ToLower() + "-designautomation",
+                                            outputFileNameOSS, new Dictionary<string, object> {
+                                            { "minutesExpiration", 15.0 },
+                                            { "useCdn", true }
+                                            });
+                await _hubContext.Clients.Client(browserConnectionId).SendAsync("downloadResult", (string)(res.Data.url));
+                Console.WriteLine("Congrats!");
+            }
         }
         catch (Exception ex)
         {
+            await _hubContext.Clients.Client(browserConnectionId).SendAsync("onComplete", ex.Message);
             Console.WriteLine(ex.Message);
-        }
-
-        // ALWAYS return ok (200)
-        return Ok();
+        }      
     }
 ```
 
