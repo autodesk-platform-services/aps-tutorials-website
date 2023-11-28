@@ -2,7 +2,7 @@ The following apis should be added to the `DesignAutomation.js` file before the 
 
 - StartWorkitem
 
-This is where we actually start the Design Automation. This endpoint also uploads the input file to an OSS Bucket and define that the output should be saved at the same bucket. To help you identify the files, both input and output uses the same original file name, but with a suffix (input or output) plus a time stamp.
+This is where we actually start the Design Automation process. This endpoint also uploads the input file to an OSS Bucket and define that the output should be saved at the same bucket. To help you identify the files, both input and output uses the same original file name, but with a suffix (input or output) plus a time stamp.
 
 ```js title=routes/DesignAutomation.js
 /// <summary>
@@ -45,187 +45,130 @@ const getObjectId = async (bucketKey, objectKey, req) => {
     throw ex;
   }
 };
+
 /// <summary>
 /// Start a new workitem
 /// </summary>
-router.post(
-  "/aps/designautomation/workitems",
-  multer({
-    dest: "uploads/",
-  }).single("inputFile"),
-  async (/*StartWorkitem*/ req, res) => {
-    const input = req.body;
+router.post('/aps/designautomation/workitems', multer({
+  dest: 'uploads/'
+}).single('inputFile'), async /*StartWorkitem*/(req, res) => {
+  const input = req.body;
 
-    // basic input validation
-    const workItemData = JSON.parse(input.data);
-    const widthParam = parseFloat(workItemData.width);
-    const heigthParam = parseFloat(workItemData.height);
-    const activityName = `${Utils.NickName}.${workItemData.activityName}`;
-    const browserConnectionId = workItemData.browserConnectionId;
+  // basic input validation
+  const workItemData = JSON.parse(input.data);
+  const widthParam = parseFloat(workItemData.width);
+  const heigthParam = parseFloat(workItemData.height);
+  const activityName = `${Utils.NickName}.${workItemData.activityName}`;
+  const browerConnectionId = workItemData.browerConnectionId;
 
-    // save the file on the server
-    const ContentRootPath = _path.resolve(_path.join(__dirname, "../.."));
-    const fileSavePath = _path.join(
-      ContentRootPath,
-      _path.basename(req.file.originalname)
-    );
+  // save the file on the server
+  const ContentRootPath = _path.resolve(_path.join(__dirname, '../..'));
+  const fileSavePath = _path.join(ContentRootPath, _path.basename(req.file.originalname));
 
-    // upload file to OSS Bucket
-    // 1. ensure bucket existis
-    const bucketKey = Utils.NickName.toLowerCase() + "-designautomation";
-    try {
-      let payload = new ForgeAPI.PostBucketsPayload();
-      payload.bucketKey = bucketKey;
-      payload.policyKey = "transient"; // expires in 24h
-      await new ForgeAPI.BucketsApi().createBucket(
-        payload,
-        {},
-        req.oauth_client,
-        req.oauth_token
-      );
-    } catch (ex) {
-      // in case bucket already exists
-    }
-    // 2. upload inputFile
-    const inputFileNameOSS = `${new Date()
-      .toISOString()
-      .replace(/[-T:\.Z]/gm, "")
-      .substring(0, 14)}_input_${_path.basename(req.file.originalname)}`; // avoid overriding
-    // prepare workitem arguments
-    const bearerToken = ["Bearer", req.oauth_token.access_token].join(" ");
-    // 1. input file
-    const inputFileArgument = {
-      url: await getObjectId(bucketKey, inputFileNameOSS, req),
-      headers: { Authorization: bearerToken },
-    };
-    // 2. input json
-    const inputJson = {
-      width: widthParam,
-      height: heigthParam,
-    };
-    const inputJsonArgument = {
-      url:
-        "data:application/json, " +
-        JSON.stringify(inputJson).replace(/"/g, "'"),
-    };
-    // 3. output file
-    const outputFileNameOSS = `${new Date()
-      .toISOString()
-      .replace(/[-T:\.Z]/gm, "")
-      .substring(0, 14)}_output_${_path.basename(req.file.originalname)}`; // avoid overriding
-    const outputFileArgument = {
-      url: await getObjectId(bucketKey, outputFileNameOSS, req),
-      verb: dav3.Verb.put,
-      headers: { Authorization: bearerToken },
-    };
-
-    // prepare & submit workitem
-    // the callback contains the connectionId (used to identify the client) and the outputFileName of this workitem
-    const callbackUrl = `${config.credentials.webhook_url}/api/aps/callback/designautomation?id=${browserConnectionId}&outputFileName=${outputFileNameOSS}&inputFileName=${inputFileNameOSS}`;
-    const workItemSpec = {
-      activityId: activityName,
-      arguments: {
-        inputFile: inputFileArgument,
-        inputJson: inputJsonArgument,
-        outputFile: outputFileArgument,
-        onComplete: {
-          verb: dav3.Verb.post,
-          url: callbackUrl,
-        },
-      },
-    };
-    let workItemStatus = null;
-    try {
-      const api = await Utils.dav3API(req.oauth_token);
-      workItemStatus = await api.createWorkItem(workItemSpec);
-    } catch (ex) {
-      console.error(ex);
-      return res.status(500).json({
-        diagnostic: "Failed to create a workitem",
-      });
-    }
-    res.status(200).json({
-      workItemId: workItemStatus.id,
-    });
+  // upload file to OSS Bucket
+  // 1. ensure bucket existis
+  const bucketKey = Utils.NickName.toLowerCase() + '-designautomation';
+  try {
+    let payload = new ForgeAPI.PostBucketsPayload();
+    payload.bucketKey = bucketKey;
+    payload.policyKey = 'transient'; // expires in 24h
+    await new ForgeAPI.BucketsApi().createBucket(payload, {}, req.oauth_client, req.oauth_token);
+  } catch (ex) {
+    // in case bucket already exists
   }
-);
+  // 2. upload inputFile
+  const inputFileNameOSS = `${new Date().toISOString().replace(/[-T:\.Z]/gm, '').substring(0, 14)}_input_${_path.basename(req.file.originalname)}`; // avoid overriding
+  // prepare workitem arguments
+  const bearerToken = ["Bearer", req.oauth_token.access_token].join(" ");
+  // 1. input file
+  const inputFileArgument = {
+    url: await getObjectId(bucketKey, inputFileNameOSS, req),
+    headers: { "Authorization": bearerToken }
+  };
+  // 2. input json
+  const inputJson = {
+    width: widthParam,
+    height: heigthParam
+  };
+  const inputJsonArgument = {
+    url: "data:application/json, " + JSON.stringify(inputJson).replace(/"/g, "'")
+  };
+  // 3. output file
+  const outputFileNameOSS = `${new Date().toISOString().replace(/[-T:\.Z]/gm, '').substring(0, 14)}_output_${_path.basename(req.file.originalname)}`; // avoid overriding  
+  const outputFileArgument = {
+    url: await getObjectId(bucketKey, outputFileNameOSS, req),
+    verb: dav3.Verb.put,
+    headers: { "Authorization": bearerToken }
+  };
+
+  // prepare & submit workitem
+  const workItemSpec = {
+    activityId: activityName,
+    arguments: {
+      inputFile: inputFileArgument,
+      inputJson: inputJsonArgument,
+      outputFile: outputFileArgument,
+    }
+  };
+  let workItemStatus = null;
+  try {
+    const api = await Utils.dav3API(req.oauth_token);
+    workItemStatus = await api.createWorkItem(workItemSpec);
+    monitorWorkItem(req.oauth_client, req.oauth_token, workItemStatus.id, browerConnectionId, outputFileNameOSS, inputFileNameOSS);
+  } catch (ex) {
+    console.error(ex);
+    return (res.status(500).json({
+      diagnostic: 'Failed to create a workitem'
+    }));
+  }
+  res.status(200).json({
+    workItemId: workItemStatus.id
+  });
+});
 ```
 
-- OnCallback
-
-When the workitem is done, Design Automation will callback our app (using the ngrok forwarding URL). This function will handle it and push a notification to the client (using socketIO).
+- MonitorWorkItem
 
 ```js
 /// <summary>
-/// Callback from Design Automation Workitem (onProgress or onComplete)
+/// Monitor work item progress 
 /// </summary>
-router.post(
-  "/aps/callback/designautomation",
-  async (/*OnCallback*/ req, res) => {
-    // your webhook should return immediately! we could use Hangfire to schedule a job instead
-    // ALWAYS return ok (200)
-    res.status(200).end();
-
-    try {
-      const socketIO = require("../server").io;
-
-      // your webhook should return immediately! we can use Hangfire to schedule a job
-      const bodyJson = req.body;
-      socketIO.to(req.query.id).emit("onComplete", bodyJson);
-
-      http.get(bodyJson.reportUrl, (response) => {
-        //socketIO.to(req.query.id).emit('onComplete', response);
-        response.setEncoding("utf8");
-        let rawData = "";
-        response.on("data", (chunk) => {
-          rawData += chunk;
-        });
-        response.on("end", () => {
-          socketIO.to(req.query.id).emit("onComplete", rawData);
-        });
-      });
-
+async function monitorWorkItem(oauthClient, oauthToken, workItemId, browserConnectionId, outputFileName, inputFileName) {
+  const socketIO = require('../server').io;
+  try {
+    while (true) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const api = await Utils.dav3API(oauthToken);
+      const status = await api.getWorkitemStatus(workItemId);
+      const bucketKey = Utils.NickName.toLowerCase() + '-designautomation';
       const objectsApi = new ForgeAPI.ObjectsApi();
-      const bucketKey = Utils.NickName.toLowerCase() + "-designautomation";
-      if (bodyJson.status === "success") {
-        try {
-          //create a S3 presigned URL and send to client
-          let response = await objectsApi.getS3DownloadURL(
-            bucketKey,
-            req.query.outputFileName,
-            { useAcceleration: false, minutesExpiration: 15 },
-            req.oauth_client,
-            req.oauth_token
-          );
-          socketIO.to(req.query.id).emit("downloadResult", response.body.url);
-        } catch (ex) {
-          console.error(ex);
-          socketIO
-            .to(req.query.id)
-            .emit(
-              "onComplete",
-              "Failed to create presigned URL for outputFile.\nYour outputFile is available in your OSS bucket."
-            );
-        }
+      socketIO.to(browserConnectionId).emit('onComplete', status);
+      if (status.status == 'pending' || status.status === 'inprogress') {
+        continue;
       }
-
-      // delete the input file (we do not need it anymore)
-      try {
-        await objectsApi.deleteObject(
-          bucketKey,
-          req.query.inputFileName,
-          req.oauth_client,
-          req.oauth_token
-        );
-      } catch (ex) {
-        console.error(ex);
+      let response = await fetch(status.reportUrl);
+      socketIO.to(browserConnectionId).emit('onComplete', await response.text());
+      if (status.status === 'success') {
+        response = await objectsApi.getS3DownloadURL(bucketKey, outputFileName, {
+          useAcceleration: false, minutesExpiration: 15
+        }, oauthClient, oauthToken);
+        socketIO.to(browserConnectionId).emit('downloadResult', response.body.url);
+      } else {
+        throw new Error('Work item failed...');
       }
-    } catch (ex) {
-      console.error(ex);
+      await objectsApi.deleteObject(bucketKey, inputFileName, oauthClient, oauthToken);
+      return;
     }
+  } catch (err) {
+    console.error(err);
+    socketIO.to(browserConnectionId).emit('onError', err);
   }
-);
+}
 ```
+
+:::note
+In the case of a real-world application you would rely on the [callback mechanism](https://aps.autodesk.com/en/docs/design-automation/v3/developers_guide/callbacks/) of Design Automation instead of using polling to know when the work item finished
+:::
 
 - ClearAccount
 
