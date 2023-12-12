@@ -1,6 +1,8 @@
 Create a `config.js` file in the root of your project folder, and add the following code:
 
 ```js title="config.js"
+require('dotenv').config();
+
 let { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET, PORT } = process.env;
 if (!APS_CLIENT_ID || !APS_CLIENT_SECRET) {
     console.warn('Missing some of the environment variables.');
@@ -17,9 +19,11 @@ module.exports = {
 };
 ```
 
-We simply read the environment variables from `process.env`, and exit the application
-immediately if any of the required properties are missing. And if no bucket name is provided,
-we generate one by appending the `-basic-app` suffix to our application Client ID.
+The `dotenv` library initializes environment variables from a local _.env_ file (if there's one).
+We then simply read the environment variables from `process.env`, and exit the application
+immediately if any of the required properties are missing. And if no bucket name is provided
+for where our designs should be stored, we generate one by appending the `-basic-app` suffix
+to our application Client ID.
 
 :::caution
 Note that the Data Management service requires bucket names to be **globally unique**,
@@ -28,7 +32,21 @@ See the [documentation](https://forge.autodesk.com/en/docs/data/v2/reference/htt
 for more details.
 :::
 
-Now, to pass actual configuration values to our application for debugging purposes, we need to create
+Next, let's create the _.env_ file in the project folder, and populate it with the required
+environment variables (replacing `<client-id>` and `<client-secret>` with your APS Client ID
+and Client Secret):
+
+``` title=".env"
+APS_CLIENT_ID="<client-id>"
+APS_CLIENT_SECRET="<client-secret>"
+```
+
+:::caution
+Since the `.env` file contains sensitive information, make sure that it is **not** included in git!
+This can be ensured by adding the `.env` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
+:::
+
+Now, in order to be able to run and debug our application from Visual Studio Code, we need to create
 a [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
 Use _Run > Add Configuration_ in the menu to create a new configuration, and when prompted
 for the specific environment, choose _Node.js_. This will create a new `.vscode`
@@ -47,7 +65,6 @@ launch configurations. Replace the content of the file with the following:
             "runtimeArgs": [
                 "start"
             ],
-            "envFile": "${workspaceFolder}/.env",
             "skipFiles": [
                 "<node_internals>/**/*.js"
             ]
@@ -56,20 +73,5 @@ launch configurations. Replace the content of the file with the following:
 }
 ```
 
-We are defining a single launch configuration called _Launch Server_ that will start
-our application (using the `npm start` command), and what is more important, it will
-look for a `.env` file in the project folder, and provide any `<key>="<value>"` pairs
-defined in this file as environment variables to our application. Let's create
-the `.env` file in the project folder, and populate it with our environment variables
-(using your own values instead of the placeholders of course):
-
-``` title=".env"
-APS_CLIENT_ID="your-client-id"
-APS_CLIENT_SECRET="your-client-secret"
-APS_BUCKET="optional-name-of-existing-bucket"
-```
-
-:::caution
-Since the `.env` file contains sensitive information, make sure that it is **not** included in git!
-This can be ensured by adding the `.env` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
-:::
+We are defining a single launch configuration called _Launch Server_ that will simply
+start our application using the `npm start` command.
