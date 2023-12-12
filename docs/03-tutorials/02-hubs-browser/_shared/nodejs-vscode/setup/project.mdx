@@ -5,12 +5,13 @@ and initialize a new Node.js project:
 npm init -y
 ```
 
-Next, install all the Node.js dependencies we're going to use. In this case it will be
-the [Express.js](https://expressjs.com) framework, an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
+Next, install all the Node.js dependencies we're going to use. In this case it will be [dotenv](https://www.npmjs.com/package/dotenv)
+(utility for initializing environment variables from a file), [Express.js](https://expressjs.com) (web framework),
+an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
 for handling cookie-based sessions, and finally the [APS SDK](https://www.npmjs.com/package/forge-apis):
 
 ```bash
-npm install --save express cookie-session forge-apis
+npm install --save dotenv express cookie-session forge-apis
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -18,11 +19,12 @@ The `"dependencies"` in your `package.json` file should now look something like 
 
 ```json
 // ...
-"dependencies": {
+  "dependencies": {
     "cookie-session": "^1.4.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "forge-apis": "^0.9.4"
-},
+  },
 // ...
 ```
 

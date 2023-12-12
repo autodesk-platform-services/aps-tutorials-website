@@ -1,6 +1,8 @@
 Create a `config.js` file in the root of your project folder, and add the following code:
 
 ```js title="config.js"
+require('dotenv').config();
+
 let { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, SERVER_SESSION_SECRET, PORT } = process.env;
 if (!APS_CLIENT_ID || !APS_CLIENT_SECRET || !APS_CALLBACK_URL || !SERVER_SESSION_SECRET) {
     console.warn('Missing some of the environment variables.');
@@ -21,14 +23,31 @@ module.exports = {
 };
 ```
 
-We simply read the environment variables from `process.env`, and exit the application
+The `dotenv` library initializes environment variables from a local _.env_ file (if there's one).
+We then simply read the environment variables from `process.env`, and exit the application
 immediately if any of the required properties are missing.
 
-Now, to pass actual configuration values to our application for debugging purposes, we need to create
+Next, let's create the _.env_ file in the project folder, and populate it with the required
+environment variables (replacing `<client-id>` and `<client-secret>` with your APS Client ID
+and Client Secret, and `<secret-phrase>` with an arbitrary string):
+
+``` title=".env"
+APS_CLIENT_ID="<client-id>"
+APS_CLIENT_SECRET="<client-secret>"
+APS_CALLBACK_URL="http://localhost:8080/api/auth/callback" # URL your users will be redirected to after logging in with their Autodesk account
+SERVER_SESSION_SECRET="<secret-phrase>" # secret phrase used to encrypt/decrypt server session cookies
+```
+
+:::caution
+Since the `.env` file contains sensitive information, make sure that it is **not** included in git!
+This can be ensured by adding the `.env` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
+:::
+
+Now, in order to be able to run and debug our application from Visual Studio Code, we need to create
 a [launch configuration](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations).
 Use _Run > Add Configuration_ in the menu to create a new configuration, and when prompted
-for the specific environment, choose _Node.js_. This will create a new `.vscode`
-subfolder in your project with a `launch.json` file where you can define different
+for the specific environment, choose _Node.js_. This will create a new _.vscode_
+subfolder in your project with a _launch.json_ file where you can define different
 launch configurations. Replace the content of the file with the following:
 
 ```json title=".vscode/launch.json"
@@ -43,7 +62,6 @@ launch configurations. Replace the content of the file with the following:
             "runtimeArgs": [
                 "start"
             ],
-            "envFile": "${workspaceFolder}/.env",
             "skipFiles": [
                 "<node_internals>/**/*.js"
             ]
@@ -52,21 +70,5 @@ launch configurations. Replace the content of the file with the following:
 }
 ```
 
-We are defining a single launch configuration called _Launch Server_ that will start
-our application (using the `npm start` command), and what is more important, it will
-look for a `.env` file in the project folder, and provide any `<key>="<value>"` pairs
-defined in this file as environment variables to our application. Let's create
-the `.env` file in the project folder, and populate it with our environment variables
-(using your own values instead of the placeholders of course):
-
-``` title=".env"
-APS_CLIENT_ID="your-client-id"
-APS_CLIENT_SECRET="your-client-secret"
-APS_CALLBACK_URL="http://localhost:8080/api/auth/callback"
-SERVER_SESSION_SECRET="custom-encryption-phrase"
-```
-
-:::caution
-Since the `.env` file contains sensitive information, make sure that it is **not** included in git!
-This can be ensured by adding the `.env` line to the [.gitignore](https://git-scm.com/docs/gitignore) file.
-:::
+We are defining a single launch configuration called _Launch Server_ that will simply
+start our application using the `npm start` command.
