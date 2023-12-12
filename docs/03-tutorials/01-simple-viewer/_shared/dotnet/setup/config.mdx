@@ -54,9 +54,9 @@ from environment variables (or from other [configuration providers](https://docs
 for later use.
 
 Now, to pass actual configuration values to our application for debugging purposes,
-we will modify (or create) the `appsettings.Development.json` file in our project folder,
-or create one of it does not exist, with the following content (using your own
-values instead of the placeholders of course):
+we will modify (or create) the _appsettings.Development.json_ file in our project folder
+with the following content (replacing `<client-id>` and `<client-secret>` with your
+APS Client ID and Client Secret):
 
 ```json
 {
@@ -66,9 +66,8 @@ values instead of the placeholders of course):
       "Microsoft.AspNetCore": "Warning"
     }
   },
-  "APS_CLIENT_ID": "your-client-id",
-  "APS_CLIENT_SECRET": "your-client-secret",
-  "APS_BUCKET": "optional-name-of-existing-bucket"
+  "APS_CLIENT_ID": "<client-id>",
+  "APS_CLIENT_SECRET": "<client-secret>"
 }
 ```
 
