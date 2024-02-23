@@ -1,11 +1,8 @@
-import EnvTabs from '@site/src/components/EnvTabs.js';
 
 import NodeJsVsCodeProject from './_shared/nodejs-vscode/setup/project.mdx';
 import NodeJsVsCodeConfig from './_shared/nodejs-vscode/setup/config.mdx';
 import NodeJsVsCodeServer from './_shared/nodejs-vscode/setup/server.mdx';
 import NodeJsVsCodeTest from './_shared/nodejs-vscode/setup/test.mdx';
-
-import DotNetPlaceHolder from './_shared/dotnet-place-holder.mdx';
 
 # Application Setup
 
@@ -14,7 +11,7 @@ a basic server application.
 
 ## Create project
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeProject} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeProject />
 
 ## Application config
 
@@ -23,14 +20,14 @@ the credentials of our APS app for communicating with Autodesk Platform Services
 where our users will be redirected to during the [3-legged authentication workflow](https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token/).
 We will pass these parameters to the server app using environment variables.
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeConfig} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeConfig />
 
 ## Create basic server
 
 Next we'll setup a basic server application.
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeServer} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeServer />
 
 ## Try it out
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeTest} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeTest />

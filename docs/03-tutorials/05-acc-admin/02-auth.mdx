@@ -1,10 +1,6 @@
-import EnvTabs from '@site/src/components/EnvTabs.js';
-
 import NodeJsVsCodeTokens from './_shared/nodejs-vscode/auth/tokens.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/auth/endpoints.mdx';
 import NodeJsVsCodeTest from './_shared/nodejs-vscode/auth/test.mdx';
-
-import DotNetPlaceHolder from './_shared/dotnet-place-holder.mdx';
 
 # Authentication
 
@@ -14,14 +10,14 @@ and generate access tokens for various needs.
 
 ## Access tokens
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeTokens} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeTokens />
 
 ## Server endpoints
 
 Now let's expose this functionality via a collection of endpoints in our server.
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeEndpoints />
 
 ## Try it out
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeTest} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
+<NodeJsVsCodeTest />
