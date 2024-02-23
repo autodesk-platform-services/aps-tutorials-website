@@ -1,0 +1,42 @@
+Create a new folder for your project, navigate to it in the command line,
+and initialize a new Node.js project:
+
+```bash
+npm init -y
+```
+
+Next, install all the Node.js dependencies we're going to use. In this case it will be [dotenv](https://www.npmjs.com/package/dotenv)
+(utility for initializing environment variables from a file), [Express.js](https://expressjs.com) (web framework),
+an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
+for handling cookie-based sessions, and finally the necessary APS SDK including:
+- [@aps_sdk/autodesk-sdkmanager](https://www.npmjs.com/package/@aps_sdk/autodesk-sdkmanager),
+- [@aps_sdk/authentication](https://www.npmjs.com/package/@aps_sdk/authentication),
+- [@aps_sdk/data-management](https://www.npmjs.com/package/@aps_sdk/data-management),
+- [@aps_sdk/account-admin](https://www.npmjs.com/package/@aps_sdk/account-admin):
+
+```bash
+npm install --save dotenv express cookie-session @aps_sdk/autodesk-sdkmanager @aps_sdk/authentication @aps_sdk/data-management @aps_sdk/account-admin
+```
+
+The `"dependencies"` in your `package.json` file should now look something like this
+(potentially with slightly different version numbers):
+
+```json
+// ...
+  "dependencies": {
+    "@aps_sdk/account-admin": "^0.0.1-beta.1",
+    "@aps_sdk/authentication": "^0.0.1-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "^0.0.5-beta.1",
+    "@aps_sdk/data-management": "^0.0.3-beta.1",
+    "cookie-session": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2"
+  },
+// ...
+```
+
+Finally, let's create a couple more subfolders in your project folder that we're going to need later:
+
+- `wwwroot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
+- `routes` - this is where we're going to implement all the server endpoints
+- `services` - here we're going to keep all the server-side logic that can be shared by different endpoints

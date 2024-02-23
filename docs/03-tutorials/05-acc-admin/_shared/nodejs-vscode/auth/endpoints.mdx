@@ -1,0 +1,59 @@
+Create an `auth.js` file under the `routes` subfolder with the following content:
+
+```js title="routes/auth.js"
+const express = require('express');
+const { getAuthorizationUrl, authCallbackMiddleware, authRefreshMiddleware, getUserProfile } = require('../services/aps.js');
+
+let router = express.Router();
+
+router.get('/api/auth/login', function (req, res) {
+    res.redirect(getAuthorizationUrl());
+});
+
+router.get('/api/auth/logout', function (req, res) {
+    req.session = null;
+    res.redirect('/');
+});
+
+router.get('/api/auth/callback', authCallbackMiddleware, function (req, res) {
+    res.redirect('/');
+});
+
+router.get('/api/auth/profile', authRefreshMiddleware, async function (req, res, next) {
+    try {
+        const profile = await getUserProfile(req.oAuthToken);
+        res.json({ name: `${profile.name}` });
+    } catch (err) {
+        next(err);
+    }
+});
+
+module.exports = router;
+```
+
+Here we implement a new Express.js [router](http://expressjs.com/en/4x/api.html#router) that
+will handle all the authentication-related endpoints. Let's "mount" the router to our server
+application by modifying `server.js`:
+
+```js title="server.js"
+const express = require('express');
+const session = require('cookie-session');
+const { PORT, SERVER_SESSION_SECRET } = require('./config.js');
+
+let app = express();
+app.use(express.static('wwwroot'));
+app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
+// highlight-start
+app.use(require('./routes/auth.js'));
+// highlight-end
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`));
+```
+
+The router will now handle the following requests:
+
+- `GET /api/auth/login` will redirect the user to the Autodesk login page
+- `GET /api/auth/callback` is the URL our user will be redirected to after logging in successfully,
+and it is where we're going to generate a new set of tokens for the user
+- `GET /api/auth/logout` will remove any cookie-based session data for the given user, effectively
+logging the user out of our application
+- `GET /api/auth/profile` will return a simple JSON with additional information about the logged in user
