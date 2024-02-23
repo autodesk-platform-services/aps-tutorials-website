@@ -3,8 +3,7 @@ import EnvTabs from '@site/src/components/EnvTabs.js';
 import NodeJsVsCodeHubs from './_shared/nodejs-vscode/data/hubs.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
 
-import DotNetHubs from './_shared/dotnet/data/hubs.mdx';
-import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
+import DotNetPlaceHolder from './_shared/dotnet-place-holder.mdx';
 
 # Project Browsing
 
@@ -15,14 +14,14 @@ We will basically get the hierarchy of hubs, projects using Data Management APIs
 
 First, let's add a couple of helper methods for browsing through the hubs, projects:
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeHubs} DotNetVsCode={DotNetHubs} DotNetVs2022={DotNetHubs} />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeHubs} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
 
 ## Server endpoints
 
 Next, let's expose the new functionality to the client-side code through another
 set of endpoints.
 
-<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetEndpoints} DotNetVs2022={DotNetEndpoints} />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetPlaceHolder} DotNetVs2022={DotNetPlaceHolder} />
 
 ## Try it out
 
