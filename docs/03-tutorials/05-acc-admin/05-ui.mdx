@@ -39,6 +39,7 @@ class Table {
     #projectId;
     #tabKey;
     #dataSet;
+    #maxItem;
 
     constructor(tableId, accountId = null, projectId = null, tabKey = 'PROJECTS') {
         this.#tableId = tableId;
@@ -46,6 +47,7 @@ class Table {
         this.#projectId = projectId;
         this.#tabKey = tabKey;
         this.#dataSet = null;
+        this.#maxItem = 5;
     };
 
     get tabKey(){
@@ -57,15 +59,19 @@ class Table {
     }
 
     resetData = async( tabKey=null, accountId=null, projectId=null ) =>{
+        //TBD
     }
 
     drawTable = () => {
+        //TBD
     }
 
     exportToCSV = ()=>{
+        //TBD
     }
 
     importFromCSV = async() => {
+        //TBD
     }    
 }
 
