@@ -13,7 +13,7 @@ const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../confi
 
 const service = module.exports = {};
 
-const sdk = SdkManagerBuilder.Create().build();
+const sdk = SdkManagerBuilder.create().build();
 const authenticationClient = new AuthenticationClient(sdk);
 // highlight-start
 const dataManagementClient = new DataManagementClient(sdk);
@@ -25,14 +25,14 @@ const dataManagementClient = new DataManagementClient(sdk);
 ```js title="services/aps.js"
 // Data Management APIs
 service.getHubs = async (token) => {
-    const resp = await dataManagementClient.GetHubsAsync(token.access_token);
+    const resp = await dataManagementClient.getHubs(token.access_token);
     return resp.data.filter((item)=>{
         return item.id.startsWith('b.');
     })
 };
 
 service.getProjects = async (hubId, token) => {
-    const resp = await dataManagementClient.GetHubProjectsAsync(token.access_token, hubId);
+    const resp = await dataManagementClient.getHubProjects(token.access_token, hubId);
     return resp.data.filter( (item)=>{
         return item.attributes.extension.data.projectType == 'ACC';
     } )
