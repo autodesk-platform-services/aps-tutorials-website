@@ -10,17 +10,17 @@ const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../confi
 
 const service = module.exports = {};
 
-const sdk = SdkManagerBuilder.Create().build();
+const sdk = SdkManagerBuilder.create().build();
 const authenticationClient = new AuthenticationClient(sdk);
 
 service.getAuthorizationUrl = () => authenticationClient.authorize(APS_CLIENT_ID, ResponseType.Code, APS_CALLBACK_URL, [
-    Scopes.Dataread,
-    Scopes.Accountread,
-    Scopes.Accountwrite
+    Scopes.DataRead,
+    Scopes.AccountRead,
+    Scopes.AccountWrite
 ]);
 
 service.authCallbackMiddleware = async (req, res, next) => {
-    const credentials = await authenticationClient.getThreeLeggedTokenAsync(APS_CLIENT_ID, APS_CLIENT_SECRET, req.query.code, APS_CALLBACK_URL);
+    const credentials = await authenticationClient.getThreeLeggedToken(APS_CLIENT_ID, req.query.code, APS_CALLBACK_URL,{clientSecret:APS_CLIENT_SECRET});
     req.session.token = credentials.access_token;
     req.session.refresh_token = credentials.refresh_token;
     req.session.expires_at = Date.now() + credentials.expires_in * 1000;
@@ -35,11 +35,14 @@ service.authRefreshMiddleware = async (req, res, next) => {
     }
 
     if (expires_at < Date.now()) {
-        const credentials = await authenticationClient.getRefreshTokenAsync(APS_CLIENT_ID, APS_CLIENT_SECRET, refresh_token, [
-            Scopes.Dataread,
-            Scopes.Accountread,
-            Scopes.Accountwrite
-        ]);
+        const credentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, refresh_token, {
+            clientSecret: APS_CLIENT_SECRET,
+            scopes: [
+                Scopes.DataRead,
+                Scopes.AccountRead,
+                Scopes.AccountWrite
+            ]
+        });
         req.session.token = credentials.access_token;
         req.session.refresh_token = credentials.refresh_token;
         req.session.expires_at = Date.now() + credentials.expires_in * 1000;
@@ -52,7 +55,7 @@ service.authRefreshMiddleware = async (req, res, next) => {
 };
 
 service.getUserProfile = async (token) => {
-    const resp = await authenticationClient.getUserinfoAsync(token.access_token);
+    const resp = await authenticationClient.getUserInfo(token.access_token);
     return resp;
 };
 ```

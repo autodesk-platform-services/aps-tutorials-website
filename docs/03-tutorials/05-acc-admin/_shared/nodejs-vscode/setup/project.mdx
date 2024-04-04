@@ -14,6 +14,13 @@ for handling cookie-based sessions, and finally the necessary APS SDK including:
 - [@aps_sdk/data-management](https://www.npmjs.com/package/@aps_sdk/data-management),
 - [@aps_sdk/account-admin](https://www.npmjs.com/package/@aps_sdk/account-admin):
 
+
+:::caution
+The APS SDKs used in the tutorial are still “unstable” at this moment, they may change significantly.
+Please use the exact same version to make sure the tutorial goes well, if you are using a different 
+version of APS SDK, please make sure to catch up with all the changes. 
+:::
+
 ```bash
 npm install --save dotenv express cookie-session @aps_sdk/autodesk-sdkmanager @aps_sdk/authentication @aps_sdk/data-management @aps_sdk/account-admin
 ```
@@ -24,13 +31,13 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
-    "@aps_sdk/account-admin": "^0.0.1-beta.1",
-    "@aps_sdk/authentication": "^0.0.1-beta.1",
-    "@aps_sdk/autodesk-sdkmanager": "^0.0.5-beta.1",
-    "@aps_sdk/data-management": "^0.0.3-beta.1",
-    "cookie-session": "^2.1.0",
+    "@aps_sdk/authentication": "^0.1.0-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "^0.0.7-beta.1",
+    "@aps_sdk/data-management": "^0.1.0-beta.1",
+    "@aps_sdk/account-admin": "^0.1.0-beta.1",
+    "cookie-session": "^1.4.0",
     "dotenv": "^16.4.5",
-    "express": "^4.18.2"
+    "express": "^4.19.2"
   },
 // ...
 ```
