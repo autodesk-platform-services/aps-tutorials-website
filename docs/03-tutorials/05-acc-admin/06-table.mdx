@@ -323,12 +323,22 @@ export async function initTableTabs(){
 
 ## CSV File Prepare
 Finally, the most important feature is batch import projects/users, this is achieved by using a CSV file,
-we provided 2 template file for projects and users, you can add your information based on the template, 
-then import these data from csv file into ACC account.
+we provided 2 template files for projects and users, you can add/modify your information based on the template, 
+then import these data from CSV file into ACC account.
 
-- [ProjectsTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/raw/1521d17ea3e44465a228c95bd79c3d2a5b85fe02/template%20files/ProjectsTemplate.csv) 
-- [UsersTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/raw/1521d17ea3e44465a228c95bd79c3d2a5b85fe02/template%20files/UsersTemplate.csv) 
+- [ProjectsTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/ProjectsTemplate.csv) 
+- [UsersTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/UsersTemplate.csv) 
 
+:::caution
+When import users to the project, the column **`roleIds`** of CSV file supports multiple roles for the project user,
+please use **"|"** as separator.
+:::
+:::caution
+If you open the CSV file with Microsoft Excel, some data type will be automatically changed by the setting, for example, the column of
+**startDate** might be changed to the type as **"2012/03/14"**, please make sure to select another type like **"2012-03-14"** without **"/"** as shown in the screenshot, 
+otherwise the date will not be recognized correctly after exporting to CSV file.      
+:::
+![Excel Data Format](./_shared/excel-data-type.png)
 
 ## Try it out
 
