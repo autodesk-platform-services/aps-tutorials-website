@@ -51,8 +51,16 @@ public class HubsController : ControllerBase
         {
             return Unauthorized();
         }
-        var contents = await _aps.GetContents(hub, project, folder_id, tokens);
-        return JsonConvert.SerializeObject(contents);
+        if (string.IsNullOrEmpty(folder_id))
+        {
+            var folders = await _aps.GetTopFolders(hub, project, tokens);
+            return JsonConvert.SerializeObject(folders);
+        }
+        else
+        {
+            var contents = await _aps.GetFolderContents(project, folder_id, tokens);
+            return JsonConvert.SerializeObject(contents);
+        }
     }
 
     [HttpGet("{hub}/projects/{project}/contents/{item}/versions")]
@@ -63,7 +71,7 @@ public class HubsController : ControllerBase
         {
             return Unauthorized();
         }
-        var versions = await _aps.GetVersions(hub, project, item, tokens);
+        var versions = await _aps.GetVersions(project, item, tokens);
         return JsonConvert.SerializeObject(versions);
     }
 }
