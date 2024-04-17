@@ -3,31 +3,39 @@ all the APS logic that will be used in different areas of our server application
 by adding the following code to the file:
 
 ```js title="services/aps.js"
-const fs = require('fs');
-const APS = require('forge-apis');
+const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
+const { AuthenticationClient, Scopes } = require('@aps_sdk/authentication');
+const { OssClient, CreateBucketsPayloadPolicyKeyEnum, CreateBucketXAdsRegionEnum } = require('@aps_sdk/oss');
+const { ModelDerivativeClient, View, Type } = require('@aps_sdk/model-derivative');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET } = require('../config.js');
 
-let internalAuthClient = new APS.AuthClientTwoLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, ['bucket:read', 'bucket:create', 'data:read', 'data:write', 'data:create'], true);
-let publicAuthClient = new APS.AuthClientTwoLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, ['viewables:read'], true);
+const sdk = SdkManagerBuilder.create().build();
+const authenticationClient = new AuthenticationClient(sdk);
+const ossClient = new OssClient(sdk);
+const modelDerivativeClient = new ModelDerivativeClient(sdk);
 
 const service = module.exports = {};
 
 service.getInternalToken = async () => {
-    if (!internalAuthClient.isAuthorized()) {
-        await internalAuthClient.authenticate();
-    }
-    return internalAuthClient.getCredentials();
+    const credentials = await authenticationClient.getTwoLeggedToken(APS_CLIENT_ID, APS_CLIENT_SECRET, [
+        Scopes.DataRead,
+        Scopes.DataCreate,
+        Scopes.DataWrite,
+        Scopes.BucketCreate,
+        Scopes.BucketRead
+    ]);
+    return credentials;
 };
 
 service.getPublicToken = async () => {
-    if (!publicAuthClient.isAuthorized()) {
-        await publicAuthClient.authenticate();
-    }
-    return publicAuthClient.getCredentials();
+    const credentials = await authenticationClient.getTwoLeggedToken(APS_CLIENT_ID, APS_CLIENT_SECRET, [
+        Scopes.DataRead
+    ]);
+    return credentials;
 };
 ```
 
-The code creates two authentication clients, one for generating tokens for internal use
+The code provides two helper functions - one for generating access tokens for internal use
 (giving us read/write access to the Data Management buckets and objects), and one for generating
 tokens for public use (only giving a read access to the translation outputs from the Model Derivative
-service), and two helper methods to generate the corresponding tokens for us.
+service).
