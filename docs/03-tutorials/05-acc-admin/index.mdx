@@ -1,0 +1,32 @@
+import Image from '@theme/IdealImage';
+import PreviewUrl from '@site/static/videos/acc-administrator.png';
+
+# ACC Administrator
+
+## Introduction
+
+In this tutorial we're going to build an APS application that will let us browse Hubs and Projects
+of our authenticated user in [Autodesk Construction Cloud](https://www.autodesk.com/products/autodesk-docs/overview),
+list all the information of projects and project users, you can also export these information to a CSV
+file easily, but most important, the tutorial will show case how to import multiple projects into a selected account
+based on a template project list csv file, or import multiple users into a selected project from user list template 
+csv file.
+
+:::note
+Make sure to [provision access](../../01-getting-started/index.mdx#provision-access-in-other-products) to your ACC accounts
+so that the application can see your projects.
+:::
+
+<Image img={PreviewUrl} />
+
+We will use the following components of the platform:
+
+- [Authentication](https://aps.autodesk.com/en/docs/oauth/v2/developers_guide/overview)
+- [Data Management](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
+- [Autodesk Construction Cloud Admin](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
+
+:::tip
+If you're not interested in building the application from scratch, and you just want to try
+and run it locally, the complete implementation is available on GitHub:
+- https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs
+:::

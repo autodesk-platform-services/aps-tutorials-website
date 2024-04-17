@@ -1,0 +1,39 @@
+Let's implement the logic for browsing through the individual hubs, projects.
+
+First, let's include the Data Management SDK, add the `@aps_sdk/data-management` library, and also create an instance of
+SDK client of `DataManagementClient` at the beginning of `services/aps.js` file:
+```js title="services/aps.js"
+const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
+const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
+// highlight-start
+const { DataManagementClient } = require('@aps_sdk/data-management');
+// highlight-end
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../config.js');
+
+const service = module.exports = {};
+
+const sdk = SdkManagerBuilder.create().build();
+const authenticationClient = new AuthenticationClient(sdk);
+// highlight-start
+const dataManagementClient = new DataManagementClient(sdk);
+// highlight-end
+```
+
+ And then append the following code to the end of the `services/aps.js` file:
+
+```js title="services/aps.js"
+// Data Management APIs
+service.getHubs = async (token) => {
+    const resp = await dataManagementClient.getHubs(token.access_token);
+    return resp.data.filter((item)=>{
+        return item.id.startsWith('b.');
+    })
+};
+
+service.getProjects = async (hubId, token) => {
+    const resp = await dataManagementClient.getHubProjects(token.access_token, hubId);
+    return resp.data.filter( (item)=>{
+        return item.attributes.extension.data.projectType == 'ACC';
+    } )
+};
+```

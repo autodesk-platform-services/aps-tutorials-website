@@ -5,11 +5,12 @@ ASP.NET Core project:
 dotnet new web
 ```
 
-Next we will need to install the dependencies. In this case it will just be the
-[APS SDK](https://www.nuget.org/packages/Autodesk.Forge):
+Next we will need to install the dependencies. In this case it will be the required APS SDK packages:
 
 ```bash
-dotnet add package Autodesk.Forge
+dotnet add package Autodesk.SdkManager
+dotnet add package Autodesk.Authentication
+dotnet add package Autodesk.DataManagement
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -17,15 +18,16 @@ slightly different version numbers, and additional .NET settings):
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Autodesk.Forge" Version="1.9.7" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Autodesk.Authentication" Version="1.0.0" />
+    <PackageReference Include="Autodesk.DataManagement" Version="1.0.0" />
+    <PackageReference Include="Autodesk.SdkManager" Version="1.0.0" />
+  </ItemGroup>
 </Project>
 ```
 

@@ -2,28 +2,28 @@ Let's implement the logic for browsing through the individual hubs, projects, fo
 and versions. Add the following code to the end of the `services/aps.js` file:
 
 ```js title="services/aps.js"
-service.getHubs = async (token) => {
-    const resp = await new APS.HubsApi().getHubs(null, internalAuthClient, token);
-    return resp.body.data;
+service.getHubs = async (accessToken) => {
+    const resp = await dataManagementClient.getHubs(accessToken);
+    return resp.data;
 };
 
-service.getProjects = async (hubId, token) => {
-    const resp = await new APS.ProjectsApi().getHubProjects(hubId, null, internalAuthClient, token);
-    return resp.body.data;
+service.getProjects = async (hubId, accessToken) => {
+    const resp = await dataManagementClient.getHubProjects(accessToken, hubId);
+    return resp.data;
 };
 
-service.getProjectContents = async (hubId, projectId, folderId, token) => {
+service.getProjectContents = async (hubId, projectId, folderId, accessToken) => {
     if (!folderId) {
-        const resp = await new APS.ProjectsApi().getProjectTopFolders(hubId, projectId, internalAuthClient, token);
-        return resp.body.data;
+        const resp = await dataManagementClient.getProjectTopFolders(accessToken, hubId, projectId);
+        return resp.data;
     } else {
-        const resp = await new APS.FoldersApi().getFolderContents(projectId, folderId, null, internalAuthClient, token);
-        return resp.body.data;
+        const resp = await dataManagementClient.getFolderContents(accessToken, projectId, folderId);
+        return resp.data;
     }
 };
 
-service.getItemVersions = async (projectId, itemId, token) => {
-    const resp = await new APS.ItemsApi().getItemVersions(projectId, itemId, null, internalAuthClient, token);
-    return resp.body.data;
+service.getItemVersions = async (projectId, itemId, accessToken) => {
+    const resp = await dataManagementClient.getItemVersions(accessToken, projectId, itemId);
+    return resp.data;
 };
 ```

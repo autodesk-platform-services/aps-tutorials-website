@@ -3,74 +3,45 @@ Create a `APS.Hubs.cs` under the `Models` subfolder with the following content:
 ```csharp title="Models/APS.Hubs.cs"
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Autodesk.Forge;
-using Autodesk.Forge.Model;
+using Autodesk.DataManagement;
+using Autodesk.DataManagement.Http;
+using Autodesk.DataManagement.Model;
 
 public partial class APS
 {
-    public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
+    public async Task<IEnumerable<HubsData>> GetHubs(Tokens tokens)
     {
-        var hubs = new List<dynamic>();
-        var api = new HubsApi();
-        api.Configuration.AccessToken = tokens.InternalToken;
-        var response = await api.GetHubsAsync();
-        foreach (KeyValuePair<string, dynamic> hub in new DynamicDictionaryItems(response.data))
-        {
-            hubs.Add(hub.Value);
-        }
-        return hubs;
+        var dataManagementClient = new DataManagementClient(_sdkManager);
+        var hubs = await dataManagementClient.GetHubsAsync(accessToken: tokens.InternalToken);
+        return hubs.Data;
     }
 
-    public async Task<IEnumerable<dynamic>> GetProjects(string hubId, Tokens tokens)
+    public async Task<IEnumerable<ProjectsData>> GetProjects(string hubId, Tokens tokens)
     {
-        var projects = new List<dynamic>();
-        var api = new ProjectsApi();
-        api.Configuration.AccessToken = tokens.InternalToken;
-        var response = await api.GetHubProjectsAsync(hubId);
-        foreach (KeyValuePair<string, dynamic> project in new DynamicDictionaryItems(response.data))
-        {
-            projects.Add(project.Value);
-        }
-        return projects;
+        var dataManagementClient = new DataManagementClient(_sdkManager);
+        var projects = await dataManagementClient.GetHubProjectsAsync(hubId, accessToken: tokens.InternalToken);
+        return projects.Data;
     }
 
-    public async Task<IEnumerable<dynamic>> GetContents(string hubId, string projectId, string folderId, Tokens tokens)
+    public async Task<IEnumerable<TopFoldersData>> GetTopFolders(string hubId, string projectId, Tokens tokens)
     {
-        var contents = new List<dynamic>();
-        if (string.IsNullOrEmpty(folderId))
-        {
-            var api = new ProjectsApi();
-            api.Configuration.AccessToken = tokens.InternalToken;
-            var response = await api.GetProjectTopFoldersAsync(hubId, projectId);
-            foreach (KeyValuePair<string, dynamic> folders in new DynamicDictionaryItems(response.data))
-            {
-                contents.Add(folders.Value);
-            }
-        }
-        else
-        {
-            var api = new FoldersApi();
-            api.Configuration.AccessToken = tokens.InternalToken;
-            var response = await api.GetFolderContentsAsync(projectId, folderId); // TODO: add paging
-            foreach (KeyValuePair<string, dynamic> item in new DynamicDictionaryItems(response.data))
-            {
-                contents.Add(item.Value);
-            }
-        }
-        return contents;
+        var dataManagementClient = new DataManagementClient(_sdkManager);
+        var folders = await dataManagementClient.GetProjectTopFoldersAsync(hubId, projectId, accessToken: tokens.InternalToken);
+        return folders.Data;
     }
 
-    public async Task<IEnumerable<dynamic>> GetVersions(string hubId, string projectId, string itemId, Tokens tokens)
+    public async Task<IEnumerable<FolderContentsData>> GetFolderContents(string projectId, string folderId, Tokens tokens)
     {
-        var versions = new List<dynamic>();
-        var api = new ItemsApi();
-        api.Configuration.AccessToken = tokens.InternalToken;
-        var response = await api.GetItemVersionsAsync(projectId, itemId);
-        foreach (KeyValuePair<string, dynamic> version in new DynamicDictionaryItems(response.data))
-        {
-            versions.Add(version.Value);
-        }
-        return versions;
+        var dataManagementClient = new DataManagementClient(_sdkManager);
+        var contents = await dataManagementClient.GetFolderContentsAsync(projectId, folderId, accessToken: tokens.InternalToken);
+        return contents.Data;
+    }
+
+    public async Task<IEnumerable<VersionsData>> GetVersions(string projectId, string itemId, Tokens tokens)
+    {
+        var dataManagementClient = new DataManagementClient(_sdkManager);
+        var versions = await dataManagementClient.GetItemVersionsAsync(projectId, itemId, accessToken: tokens.InternalToken);
+        return versions.Data;
     }
 }
 ```

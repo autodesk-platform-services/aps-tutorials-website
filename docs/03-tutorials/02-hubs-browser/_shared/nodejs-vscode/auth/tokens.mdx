@@ -3,19 +3,30 @@ all the APS logic that will be used in different areas of our server application
 by adding the following code to the file:
 
 ```js title="services/aps.js"
-const APS = require('forge-apis');
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
+const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
+const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
+const { DataManagementClient } = require('@aps_sdk/data-management');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../config.js');
 
-const internalAuthClient = new APS.AuthClientThreeLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
-const publicAuthClient = new APS.AuthClientThreeLegged(APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, PUBLIC_TOKEN_SCOPES);
-
+const sdkManager = SdkManagerBuilder.create().build();
+const authenticationClient = new AuthenticationClient(sdkManager);
+const dataManagementClient = new DataManagementClient(sdkManager);
 const service = module.exports = {};
 
-service.getAuthorizationUrl = () => internalAuthClient.generateAuthUrl();
+service.getAuthorizationUrl = () => authenticationClient.authorize(APS_CLIENT_ID, ResponseType.Code, APS_CALLBACK_URL, [
+    Scopes.DataRead,
+    Scopes.DataCreate,
+    Scopes.ViewablesRead
+]);
 
 service.authCallbackMiddleware = async (req, res, next) => {
-    const internalCredentials = await internalAuthClient.getToken(req.query.code);
-    const publicCredentials = await publicAuthClient.refreshToken(internalCredentials);
+    const internalCredentials = await authenticationClient.getThreeLeggedToken(APS_CLIENT_ID, req.query.code, APS_CALLBACK_URL, {
+        clientSecret: APS_CLIENT_SECRET
+    });
+    const publicCredentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, internalCredentials.refresh_token, {
+        clientSecret: APS_CLIENT_SECRET,
+        scopes: [Scopes.ViewablesRead]
+    });
     req.session.public_token = publicCredentials.access_token;
     req.session.internal_token = internalCredentials.access_token;
     req.session.refresh_token = publicCredentials.refresh_token;
@@ -31,8 +42,14 @@ service.authRefreshMiddleware = async (req, res, next) => {
     }
 
     if (expires_at < Date.now()) {
-        const internalCredentials = await internalAuthClient.refreshToken({ refresh_token });
-        const publicCredentials = await publicAuthClient.refreshToken(internalCredentials);
+        const internalCredentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, refresh_token, {
+            clientSecret: APS_CLIENT_SECRET,
+            scopes: [Scopes.DataRead, Scopes.DataCreate]
+        });
+        const publicCredentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, internalCredentials.refresh_token, {
+            clientSecret: APS_CLIENT_SECRET,
+            scopes: [Scopes.ViewablesRead]
+        });
         req.session.public_token = publicCredentials.access_token;
         req.session.internal_token = internalCredentials.access_token;
         req.session.refresh_token = publicCredentials.refresh_token;
@@ -40,18 +57,18 @@ service.authRefreshMiddleware = async (req, res, next) => {
     }
     req.internalOAuthToken = {
         access_token: req.session.internal_token,
-        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000)
+        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000),
     };
     req.publicOAuthToken = {
         access_token: req.session.public_token,
-        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000)
+        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000),
     };
     next();
 };
 
-service.getUserProfile = async (token) => {
-    const resp = await new APS.UserProfileApi().getUserProfile(internalAuthClient, token);
-    return resp.body;
+service.getUserProfile = async (accessToken) => {
+    const resp = await authenticationClient.getUserInfo(accessToken);
+    return resp;
 };
 ```
 

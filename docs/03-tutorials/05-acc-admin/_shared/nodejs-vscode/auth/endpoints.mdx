@@ -19,13 +19,9 @@ router.get('/api/auth/callback', authCallbackMiddleware, function (req, res) {
     res.redirect('/');
 });
 
-router.get('/api/auth/token', authRefreshMiddleware, function (req, res) {
-    res.json(req.publicOAuthToken);
-});
-
 router.get('/api/auth/profile', authRefreshMiddleware, async function (req, res, next) {
     try {
-        const profile = await getUserProfile(req.internalOAuthToken.access_token);
+        const profile = await getUserProfile(req.oAuthToken);
         res.json({ name: `${profile.name}` });
     } catch (err) {
         next(err);
@@ -60,6 +56,4 @@ The router will now handle the following requests:
 and it is where we're going to generate a new set of tokens for the user
 - `GET /api/auth/logout` will remove any cookie-based session data for the given user, effectively
 logging the user out of our application
-- `GET /api/auth/token` will generate a public access token that will later be used by the Viewer
-to load our designs
 - `GET /api/auth/profile` will return a simple JSON with additional information about the logged in user
