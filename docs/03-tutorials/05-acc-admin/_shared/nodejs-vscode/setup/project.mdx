@@ -15,13 +15,17 @@ and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling 
 
 
 :::caution
-The APS SDKs used in the tutorial are still “unstable” at this moment, they may change significantly.
-Please use the exact same version to make sure the tutorial goes well, if you are using a different 
-version of APS SDK, please make sure to catch up with all the changes. 
+As of April 2024 the APS SDK for Node.js is in beta, which means that the public 
+interfaces can still change. To avoid any potential issues, we recommend installing 
+the specific versions of these packages as shown below.
 :::
 
 ```bash
-npm install --save dotenv express cookie-session @aps_sdk/autodesk-sdkmanager @aps_sdk/authentication @aps_sdk/data-management @aps_sdk/account-admin
+npm install --save dotenv express cookie-session 
+npm install --save @aps_sdk/autodesk-sdkmanager@0.0.7-beta.1 
+npm install --save @aps_sdk/authentication@0.1.0-beta.1 
+npm install --save @aps_sdk/data-management@0.1.0-beta.1 
+npm install --save @aps_sdk/account-admin@0.1.0-beta.1
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
