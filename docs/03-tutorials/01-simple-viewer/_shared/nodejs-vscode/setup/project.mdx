@@ -10,8 +10,17 @@ Next, install all the Node.js dependencies we're going to use. In this case it w
 [Express.js](https://expressjs.com) (web framework), an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
 for handling `multipart/form-data` requests, and finally the various packages of the official APS SDK:
 
+:::caution
+As of April 2024 the APS SDK for Node.js is in beta, which means that the public interfaces can still change.
+To avoid any potential issues, we recommend installing the specific versions of these packages as shown below.
+:::
+
 ```bash
-npm install --save dotenv express express-formidable @aps_sdk/autodesk-sdkmanager @aps_sdk/authentication @aps_sdk/oss @aps_sdk/model-derivative
+npm install --save dotenv express express-formidable
+npm install --save @aps_sdk/autodesk-sdkmanager@0.0.7-beta.1
+npm install --save @aps_sdk/authentication@0.1.0-beta.1
+npm install --save @aps_sdk/oss@0.1.0-beta.1
+npm install --save @aps_sdk/model-derivative@0.1.0-beta.1
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -20,10 +29,10 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
-    "@aps_sdk/authentication": "^0.1.0-beta.1",
-    "@aps_sdk/autodesk-sdkmanager": "^0.0.7-beta.1",
-    "@aps_sdk/model-derivative": "^0.1.0-beta.1",
-    "@aps_sdk/oss": "^0.1.0-beta.1",
+    "@aps_sdk/authentication": "0.1.0-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "0.0.7-beta.1",
+    "@aps_sdk/model-derivative": "0.1.0-beta.1",
+    "@aps_sdk/oss": "0.1.0-beta.1",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "express-formidable": "^1.2.0"
