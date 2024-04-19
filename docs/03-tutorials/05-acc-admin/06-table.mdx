@@ -330,15 +330,24 @@ then import these data from CSV file into ACC account.
 - [UsersTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/UsersTemplate.csv) 
 
 :::caution
-When import users to the project, the column **`roleIds`** of CSV file supports multiple roles for the project user,
+- When import projects to the hub, make sure the **Project Name** prepared in the CSV file
+is not existing in the hub, otherwise, the project can not created due to the name conflicts.
+
+- When import users to the project, the column **`roleIds`** of CSV file supports multiple roles for the project user,
 please use **"|"** as separator.
-:::
-:::caution
-If you open the CSV file with Microsoft Excel, some data type will be automatically changed by the setting, for example, the column of
+
+- If you open the CSV file with Microsoft Excel, some data type will be automatically changed by the setting, for example, the column of
 **startDate** might be changed to the type as **"2012/03/14"**, please make sure to select another type like **"2012-03-14"** without **"/"** as shown in the screenshot, 
-otherwise the date will not be recognized correctly after exporting to CSV file.      
+otherwise the date will not be recognized correctly after exporting to CSV file.
 :::
 ![Excel Data Format](./_shared/excel-data-type.png)
+
+:::tip
+- When importing projects, you can always open the **Developer Tools** and check the console
+for the status of these projects as picture shown below, be noted this only work for importing 
+projects, not work for importing users.
+:::
+![Projects Status](./_shared/projects-status.png)
 
 ## Try it out
 
