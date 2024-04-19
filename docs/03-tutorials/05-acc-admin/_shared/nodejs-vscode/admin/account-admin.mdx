@@ -42,10 +42,8 @@ service.createProjectACC = async (accountId, projectInfo, token) =>{
 }
 
 service.getProjectACC = async (projectId, token) => {
-    let projectsList = [];
     const resp = await adminClient.getProject( token, projectId );
-    projectsList.push(resp);
-    return projectsList;
+    return resp;
 };
 
 service.getProjectUsersACC = async (projectId, token) => {
@@ -81,5 +79,11 @@ service.importProjectUsersACC = async (projectId, projectUsers, token) => {
     return resp;
 }
 ```
+
+:::tip
+The method adminClient.getProjects will return all the production projects of this hub, 
+it's different from the Data Management GET Projects API which 
+returns only returns the projects the current user is involved.
+:::
 
 
