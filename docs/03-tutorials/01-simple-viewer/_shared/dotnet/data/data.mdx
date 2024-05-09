@@ -28,7 +28,7 @@ public partial class APS
                 var payload = new CreateBucketsPayload
                 {
                     BucketKey = bucketKey,
-                    PolicyKey = "Persistent"
+                    PolicyKey = "persistent"
                 };
                 await ossClient.CreateBucketAsync(region, payload, auth.AccessToken);
             }
