@@ -8,9 +8,9 @@ dotnet new web
 Next we will need to install the dependencies. In this case it will be the required APS SDK packages:
 
 ```bash
-dotnet add package Autodesk.SdkManager
-dotnet add package Autodesk.Authentication
-dotnet add package Autodesk.DataManagement
+dotnet add package Autodesk.SdkManager --version 1.0.0
+dotnet add package Autodesk.Authentication --version 1.0.0
+dotnet add package Autodesk.DataManagement --version 1.0.0
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -36,7 +36,6 @@ Finally, let's create a couple more subfolders in your project folder that we're
 - `Controllers` - this is where we're going to implement all the server endpoints
 - `Models` - here we're going to keep all the server-side logic that can be shared by different endpoints
 - `wwwroot` - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
-
 
 :::note
 If the `.vscode` folder is not created automatically, you can create it via the Run & Debug sidepanel
