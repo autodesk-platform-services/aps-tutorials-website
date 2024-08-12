@@ -3,14 +3,18 @@ all the APS-specific logic that will be used in different areas of our server ap
 start by adding the following code to the file:
 
 ```csharp title="Models/APS.cs"
+using Autodesk.SDKManager;
+
 public partial class APS
 {
+    private readonly SDKManager _sdkManager;
     private readonly string _clientId;
     private readonly string _clientSecret;
     private readonly string _bucket;
 
     public APS(string clientId, string clientSecret, string bucket = null)
     {
+        _sdkManager = SdkManagerBuilder.Create().Build();
         _clientId = clientId;
         _clientSecret = clientSecret;
         _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
@@ -27,8 +31,10 @@ Here we will implement all the authentication logic. Populate the file with the 
 
 ```csharp title="Models/APS.Auth.cs"
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Autodesk.Forge;
+using Autodesk.Authentication;
+using Autodesk.Authentication.Model;
 
 public record Token(string AccessToken, DateTime ExpiresAt);
 
@@ -37,32 +43,32 @@ public partial class APS
     private Token _internalTokenCache;
     private Token _publicTokenCache;
 
-    private async Task<Token> GetToken(Scope[] scopes)
+    private async Task<Token> GetToken(List<Scopes> scopes)
     {
-        dynamic auth = await new TwoLeggedApi().AuthenticateAsync(_clientId, _clientSecret, "client_credentials", scopes);
-        return new Token(auth.access_token, DateTime.UtcNow.AddSeconds(auth.expires_in));
+        var authenticationClient = new AuthenticationClient(_sdkManager);
+        var auth = await authenticationClient.GetTwoLeggedTokenAsync(_clientId, _clientSecret, scopes);
+        return new Token(auth.AccessToken, DateTime.UtcNow.AddSeconds((double)auth.ExpiresIn));
     }
 
     public async Task<Token> GetPublicToken()
     {
         if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            _publicTokenCache = await GetToken(new Scope[] { Scope.ViewablesRead });
+            _publicTokenCache = await GetToken(new List<Scopes> { Scopes.ViewablesRead });
         return _publicTokenCache;
     }
 
     private async Task<Token> GetInternalToken()
     {
         if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            _internalTokenCache = await GetToken(new Scope[] { Scope.BucketCreate, Scope.BucketRead, Scope.DataRead, Scope.DataWrite, Scope.DataCreate });
+            _internalTokenCache = await GetToken(new List<Scopes> { Scopes.BucketCreate, Scopes.BucketRead, Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate });
         return _internalTokenCache;
     }
 }
 ```
 
-This part of the `APS` class creates two authentication clients, one for internal use
+This part of the `APS` class provides two helper methods - one for internal use
 (giving us read/write access to the Data Management buckets and objects), and one for public use
-(only allowing access to the translation outputs from the Model Derivative service), and a couple
-of methods for generating the corresponding tokens for us.
+(only allowing access to the translation outputs from the Model Derivative service).
 
 Next, let's update our `Startup.cs` file to make a singleton instance of the `APS` class
 available to our server application:

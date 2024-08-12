@@ -7,10 +7,18 @@ npm init -y
 
 Next, install all the Node.js dependencies we're going to use. In this case it will be [dotenv](https://www.npmjs.com/package/dotenv)
 (utility for initializing environment variables from a file), [Express.js](https://expressjs.com) (web framework),
-and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling cookie-based sessions, and finally the [APS SDK](https://www.npmjs.com/package/forge-apis):
+and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling cookie-based sessions, and finally the required APS SDK modules:
+
+:::caution
+As of April 2024 the APS SDK for Node.js is in beta, which means that the public interfaces can still change.
+To avoid any potential issues, we recommend installing the specific versions of these packages as shown below.
+:::
 
 ```bash
-npm install --save dotenv express cookie-session forge-apis
+npm install --save dotenv express cookie-session
+npm install --save @aps_sdk/autodesk-sdkmanager@0.0.7-beta.1
+npm install --save @aps_sdk/authentication@0.1.0-beta.1
+npm install --save @aps_sdk/data-management@0.1.0-beta.1
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -19,10 +27,12 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
+    "@aps_sdk/authentication": "0.1.0-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "0.0.7-beta.1",
+    "@aps_sdk/data-management": "0.1.0-beta.1",
     "cookie-session": "^1.4.0",
     "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "forge-apis": "^0.9.4"
+    "express": "^4.18.2"
   },
 // ...
 ```
