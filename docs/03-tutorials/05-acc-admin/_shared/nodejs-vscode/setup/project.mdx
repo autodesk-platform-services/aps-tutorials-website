@@ -8,10 +8,10 @@ npm init -y
 Next, install all the Node.js dependencies we're going to use. In this case it will be [dotenv](https://www.npmjs.com/package/dotenv)
 (utility for initializing environment variables from a file), [Express.js](https://expressjs.com) (web framework),
 and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling cookie-based sessions, and finally the necessary APS SDK including:
-- [@aps_sdk/autodesk-sdkmanager](https://www.npmjs.com/package/@aps_sdk/autodesk-sdkmanager),
-- [@aps_sdk/authentication](https://www.npmjs.com/package/@aps_sdk/authentication),
-- [@aps_sdk/data-management](https://www.npmjs.com/package/@aps_sdk/data-management),
-- [@aps_sdk/account-admin](https://www.npmjs.com/package/@aps_sdk/account-admin):
+- [@aps_sdk/autodesk-sdkmanager](https://www.npmjs.com/package/@aps_sdk/autodesk-sdkmanager)
+- [@aps_sdk/authentication](https://www.npmjs.com/package/@aps_sdk/authentication)
+- [@aps_sdk/data-management](https://www.npmjs.com/package/@aps_sdk/data-management)
+- [@aps_sdk/construction-account-admin](https://www.npmjs.com/package/@aps_sdk/construction-account-admin)
 
 
 :::caution
@@ -22,10 +22,10 @@ the specific versions of these packages as shown below.
 
 ```bash
 npm install --save dotenv express cookie-session 
-npm install --save @aps_sdk/autodesk-sdkmanager@0.0.7-beta.1 
-npm install --save @aps_sdk/authentication@0.1.0-beta.1 
+npm install --save @aps_sdk/autodesk-sdkmanager@1.0.0-beta.1
+npm install --save @aps_sdk/authentication@1.0.0-beta.1 
 npm install --save @aps_sdk/data-management@0.1.0-beta.1 
-npm install --save @aps_sdk/account-admin@0.1.0-beta.1
+npm install --save @aps_sdk/construction-account-admin@1.0.0-beta.2
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -34,10 +34,10 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
-    "@aps_sdk/authentication": "^0.1.0-beta.1",
-    "@aps_sdk/autodesk-sdkmanager": "^0.0.7-beta.1",
+    "@aps_sdk/authentication": "^1.0.0-beta.1",
+    "@aps_sdk/autodesk-sdkmanager": "^1.0.0-beta.1",
     "@aps_sdk/data-management": "^0.1.0-beta.1",
-    "@aps_sdk/account-admin": "^0.1.0-beta.1",
+    "@aps_sdk/construction-account-admin": "^1.0.0-beta.2",
     "cookie-session": "^2.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2"

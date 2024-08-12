@@ -5,7 +5,7 @@ const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
 const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
 const { DataManagementClient } = require('@aps_sdk/data-management');
 // highlight-start
-const { AdminClient } = require('@aps_sdk/account-admin');
+const { AdminClient } = require('@aps_sdk/construction-account-admin');
 // highlight-end
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../config.js');
 
@@ -81,9 +81,9 @@ service.importProjectUsersACC = async (projectId, projectUsers, token) => {
 ```
 
 :::tip
-The method adminClient.getProjects will return all the production projects of this hub, 
-it's different from the Data Management GET Projects API which 
-returns only returns the projects the current user is involved.
+The method adminClient.getProjects() returns all the production projects within this hub, 
+it's different from the Data Management GET Projects API which only returns these projects 
+the current user is involved.
 :::
 
 
