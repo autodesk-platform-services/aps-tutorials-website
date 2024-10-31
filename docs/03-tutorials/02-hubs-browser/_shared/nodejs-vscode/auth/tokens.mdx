@@ -3,29 +3,23 @@ all the APS logic that will be used in different areas of our server application
 by adding the following code to the file:
 
 ```js title="services/aps.js"
-const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
-const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
+const { AuthenticationClient, ResponseType } = require('@aps_sdk/authentication');
 const { DataManagementClient } = require('@aps_sdk/data-management');
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
 
-const sdkManager = SdkManagerBuilder.create().build();
-const authenticationClient = new AuthenticationClient(sdkManager);
-const dataManagementClient = new DataManagementClient(sdkManager);
+const authenticationClient = new AuthenticationClient();
+const dataManagementClient = new DataManagementClient();
 const service = module.exports = {};
 
-service.getAuthorizationUrl = () => authenticationClient.authorize(APS_CLIENT_ID, ResponseType.Code, APS_CALLBACK_URL, [
-    Scopes.DataRead,
-    Scopes.DataCreate,
-    Scopes.ViewablesRead
-]);
+service.getAuthorizationUrl = () => authenticationClient.authorize(APS_CLIENT_ID, ResponseType.Code, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES);
 
 service.authCallbackMiddleware = async (req, res, next) => {
     const internalCredentials = await authenticationClient.getThreeLeggedToken(APS_CLIENT_ID, req.query.code, APS_CALLBACK_URL, {
         clientSecret: APS_CLIENT_SECRET
     });
-    const publicCredentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, internalCredentials.refresh_token, {
+    const publicCredentials = await authenticationClient.refreshToken(internalCredentials.refresh_token, APS_CLIENT_ID, {
         clientSecret: APS_CLIENT_SECRET,
-        scopes: [Scopes.ViewablesRead]
+        scopes: PUBLIC_TOKEN_SCOPES
     });
     req.session.public_token = publicCredentials.access_token;
     req.session.internal_token = internalCredentials.access_token;
@@ -42,13 +36,13 @@ service.authRefreshMiddleware = async (req, res, next) => {
     }
 
     if (expires_at < Date.now()) {
-        const internalCredentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, refresh_token, {
+        const internalCredentials = await authenticationClient.refreshToken(refresh_token, APS_CLIENT_ID, {
             clientSecret: APS_CLIENT_SECRET,
-            scopes: [Scopes.DataRead, Scopes.DataCreate]
+            scopes: INTERNAL_TOKEN_SCOPES
         });
-        const publicCredentials = await authenticationClient.getRefreshToken(APS_CLIENT_ID, internalCredentials.refresh_token, {
+        const publicCredentials = await authenticationClient.refreshToken(internalCredentials.refresh_token, APS_CLIENT_ID, {
             clientSecret: APS_CLIENT_SECRET,
-            scopes: [Scopes.ViewablesRead]
+            scopes: PUBLIC_TOKEN_SCOPES
         });
         req.session.public_token = publicCredentials.access_token;
         req.session.internal_token = internalCredentials.access_token;
