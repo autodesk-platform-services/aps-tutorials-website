@@ -10,7 +10,7 @@ Name the project any way you want:
 
 ![Configure project](configure-project.webp)
 
-Choose the _.NET 6.0 (Long-term support)_ framework, and disable HTTPS as we don't need it for now:
+Choose the _.NET 8.0 (Long-term support)_ framework, and disable HTTPS as we don't need it for now:
 
 ![Additional information](additional-info.webp)
 

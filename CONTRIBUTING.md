@@ -108,8 +108,8 @@ In this project we also have a specialized component called `<EnvTabs>` that is 
 specifically to show 3 predefined tabs for the following "environments":
 
 - Node.js + Visual Studio Code
-- .NET6 + Visual Studio Code
-- .NET6 + Visual Studio 2022
+- .NET 8 + Visual Studio Code
+- .NET 8 + Visual Studio 2022
 
 To use it, import the Markdown content for individual tabs as separate React components,
 and insert them into the `<EnvTabs>` component like so:
