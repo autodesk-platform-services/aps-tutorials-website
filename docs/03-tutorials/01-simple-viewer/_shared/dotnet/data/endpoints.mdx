@@ -39,7 +39,7 @@ public class ModelsController : ControllerBase
     public class UploadModelForm
     {
         [FromForm(Name = "model-zip-entrypoint")]
-        public string? Entrypoint { get; set; }
+        public string Entrypoint { get; set; }
 
         [FromForm(Name = "model-file")]
         public IFormFile File { get; set; }
@@ -48,12 +48,8 @@ public class ModelsController : ControllerBase
     [HttpPost(), DisableRequestSizeLimit]
     public async Task<BucketObject> UploadAndTranslateModel([FromForm] UploadModelForm form)
     {
-        var tempFilePath = Path.GetTempFileName();
-        using (var stream = System.IO.File.Create(tempFilePath))
-        {
-            await form.File.CopyToAsync(stream);
-        }
-        var obj = await _aps.UploadModel(form.File.FileName, tempFilePath);
+        using var stream = form.File.OpenReadStream();
+        var obj = await _aps.UploadModel(form.File.FileName, stream);
         var job = await _aps.TranslateModel(obj.ObjectId, form.Entrypoint);
         return new BucketObject(obj.ObjectKey, job.Urn);
     }
