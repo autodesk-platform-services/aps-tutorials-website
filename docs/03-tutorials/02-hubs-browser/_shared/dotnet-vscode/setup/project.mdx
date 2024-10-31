@@ -8,9 +8,8 @@ dotnet new web
 Next we will need to install the dependencies. In this case it will be the required APS SDK packages:
 
 ```bash
-dotnet add package Autodesk.SdkManager --version 1.0.0
-dotnet add package Autodesk.Authentication --version 1.0.0
-dotnet add package Autodesk.DataManagement --version 1.0.0
+dotnet add package Autodesk.Authentication --version 2.0.0-beta4
+dotnet add package Autodesk.DataManagement --version 2.0.0-beta4
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -19,14 +18,11 @@ slightly different version numbers, and additional .NET settings):
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Autodesk.Authentication" Version="1.0.0" />
-    <PackageReference Include="Autodesk.DataManagement" Version="1.0.0" />
-    <PackageReference Include="Autodesk.SdkManager" Version="1.0.0" />
+    <PackageReference Include="Autodesk.Authentication" Version="2.0.0-beta4" />
+    <PackageReference Include="Autodesk.DataManagement" Version="2.0.0-beta4" />
   </ItemGroup>
 </Project>
 ```
@@ -41,4 +37,4 @@ Finally, let's create a couple more subfolders in your project folder that we're
 If the `.vscode` folder is not created automatically, you can create it via the Run & Debug sidepanel
 :::
 
-To create the `.vscode` folder click on the *Run and Debug tool on the left sidepanel > create a launch.json file > Select .NET5+ & .NET Core*.
+To create the `.vscode` folder click on the *Run and Debug tool on the left sidepanel > create a launch.json file > Select .NET & .NET Core*.

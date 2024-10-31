@@ -3,15 +3,12 @@ logic of our server application. Add the following code to the end of the `servi
 
 ```js title="services/aps.js"
 service.ensureBucketExists = async (bucketKey) => {
-    const { access_token } = await service.getInternalToken();
+    const accessToken = await getInternalToken();
     try {
-        await ossClient.getBucketDetails(access_token, bucketKey);
+        await ossClient.getBucketDetails(bucketKey, { accessToken });
     } catch (err) {
         if (err.axiosError.response.status === 404) {
-            await ossClient.createBucket(access_token, CreateBucketXAdsRegionEnum.Us, {
-                bucketKey: bucketKey,
-                policyKey: CreateBucketsPayloadPolicyKeyEnum.Persistent
-            });
+            await ossClient.createBucket(Region.Us, { bucketKey: bucketKey, policyKey: PolicyKey.Persistent }, { accessToken});
         } else {
             throw err;
         }
@@ -20,12 +17,12 @@ service.ensureBucketExists = async (bucketKey) => {
 
 service.listObjects = async () => {
     await service.ensureBucketExists(APS_BUCKET);
-    const { access_token } = await service.getInternalToken();
-    let resp = await ossClient.getObjects(access_token, APS_BUCKET, { limit: 64 });
+    const accessToken = await getInternalToken();
+    let resp = await ossClient.getObjects(APS_BUCKET, { limit: 64, accessToken });
     let objects = resp.items;
     while (resp.next) {
         const startAt = new URL(resp.next).searchParams.get('startAt');
-        resp = await ossClient.getObjects(access_token, APS_BUCKET, { limit: 64, startAt });
+        resp = await ossClient.getObjects(APS_BUCKET, { limit: 64, startAt, accessToken });
         objects = objects.concat(resp.items);
     }
     return objects;
@@ -33,8 +30,8 @@ service.listObjects = async () => {
 
 service.uploadObject = async (objectName, filePath) => {
     await service.ensureBucketExists(APS_BUCKET);
-    const { access_token } = await service.getInternalToken();
-    const obj = await ossClient.upload(APS_BUCKET, objectName, filePath, access_token);
+    const accessToken = await getInternalToken();
+    const obj = await ossClient.upload(APS_BUCKET, objectName, filePath, { accessToken });
     return obj;
 };
 ```

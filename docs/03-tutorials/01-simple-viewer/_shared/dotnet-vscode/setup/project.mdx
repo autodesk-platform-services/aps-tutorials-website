@@ -9,10 +9,9 @@ Next we will need to install the dependencies. In this case it will just be a co
 packages from the official APS SDK:
 
 ```bash
-dotnet add package Autodesk.SdkManager --version 1.0.0
-dotnet add package Autodesk.Authentication --version 1.0.0
-dotnet add package Autodesk.OSS --version 1.0.0
-dotnet add package Autodesk.ModelDerivative --version 1.0.0
+dotnet add package Autodesk.Authentication --version 2.0.0-beta4
+dotnet add package Autodesk.ModelDerivative --version 2.0.0-beta3
+dotnet add package Autodesk.OSS --version 2.0.0-beta2
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -21,13 +20,12 @@ slightly different version numbers, and additional .NET settings):
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autodesk.Authentication" Version="1.0.0" />
-    <PackageReference Include="Autodesk.ModelDerivative" Version="1.0.0" />
-    <PackageReference Include="Autodesk.OSS" Version="1.0.0" />
-    <PackageReference Include="Autodesk.SdkManager" Version="1.0.0" />
+    <PackageReference Include="Autodesk.Authentication" Version="2.0.0-beta4" />
+    <PackageReference Include="Autodesk.ModelDerivative" Version="2.0.0-beta3" />
+    <PackageReference Include="Autodesk.OSS" Version="2.0.0-beta2" />
   </ItemGroup>
 </Project>
 ```
@@ -46,7 +44,7 @@ The folder structure in the editor should look similar to this:
 ![Folder Structure](folder-structure.webp)
 
 :::note
-If the `.vscode` folder is not created automatically, you can create it via the Run & Debug sidepanel
+If the `.vscode` folder is not created automatically, you can create it via the _Run & Debug_ sidepanel.
 :::
 
-To create the `.vscode` folder click on the *Run and Debug tool on the left sidepanel > create a launch.json file > Select .NET5+ & .NET Core*.
+To create the `.vscode` folder click on the *Run and Debug tool on the left sidepanel > create a launch.json file > Select .NET & .NET Core*.

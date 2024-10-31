@@ -8,10 +8,10 @@ export default function EnvTabs({ NodeJsVsCode, DotNetVsCode, DotNetVs2022 }) {
             <TabItem value="nodejs-vscode" label="Node.js & VSCode" default>
                 <NodeJsVsCode />
             </TabItem>
-            <TabItem value="dotnet-vscode" label=".NET 6 & VSCode">
+            <TabItem value="dotnet-vscode" label=".NET & VSCode">
                 <DotNetVsCode />
             </TabItem>
-            <TabItem value="dotnet-vs2022" label=".NET 6 & VS2022">
+            <TabItem value="dotnet-vs2022" label=".NET & VS2022">
                 <DotNetVs2022 />
             </TabItem>
         </Tabs>

@@ -3,18 +3,14 @@ all the APS-specific logic that will be used in different areas of our server ap
 start by adding the following code to the file:
 
 ```csharp title="Models/APS.cs"
-using Autodesk.SDKManager;
-
 public partial class APS
 {
-    private readonly SDKManager _sdkManager;
     private readonly string _clientId;
     private readonly string _clientSecret;
     private readonly string _bucket;
 
     public APS(string clientId, string clientSecret, string bucket = null)
     {
-        _sdkManager = SdkManagerBuilder.Create().Build();
         _clientId = clientId;
         _clientSecret = clientSecret;
         _bucket = string.IsNullOrEmpty(bucket) ? string.Format("{0}-basic-app", _clientId.ToLower()) : bucket;
@@ -45,7 +41,7 @@ public partial class APS
 
     private async Task<Token> GetToken(List<Scopes> scopes)
     {
-        var authenticationClient = new AuthenticationClient(_sdkManager);
+        var authenticationClient = new AuthenticationClient();
         var auth = await authenticationClient.GetTwoLeggedTokenAsync(_clientId, _clientSecret, scopes);
         return new Token(auth.AccessToken, DateTime.UtcNow.AddSeconds((double)auth.ExpiresIn));
     }
@@ -53,14 +49,14 @@ public partial class APS
     public async Task<Token> GetPublicToken()
     {
         if (_publicTokenCache == null || _publicTokenCache.ExpiresAt < DateTime.UtcNow)
-            _publicTokenCache = await GetToken(new List<Scopes> { Scopes.ViewablesRead });
+            _publicTokenCache = await GetToken([Scopes.ViewablesRead]);
         return _publicTokenCache;
     }
 
     private async Task<Token> GetInternalToken()
     {
         if (_internalTokenCache == null || _internalTokenCache.ExpiresAt < DateTime.UtcNow)
-            _internalTokenCache = await GetToken(new List<Scopes> { Scopes.BucketCreate, Scopes.BucketRead, Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate });
+            _internalTokenCache = await GetToken([Scopes.BucketCreate, Scopes.BucketRead, Scopes.DataRead, Scopes.DataWrite, Scopes.DataCreate]);
         return _internalTokenCache;
     }
 }
@@ -102,7 +98,7 @@ public class Startup
             throw new ApplicationException("Missing required environment variables APS_CLIENT_ID or APS_CLIENT_SECRET.");
         }
         // highlight-start
-        services.AddSingleton<APS>(new APS(clientID, clientSecret, bucket));
+        services.AddSingleton(new APS(clientID, clientSecret, bucket));
         // highlight-end
     }
 

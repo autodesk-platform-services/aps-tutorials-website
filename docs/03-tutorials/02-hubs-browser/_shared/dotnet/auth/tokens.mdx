@@ -4,7 +4,6 @@ start by adding the following code to the file:
 
 ```csharp title="Models/APS.cs"
 using System;
-using Autodesk.SDKManager;
 using Autodesk.Authentication.Model;
 using System.Collections.Generic;
 
@@ -18,16 +17,14 @@ public class Tokens
 
 public partial class APS
 {
-    private readonly SDKManager _sdkManager;
     private readonly string _clientId;
     private readonly string _clientSecret;
     private readonly string _callbackUri;
-    private readonly List<Scopes> InternalTokenScopes = new List<Scopes> { Scopes.DataRead, Scopes.ViewablesRead };
-    private readonly List<Scopes> PublicTokenScopes = new List<Scopes> { Scopes.ViewablesRead };
+    private readonly List<Scopes> InternalTokenScopes = [Scopes.DataRead, Scopes.ViewablesRead];
+    private readonly List<Scopes> PublicTokenScopes = [Scopes.ViewablesRead];
 
     public APS(string clientId, string clientSecret, string callbackUri)
     {
-        _sdkManager = SdkManagerBuilder.Create().Build();
         _clientId = clientId;
         _clientSecret = clientSecret;
         _callbackUri = callbackUri;
@@ -51,41 +48,41 @@ public partial class APS
 {
     public string GetAuthorizationURL()
     {
-        var authenticationClient = new AuthenticationClient(_sdkManager);
+        var authenticationClient = new AuthenticationClient();
         return authenticationClient.Authorize(_clientId, ResponseType.Code, _callbackUri, InternalTokenScopes);
     }
 
     public async Task<Tokens> GenerateTokens(string code)
     {
-        var authenticationClient = new AuthenticationClient(_sdkManager);
-        var internalAuth = await authenticationClient.GetThreeLeggedTokenAsync(_clientId, _clientSecret, code, _callbackUri);
-        var publicAuth = await authenticationClient.GetRefreshTokenAsync(_clientId, _clientSecret, internalAuth.RefreshToken, PublicTokenScopes);
+        var authenticationClient = new AuthenticationClient();
+        var internalAuth = await authenticationClient.GetThreeLeggedTokenAsync(_clientId, code, _callbackUri, clientSecret: _clientSecret);
+        var publicAuth = await authenticationClient.RefreshTokenAsync(internalAuth.RefreshToken, _clientId, clientSecret: _clientSecret, scopes: PublicTokenScopes);
         return new Tokens
         {
             PublicToken = publicAuth.AccessToken,
             InternalToken = internalAuth.AccessToken,
-            RefreshToken = publicAuth._RefreshToken,
+            RefreshToken = publicAuth.RefreshToken,
             ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds((double)internalAuth.ExpiresIn)
         };
     }
 
     public async Task<Tokens> RefreshTokens(Tokens tokens)
     {
-        var authenticationClient = new AuthenticationClient(_sdkManager);
-        var internalAuth = await authenticationClient.GetRefreshTokenAsync(_clientId, _clientSecret, tokens.RefreshToken, InternalTokenScopes);
-        var publicAuth = await authenticationClient.GetRefreshTokenAsync(_clientId, _clientSecret, internalAuth._RefreshToken, PublicTokenScopes);
+        var authenticationClient = new AuthenticationClient();
+        var internalAuth = await authenticationClient.RefreshTokenAsync(tokens.RefreshToken, _clientId, clientSecret: _clientSecret, scopes: InternalTokenScopes);
+        var publicAuth = await authenticationClient.RefreshTokenAsync(internalAuth.RefreshToken, _clientId, clientSecret: _clientSecret, scopes: PublicTokenScopes);
         return new Tokens
         {
             PublicToken = publicAuth.AccessToken,
             InternalToken = internalAuth.AccessToken,
-            RefreshToken = publicAuth._RefreshToken,
+            RefreshToken = publicAuth.RefreshToken,
             ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds((double)internalAuth.ExpiresIn)
         };
     }
 
     public async Task<UserInfo> GetUserProfile(Tokens tokens)
     {
-        var authenticationClient = new AuthenticationClient(_sdkManager);
+        var authenticationClient = new AuthenticationClient();
         UserInfo userInfo = await authenticationClient.GetUserInfoAsync(tokens.InternalToken);
         return userInfo;
     }
@@ -129,7 +126,7 @@ public class Startup
             throw new ApplicationException("Missing required environment variables APS_CLIENT_ID, APS_CLIENT_SECRET, or APS_CALLBACK_URL.");
         }
         // highlight-start
-        services.AddSingleton<APS>(new APS(clientID, clientSecret, callbackURL));
+        services.AddSingleton(new APS(clientID, clientSecret, callbackURL));
         // highlight-end
     }
 

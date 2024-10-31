@@ -10,15 +10,14 @@ Next, install all the Node.js dependencies we're going to use. In this case it w
 and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling cookie-based sessions, and finally the required APS SDK modules:
 
 :::caution
-As of April 2024 the APS SDK for Node.js is in beta, which means that the public interfaces can still change.
+As of November 2024 the APS SDK for Node.js is in beta, which means that the public interfaces can still change.
 To avoid any potential issues, we recommend installing the specific versions of these packages as shown below.
 :::
 
 ```bash
 npm install --save dotenv express cookie-session
-npm install --save @aps_sdk/autodesk-sdkmanager@1.0.0-beta.2
-npm install --save @aps_sdk/authentication@1.0.0-beta.1
-npm install --save @aps_sdk/data-management@0.1.0-beta.1
+npm install --save @aps_sdk/authentication@1.0.0-beta.3
+npm install --save @aps_sdk/data-management@1.0.0-beta.4
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -27,13 +26,12 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
-    "@aps_sdk/authentication": "1.0.0-beta.1",
-    "@aps_sdk/autodesk-sdkmanager": "1.0.0-beta.2",
-    "@aps_sdk/data-management": "0.1.0-beta.1",
+    "@aps_sdk/authentication": "1.0.0-beta.3",
+    "@aps_sdk/data-management": "1.0.0-beta.4",
     "cookie-session": "^1.4.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2"
-  },
+  }
 // ...
 ```
 
