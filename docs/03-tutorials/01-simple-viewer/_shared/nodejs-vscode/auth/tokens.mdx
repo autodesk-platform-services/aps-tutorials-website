@@ -3,20 +3,18 @@ all the APS logic that will be used in different areas of our server application
 by adding the following code to the file:
 
 ```js title="services/aps.js"
-const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
 const { AuthenticationClient, Scopes } = require('@aps_sdk/authentication');
-const { OssClient, CreateBucketsPayloadPolicyKeyEnum, CreateBucketXAdsRegionEnum } = require('@aps_sdk/oss');
-const { ModelDerivativeClient, View, Type } = require('@aps_sdk/model-derivative');
+const { OssClient, Region, PolicyKey } = require('@aps_sdk/oss');
+const { ModelDerivativeClient, View, OutputType } = require('@aps_sdk/model-derivative');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET } = require('../config.js');
 
-const sdk = SdkManagerBuilder.create().build();
-const authenticationClient = new AuthenticationClient(sdk);
-const ossClient = new OssClient(sdk);
-const modelDerivativeClient = new ModelDerivativeClient(sdk);
+const authenticationClient = new AuthenticationClient();
+const ossClient = new OssClient();
+const modelDerivativeClient = new ModelDerivativeClient();
 
 const service = module.exports = {};
 
-service.getInternalToken = async () => {
+async function getInternalToken() {
     const credentials = await authenticationClient.getTwoLeggedToken(APS_CLIENT_ID, APS_CLIENT_SECRET, [
         Scopes.DataRead,
         Scopes.DataCreate,
@@ -24,14 +22,11 @@ service.getInternalToken = async () => {
         Scopes.BucketCreate,
         Scopes.BucketRead
     ]);
-    return credentials;
-};
+    return credentials.access_token;
+}
 
-service.getPublicToken = async () => {
-    const credentials = await authenticationClient.getTwoLeggedToken(APS_CLIENT_ID, APS_CLIENT_SECRET, [
-        Scopes.DataRead
-    ]);
-    return credentials;
+service.getViewerToken = async () => {
+    return await authenticationClient.getTwoLeggedToken(APS_CLIENT_ID, APS_CLIENT_SECRET, [Scopes.ViewablesRead]);
 };
 ```
 

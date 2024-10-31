@@ -3,8 +3,8 @@ the conversions. Add the following code to the end of the `services/aps.js` file
 
 ```js title="services/aps.js"
 service.translateObject = async (urn, rootFilename) => {
-    const { access_token } = await service.getInternalToken();
-    const job = await modelDerivativeClient.startJob(access_token, {
+    const accessToken = await getInternalToken();
+    const job = await modelDerivativeClient.startJob({
         input: {
             urn,
             compressedUrn: !!rootFilename,
@@ -13,17 +13,17 @@ service.translateObject = async (urn, rootFilename) => {
         output: {
             formats: [{
                 views: [View._2d, View._3d],
-                type: Type.Svf
+                type: OutputType.Svf2
             }]
         }
-    });
+    }, { accessToken });
     return job.result;
 };
 
 service.getManifest = async (urn) => {
-    const { access_token } = await service.getInternalToken();
+    const accessToken = await getInternalToken();
     try {
-        const manifest = await modelDerivativeClient.getManifest(access_token, urn);
+        const manifest = await modelDerivativeClient.getManifest(urn, { accessToken });
         return manifest;
     } catch (err) {
         if (err.axiosError.response.status === 404) {
