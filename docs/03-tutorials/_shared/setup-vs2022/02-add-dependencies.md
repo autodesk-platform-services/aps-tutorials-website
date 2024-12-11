@@ -7,7 +7,7 @@ right-click on _Dependencies_, and then click on _Manage NuGet Packages..._:
 In the _NuGet Package Manager_, switch to the _Browse_ tab, and search for and install
 the following packages:
 
-- [Autodesk.Authentication](https://www.nuget.org/packages/Autodesk.Authentication) (version 2.0.0-beta4)
-- [Autodesk.OSS](https://www.nuget.org/packages/Autodesk.OSS) (version 2.0.0-beta2)
-- [Autodesk.DataManagement](https://www.nuget.org/packages/Autodesk.DataManagement) (version 2.0.0-beta4)
-- [Autodesk.ModelDerivative](https://www.nuget.org/packages/Autodesk.ModelDerivative) (version 2.0.0-beta3)
+- [Autodesk.Authentication](https://www.nuget.org/packages/Autodesk.Authentication)
+- [Autodesk.OSS](https://www.nuget.org/packages/Autodesk.OSS)
+- [Autodesk.DataManagement](https://www.nuget.org/packages/Autodesk.DataManagement)
+- [Autodesk.ModelDerivative](https://www.nuget.org/packages/Autodesk.ModelDerivative)

@@ -8,8 +8,8 @@ dotnet new web
 Next we will need to install the dependencies. In this case it will be the required APS SDK packages:
 
 ```bash
-dotnet add package Autodesk.Authentication --version 2.0.0-beta4
-dotnet add package Autodesk.DataManagement --version 2.0.0-beta4
+dotnet add package Autodesk.Authentication
+dotnet add package Autodesk.DataManagement
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -21,8 +21,8 @@ slightly different version numbers, and additional .NET settings):
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autodesk.Authentication" Version="2.0.0-beta4" />
-    <PackageReference Include="Autodesk.DataManagement" Version="2.0.0-beta4" />
+    <PackageReference Include="Autodesk.Authentication" Version="2.0.0" />
+    <PackageReference Include="Autodesk.DataManagement" Version="2.0.0" />
   </ItemGroup>
 </Project>
 ```

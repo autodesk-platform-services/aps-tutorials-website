@@ -9,9 +9,9 @@ Next we will need to install the dependencies. In this case it will just be a co
 packages from the official APS SDK:
 
 ```bash
-dotnet add package Autodesk.Authentication --version 2.0.0-beta4
-dotnet add package Autodesk.ModelDerivative --version 2.0.0-beta3
-dotnet add package Autodesk.OSS --version 2.0.0-beta2
+dotnet add package Autodesk.Authentication
+dotnet add package Autodesk.ModelDerivative
+dotnet add package Autodesk.OSS
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -23,9 +23,9 @@ slightly different version numbers, and additional .NET settings):
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autodesk.Authentication" Version="2.0.0-beta4" />
-    <PackageReference Include="Autodesk.ModelDerivative" Version="2.0.0-beta3" />
-    <PackageReference Include="Autodesk.OSS" Version="2.0.0-beta2" />
+    <PackageReference Include="Autodesk.Authentication" Version="2.0.0" />
+    <PackageReference Include="Autodesk.ModelDerivative" Version="2.0.0" />
+    <PackageReference Include="Autodesk.OSS" Version="2.0.0" />
   </ItemGroup>
 </Project>
 ```

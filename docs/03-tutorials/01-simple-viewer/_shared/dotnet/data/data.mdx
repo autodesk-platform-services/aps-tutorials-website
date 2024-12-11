@@ -43,7 +43,7 @@ public partial class APS
         await EnsureBucketExists(_bucket);
         var auth = await GetInternalToken();
         var ossClient = new OssClient();
-        var objectDetails = await ossClient.Upload(_bucket, objectName, stream, accessToken: auth.AccessToken);
+        var objectDetails = await ossClient.UploadObjectAsync(_bucket, objectName, stream, accessToken: auth.AccessToken);
         return objectDetails;
     }
 

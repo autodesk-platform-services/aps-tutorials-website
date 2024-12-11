@@ -13,19 +13,9 @@ and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling 
 - [@aps_sdk/data-management](https://www.npmjs.com/package/@aps_sdk/data-management)
 - [@aps_sdk/construction-account-admin](https://www.npmjs.com/package/@aps_sdk/construction-account-admin)
 
-
-:::caution
-As of April 2024 the APS SDK for Node.js is in beta, which means that the public 
-interfaces can still change. To avoid any potential issues, we recommend installing 
-the specific versions of these packages as shown below.
-:::
-
 ```bash
 npm install --save dotenv express cookie-session 
-npm install --save @aps_sdk/autodesk-sdkmanager@1.0.0-beta.1
-npm install --save @aps_sdk/authentication@1.0.0-beta.1 
-npm install --save @aps_sdk/data-management@0.1.0-beta.1 
-npm install --save @aps_sdk/construction-account-admin@1.0.0-beta.2
+npm install --save @aps_sdk/autodesk-sdkmanager @aps_sdk/authentication @aps_sdk/data-management @aps_sdk/construction-account-admin
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -34,10 +24,10 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
-    "@aps_sdk/authentication": "^1.0.0-beta.1",
-    "@aps_sdk/autodesk-sdkmanager": "^1.0.0-beta.1",
-    "@aps_sdk/data-management": "^0.1.0-beta.1",
-    "@aps_sdk/construction-account-admin": "^1.0.0-beta.2",
+    "@aps_sdk/authentication": "^1.0.0",
+    "@aps_sdk/autodesk-sdkmanager": "^1.0.0",
+    "@aps_sdk/data-management": "^1.0.0",
+    "@aps_sdk/construction-account-admin": "^1.0.0",
     "cookie-session": "^2.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2"
