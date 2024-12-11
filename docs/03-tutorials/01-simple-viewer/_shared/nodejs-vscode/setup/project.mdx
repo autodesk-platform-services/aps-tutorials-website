@@ -10,16 +10,9 @@ Next, install all the Node.js dependencies we're going to use. In this case it w
 [Express.js](https://expressjs.com) (web framework), an Express.js [middleware](https://expressjs.com/en/guide/using-middleware.html)
 for handling `multipart/form-data` requests, and finally the various packages of the official APS SDK:
 
-:::caution
-As of November 2024 the APS SDK for Node.js is in beta, which means that the public interfaces can still change.
-To avoid any potential issues, we recommend installing the specific versions of these packages as shown below.
-:::
-
 ```bash
 npm install --save dotenv express express-formidable
-npm install --save @aps_sdk/authentication@1.0.0-beta.3
-npm install --save @aps_sdk/model-derivative@1.0.0-beta.3
-npm install --save @aps_sdk/oss@1.0.0-beta.2
+npm install --save @aps_sdk/authentication @aps_sdk/model-derivative @aps_sdk/oss
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -28,9 +21,9 @@ The `"dependencies"` in your `package.json` file should now look something like 
 ```json
 // ...
   "dependencies": {
-    "@aps_sdk/authentication": "1.0.0-beta.3",
-    "@aps_sdk/model-derivative": "1.0.0-beta.3",
-    "@aps_sdk/oss": "1.0.0-beta.2",
+    "@aps_sdk/authentication": "^1.0.0",
+    "@aps_sdk/model-derivative": "^1.0.0",
+    "@aps_sdk/oss": "^1.0.0",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "express-formidable": "^1.2.0"

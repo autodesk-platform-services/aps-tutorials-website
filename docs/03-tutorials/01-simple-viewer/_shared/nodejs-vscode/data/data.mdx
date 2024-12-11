@@ -31,7 +31,7 @@ service.listObjects = async () => {
 service.uploadObject = async (objectName, filePath) => {
     await service.ensureBucketExists(APS_BUCKET);
     const accessToken = await getInternalToken();
-    const obj = await ossClient.upload(APS_BUCKET, objectName, filePath, { accessToken });
+    const obj = await ossClient.uploadObjectAsync(APS_BUCKET, objectName, filePath, { accessToken });
     return obj;
 };
 ```
