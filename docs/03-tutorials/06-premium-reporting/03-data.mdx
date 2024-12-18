@@ -1,0 +1,23 @@
+import EnvTabs from "@site/src/components/EnvTabs.js";
+import NodeJsVsCodeData from "./_shared/nodejs-vscode/data/data.mdx";
+import NodeJsVsCodeDerivatives from "./_shared/nodejs-vscode/data/nodefetch.mdx";
+import NodeJsVsCodeEndpoints from "./_shared/nodejs-vscode/data/endpoints.mdx";
+
+# Charts Logic
+
+In this step we will extend our server so that we can list charts prepare them for viewing.
+
+## Chart.js logic
+
+Finally, we're ready to build the client-side piece of our application.
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeDerivatives} />
+
+This code defines functions for creating various chart types (bar, doughnut, line, pie, radar, and polar area) using the Chart.js library. Each function receives a canvas context (ctx) and data (usecase1) to render a chart. The data is processed to extract labels (x-axis or segment names) and dataValues (numerical data). The getAccessToken function fetches an access token from the /api/auth/token endpoint, handling errors if the fetch fails. Key features of the charts include customized colors, labels, and responsive design. Each chart is tailored to visualize specific relationships, such as "Product Name vs Total Tokens," using the corresponding chart type.
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeData} />
+
+## Try it out
+
+Start (or restart) the app as usual, and navigate to [http://localhost:8080).
+You will not see the charts yet as you've not started the application logic yet.

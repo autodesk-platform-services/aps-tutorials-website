@@ -1,0 +1,321 @@
+Let's implement the charts logic for our six usecases and add a new file login.js in wwwroot folder.
+
+```js title="wwwroot/login.js"
+async function getAccessToken(callback) {
+  try {
+    const resp = await fetch("/api/auth/token");
+    if (!resp.ok) throw new Error(await resp.text());
+    const { access_token, expires_in } = await resp.json();
+    if (callback) callback(access_token, expires_in);
+    return { access_token, expires_in };
+  } catch (err) {
+    alert("Could not obtain access token. See the console for more details.");
+    console.error(err);
+    return null;
+  }
+}
+
+export async function chart1(ctx, usecase1) {
+  console.log(usecase1.rows);
+  if (!ctx) {
+    console.error("Canvas element for 'chart1' not found.");
+    return;
+  }
+
+  const labels = usecase1.rows.map((row) => row[0]);
+
+  const dataValues = usecase1.rows.map((row) => row[1]);
+  console.log(dataValues);
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "TotalUniqueDays",
+          data: dataValues,
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: { display: true, text: "Product Name vs Total Unique Days" },
+      },
+      scales: { y: { beginAtZero: true } },
+    },
+  });
+}
+
+// Function to render Doughnut Chart
+export async function chart2(ctx, usecase1) {
+  console.log(usecase1.rows);
+  if (!ctx) {
+    console.error("Canvas element for 'chart1' not found.");
+    return;
+  }
+
+  const labels = usecase1.rows.map((row) => row[0]);
+  const dataValues = usecase1.rows.map((row) => row[1]);
+  console.log(dataValues);
+
+  new Chart(ctx, {
+    type: "doughnut", // Change type to 'doughnut'
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "TotalUniqueDays", // You can customize this label as needed
+          data: dataValues,
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ],
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: { display: true, text: "Product Name vs Unique Users" },
+      },
+    },
+  });
+}
+
+// Function to render Line Chart
+export async function chart3(ctx, usecase1) {
+  console.log(usecase1.rows);
+  if (!ctx) {
+    console.error("Canvas element for 'chart1' not found.");
+    return;
+  }
+
+  const labels = usecase1.rows.map((row) => row[1]);
+  const dataValues = usecase1.rows.map((row) => row[2]);
+  console.log(dataValues);
+
+  new Chart(ctx, {
+    type: "line", // Change type to 'line'
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "TotalTokens", // Customize this label as needed
+          data: dataValues,
+          borderColor: "rgba(75, 192, 192, 1)", // Line color
+          backgroundColor: "rgba(75, 192, 192, 0.2)", // Line area fill color
+          borderWidth: 2, // Line thickness
+          fill: true, // Fill the area below the line
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: {
+          display: true,
+          text: "User Name vs Total token where source=flex",
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true, // Optional: Set Y-axis to start from zero
+        },
+      },
+    },
+  });
+}
+
+// Function to render Pie Chart
+export async function chart4(ctx, usecase1) {
+  console.log(usecase1.rows);
+  if (!ctx) {
+    console.error("Canvas element for 'chart1' not found.");
+    return;
+  }
+
+  const labels = usecase1.rows.map((row) => row[0] + " , " + row[1]);
+  const dataValues = usecase1.rows.map((row) => row[2]);
+  console.log(dataValues);
+
+  new Chart(ctx, {
+    type: "pie", // Change type to 'pie'
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "TotalTokens", // Customize this label as needed
+          data: dataValues,
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ], // Slice colors
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ], // Border color of slices
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: {
+          display: true,
+          text: "Product Name vs Total token where source=flex",
+        },
+      },
+    },
+  });
+}
+
+// Function to render Radar Chart
+export async function chart5(ctx, usecase1) {
+  console.log(usecase1.rows);
+  if (!ctx) {
+    console.error("Canvas element for 'chart1' not found.");
+    return;
+  }
+
+  const labels = usecase1.rows.map((row) => row[0]);
+  const dataValues = usecase1.rows.map((row) => row[1]);
+  console.log(dataValues);
+
+  new Chart(ctx, {
+    type: "radar", // Change type to 'radar'
+    data: {
+      labels: labels, // Labels for each axis
+      datasets: [
+        {
+          label: "Unique Products", // Customize this label as needed
+          data: dataValues, // Data points for the radar chart
+          backgroundColor: "rgba(75, 192, 192, 0.2)", // Color of the area inside the radar chart
+          borderColor: "rgba(75, 192, 192, 1)", // Color of the border of the radar chart
+          borderWidth: 2, // Border thickness
+          pointBackgroundColor: "rgba(75, 192, 192, 1)", // Color of the data points
+          pointBorderColor: "#fff", // Border color of the data points
+          pointBorderWidth: 2, // Border width of the data points
+          pointRadius: 5, // Radius of the data points
+          fill: true, // Fill the area under the line
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: { display: true, text: "Product Name vs Unique Products" },
+      },
+      scales: {
+        r: {
+          beginAtZero: true, // Set the radar axis to start from zero
+          ticks: {
+            backdropColor: "rgba(255, 255, 255, 0.5)", // Optional: background color for the ticks
+            color: "#666", // Optional: color for the ticks
+          },
+        },
+      },
+    },
+  });
+}
+
+// Function to render Polar Area Chart
+export async function chart6(ctx, usecase1) {
+  console.log(usecase1.rows);
+  if (!ctx) {
+    console.error("Canvas element for 'chart1' not found.");
+    return;
+  }
+
+  const labels = usecase1.rows.map((row) => row[0]);
+  const dataValues = usecase1.rows.map((row) => row[3]);
+  console.log(dataValues);
+
+  new Chart(ctx, {
+    type: "polarArea", // Change type to 'polarArea'
+    data: {
+      labels: labels, // Labels for each segment of the polar chart
+      datasets: [
+        {
+          label: "Total Tokens", // Customize this label as needed
+          data: dataValues, // Data points for each segment
+          backgroundColor: [
+            "rgba(255, 99, 132, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(255, 159, 64, 0.2)",
+          ], // Colors for each segment
+          borderColor: [
+            "rgba(255, 99, 132, 1)",
+            "rgba(54, 162, 235, 1)",
+            "rgba(255, 206, 86, 1)",
+            "rgba(75, 192, 192, 1)",
+            "rgba(153, 102, 255, 1)",
+            "rgba(255, 159, 64, 1)",
+          ], // Border color for each segment
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+        title: { display: true, text: "Product Name vs Total Tokens" },
+      },
+      scales: {
+        r: {
+          beginAtZero: true, // Ensure the chart starts from zero radius
+        },
+      },
+    },
+  });
+}
+```

@@ -1,0 +1,41 @@
+import EnvTabs from "@site/src/components/EnvTabs.js";
+
+import NodeJsVsCodeProject from "./_shared/nodejs-vscode/setup/project.mdx";
+import NodeJsVsCodeConfig from "./_shared/nodejs-vscode/setup/config.mdx";
+import NodeJsVsCodeServer from "./_shared/nodejs-vscode/setup/server.mdx";
+import NodeJsVsCodeTest from "./_shared/nodejs-vscode/setup/test.mdx";
+
+# Application Setup
+
+Let's start by creating a new project, installing required dependencies, and setting up
+a basic server application.
+
+Create a new folder for your project, navigate to it in the command line, and initialize a new Node.js project.
+
+## New project
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeProject} />
+
+## Application config
+
+Our application will need a couple of configuration parameters to run properly, for example, the credentials of our APS app for communicating with Autodesk Platform Services, or the callback URL where our users
+will be redirected to during the 3-legged authentication workflow. We will pass these parameters to the server app using environment variables.
+
+Finally, let's create a couple more subfolders in your project folder that we're going to need later:
+• wwwroot - this is where we're going to put all the client side assets (HTML, CSS, JavaScript, images, etc.)
+• routes - this is where we're going to implement all the server endpoints
+• services - here we're going to keep all the server-side logic that can be shared by different endpoints
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeConfig} />
+
+## Basic server
+
+Next we'll create a basic server application.
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeServer} />
+
+## Try it out
+
+Now that we have a basic application setup, let's try it out!
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeTest} />

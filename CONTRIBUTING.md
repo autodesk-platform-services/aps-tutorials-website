@@ -9,13 +9,13 @@ If you haven't worked with Docusaurus before, I'd also suggest checking out its
 > Tip: look at the structure of existing tutorials under `docs/tutorials` for reference.
 
 1. Create a new folder for your tutorial under `docs/tutorials`. The name of the folder
-should be short, with comma-separated words (it will appear in the URL), and it should
-be prefixed with a number (used to control the ordering in the UI). For example,
-`04-my-cool-tutorial` would be the 4th tutorial in the sidebar accessible via the following
-URL: https://tutorials.autodesk.io/tutorials/my-cool-tutorial/.
+   should be short, with comma-separated words (it will appear in the URL), and it should
+   be prefixed with a number (used to control the ordering in the UI). For example,
+   `04-my-cool-tutorial` would be the 4th tutorial in the sidebar accessible via the following
+   URL: https://tutorials.autodesk.io/tutorials/my-cool-tutorial/.
 
 2. Inside the new folder, create a file called `_category_.json`, and populate it with
-a JSON specifying the display name of the tutorial, for example:
+   a JSON specifying the display name of the tutorial, for example:
 
 ```json
 {
@@ -24,19 +24,19 @@ a JSON specifying the display name of the tutorial, for example:
 ```
 
 3. Create an `index.md` or `index.mdx` (Markdown with JSX syntax) file in the new folder.
-This will be the main page of your tutorial. Use it to describe what the tutorial is about,
-which parts of the platform it's using, etc. Consider adding a screenshot or a video
-showing the result of the tutorial as well.
+   This will be the main page of your tutorial. Use it to describe what the tutorial is about,
+   which parts of the platform it's using, etc. Consider adding a screenshot or a video
+   showing the result of the tutorial as well.
 
 4. Create an `*.md` or `*.mdx` file for each step of the tutorial. The name of the file
-should be short, with comma-separated words (it will appear in the URL), and it should
-be prefixed with a number (used to control the ordering in the UI). For example,
-`02-basic-server.md` would be the 2nd step in the sidebar accessible via the following
-URL: https://tutorials.autodesk.io/tutorials/my-cool-tutorial/basic-server.
+   should be short, with comma-separated words (it will appear in the URL), and it should
+   be prefixed with a number (used to control the ordering in the UI). For example,
+   `02-basic-server.md` would be the 2nd step in the sidebar accessible via the following
+   URL: https://tutorials.autodesk.io/tutorials/my-cool-tutorial/basic-server.
 
 5. Add a [front matter](https://docusaurus.io/docs/markdown-features#front-matter) header
-at the beginning of each tutorial step Markdown to control the display name in the UI,
-for example:
+   at the beginning of each tutorial step Markdown to control the display name in the UI,
+   for example:
 
 ```
 ---
@@ -45,18 +45,18 @@ title: Basic Server Setup
 ```
 
 6. Start writing the content of your tutorial. Follow the steps in the [README.md](./README.md) file
-to build and preview the Docusaurus website locally.
+   to build and preview the Docusaurus website locally.
 
 ## Suggestions
 
 - Try structuring your tutorial so that the user can test their application at the end of each step,
-not just at the very end.
+  not just at the very end.
 
 - If there are any assets (images, MDX files, etc.) that you want to share across multiple pages,
-store them in a `_shared` subfolder.
+  store them in a `_shared` subfolder.
 
 - Whenever you are referring to a code element (class, variable, etc.), file, or folder, use the
-backtick notation. For example:
+  backtick notation. For example:
 
 ```
 Let's define a new class called `Authorizer`.
@@ -67,7 +67,7 @@ Create a new file in the `source/foo` subfolder.
 ```
 
 - Whenever you are referring to some UI element (button, input field, etc.), use the underscore
-notation. For example:
+  notation. For example:
 
 ```
 Click the _Sign Up_ button in the bottom-left corner.
@@ -88,7 +88,7 @@ is useful when you need to use some React components like [tabs](https://docusau
 In Docusaurus you can import an `*.md` or `*.mdx` file as a React component into another `*.mdx` file:
 
 ```mdx
-import SomeMarkdownPiece from './_shared/some/other.mdx';
+import SomeMarkdownPiece from "./_shared/some/other.mdx";
 
 ...
 
@@ -115,14 +115,18 @@ To use it, import the Markdown content for individual tabs as separate React com
 and insert them into the `<EnvTabs>` component like so:
 
 ```mdx
-import EnvTabs from '@site/src/components/EnvTabs.js';
-import SomeMarkdown1 from './_shared/foo/node-vscode.mdx';
-import SomeMarkdown2 from './_shared/foo/dotnet-vscode.mdx';
-import SomeMarkdown3 from './_shared/foo/dotnet-vs2022.mdx';
+import EnvTabs from "@site/src/components/EnvTabs.js";
+import SomeMarkdown1 from "./_shared/foo/node-vscode.mdx";
+import SomeMarkdown2 from "./_shared/foo/dotnet-vscode.mdx";
+import SomeMarkdown3 from "./_shared/foo/dotnet-vs2022.mdx";
 
 ...
 
-<EnvTabs NodeJsVsCode={SomeMarkdown1} DotNetVsCode={SomeMarkdown2} DotNetVs2022={SomeMarkdown3} />
+<EnvTabs
+  NodeJsVsCode={SomeMarkdown1}
+  DotNetVsCode={SomeMarkdown2}
+  DotNetVs2022={SomeMarkdown3}
+/>
 
 ...
 ```
@@ -193,11 +197,11 @@ Consider using the `<Image>` component from `@theme/IdealImage` which supports l
 generation of lower-res images, etc.:
 
 ```mdx
-import Image from '@theme/IdealImage';
+import Image from "@theme/IdealImage";
 
 ...
 
-<Image img={require('./_shared/developer-portal-logged-out.png')} />
+<Image img={require("./_shared/developer-portal-logged-out.png")} />
 
 ...
 ```
@@ -212,8 +216,9 @@ To learn more about this React component, check out https://docusaurus.io/docs/a
 There's a `<ResponsiveVideo>` React component you can use to embed static videos:
 
 ```mdx
-import ResponsiveVideo from '@site/src/components/ResponsiveVideo.js';
-import PreviewUrl from '@site/static/videos/simple-viewer.mp4';
+import ResponsiveVideo from "@site/src/components/ResponsiveVideo.js";
+import PreviewUrl from "@site/static/videos/simple-viewer.mp4";
+import PreviewUrl1 from "@site/static/videos/premium-reporting.gif";
 
 ...
 
