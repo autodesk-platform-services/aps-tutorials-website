@@ -1,0 +1,40 @@
+import Image from '@theme/IdealImage';
+import PreviewUrl from '@site/static/videos/acc-issues-app.png';
+
+# ACC Issues
+
+## Introduction
+
+:::note
+Ensure **[Issue Module](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_About)** is activated in ACC Project.
+:::
+
+
+In this tutorial we're going to build an APS application that will let us browse Hubs and Projects
+of our authenticated user in [Autodesk Construction Cloud](https://www.autodesk.com/products/autodesk-docs/overview),
+extract project issues, issue subtypes, issue rootcauses, issue Attribute Definitions of a 
+given ACC project and  render them in a tabular view, list all the information of project users,you can also export these information to a CSV
+file easily as well as import from an external CSV. Most important, the tutorial will show case how to:
+1. Export project issues into a csv file
+2. Import issues from external CSV file into the ACC project to create new or existing  issue.
+
+
+:::note
+Make sure to [provision access](../../01-getting-started/index.mdx#provision-access-in-other-products) to your ACC accounts
+so that the application can see your project issues.
+:::
+
+<Image img={PreviewUrl} />
+
+We will use the following components of the platform:
+
+- [Authentication](https://aps.autodesk.com/en/docs/oauth/v2/developers_guide/overview)
+- [Data Management](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
+- [Autodesk Construction Cloud Admin](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
+- [Autodesk Construction Issues](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/)
+
+:::tip
+If you're not interested in building the application from scratch, and you just want to try
+and run it locally, the complete implementation is available on GitHub:
+- https://github.com/xiaodongliang/aps-acc-issues-tutorial-nodejs
+:::
