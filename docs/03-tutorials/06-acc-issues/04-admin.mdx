@@ -1,23 +1,34 @@
 
 import NodeJsVsCodeHubs from './_shared/nodejs-vscode/admin/account-admin.mdx';
-import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/admin/endpoints.mdx';
+import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/issue/endpoints.mdx';
+import NodeJsVsCodeIssues from './_shared/nodejs-vscode/issue/acc-issue.mdx';
 
-# Project Issues
+# Project Users & Issues
 
-Now, it's time to implement our server to support Account Admin access, in this step, we'll 
-continue extend our server based on [Account Admin APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
-to FETCH and CREATE the data of ACC Projects and Users:
+Now, we will implement our server to consume [ACC Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to FETCH project issues, RETRIEVE issue project settings, 
+such as custom attribute (field) definitions and mappings, issue types/subtypes, and root cause categories. 
+We will also leverage [Account Admin APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/) to retrieve project users. 
 
-## Projects & Users
+## Project Users
 
-First, let's add a couple of helper methods for getting and importing projects and users:
+We will use a helper fuction from the Account Admin SDK to fetch project users.
+
 
 <NodeJsVsCodeHubs />
 
+## Project Issues
+Now, we will go ahead to add  couple of helper functions for getting and importing issues:
+
+
+<NodeJsVsCodeIssues />
+
 ## Server endpoints
 
-Next, let's expose the new functionality to the client-side code through another
+Next, let's expose the new project users, issues and issue settings  to the client-side code through another
 set of endpoints.
+:::info
+We are going to combine the project users and issues endoint on one file: `issue.js`
+:::
 
 <NodeJsVsCodeEndpoints />
 
@@ -25,18 +36,12 @@ set of endpoints.
 
 And that's it for the server side. Time to try it out!
 
-Start (or restart) the app from Visual Studio Code as usual, 
-- Use the ID(removing **b.**) of one ACC hub as you get in previous step in the address: http://localhost:8080/api/admin/projects?accountId={your-account-id}.
-In this case the server application should respond with a JSON list of all projects
-available under the specified hub.
-- Use the project ID as you get in previous step, try to call the address: 
-http://localhost:8080/api/admin/project/users?projectId={your-project-id}, the server application should
+- Use one project ID from previous step: GET hub projets : http://localhost:8080/api/hubs/your-hub-id/projects, and try to call the address: 
+http://localhost:8080/api/admin/projectUsers?projectId={your-project-id}, the server application should
 respond with a JSON list of all the users from this project. 
+- Use same project ID as step above (remove b.) and try to call the address: 
+http://localhost:8080/api/issues/issues?projectId={your-project-id}, the server application should
+respond with a JSON list of all the issues from this project. 
 
-:::info
-You may get different project list by the 2 differnt endpoints, here are the explain:
-- With Data Management API, it will return all the projects that the current user is involved.
-- With Account Admin API, it will return all the projects in the account if the current user is Account Admin.
-:::
-
-![Account Admin Response](./_shared/account-admin.webp)
+![Account Admin Response](./_shared/project-users.webp)
+![Account Admin Response](./_shared/project-issues.webp)

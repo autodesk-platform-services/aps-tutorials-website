@@ -1,12 +1,13 @@
 # Table
 
 Finally, we're ready to implement all the remaining logic of the class `Table`.
-The class `Table` is responsible to handle different type of data, including project list,
+The class `Table` is responsible to handle different type of data, including project issues and issue settings 
+(custom attribute (field) definitions and mappings, issue types/subtypes, and root cause categories),
 user list, and provide the functions including:
-- Get the data list from ACC Admin App based on the current input information.
+- Get the data list from ACC Issues based on the current input information.
 - Draw the current data list into a bootstrap table.
 - Export the current data list into a csv file.
-- Import the data from a csv file into the ACC Admin.
+- Import the data (issue list) from a csv file into the ACC Project.
 
 ## Table
 
@@ -16,7 +17,7 @@ Here are the explanation of the main function:
 - `resetData`: Fetch and setup the data based on the input accountId, projectId, and tabKey. 
 - `drawTable`: Draw the bootstrap table with the current data. 
 - `exportToCSV`: Export the current data into CSV file.
-- `importFromCSV`: Import the information into ACC Admin system from the prepared CSV file.
+- `importFromCSV`: Import the information into ACC Issue sample from the prepared CSV file.
 
 ```js title="wwwroot/table.js"
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,29 +48,22 @@ class Table {
     }
 
 // highlight-start
-    resetData = async( tabKey=null, accountId=null, projectId=null ) =>{
-        this.#tabKey = tabKey? tabKey: this.#tabKey;
-        this.#accountId = accountId? accountId: this.#accountId;
-        this.#projectId = accountId||projectId? projectId: this.#projectId;
+    
+    resetData = async (tabKey = null, accountId = null, projectId = null) => {
+        this.#tabKey = tabKey ? tabKey : this.#tabKey;
+        this.#accountId = accountId ? accountId : this.#accountId;
+        this.#projectId = accountId || projectId ? projectId : this.#projectId;
         const url = TABLE_TABS[this.#tabKey].REQUEST_URL;
         const data = {
             'accountId': this.#accountId,
             'projectId': this.#projectId
         }
         try {
-            const response = await axios.get(url, { params: data } );
+            const response = await axios.get(url, { params: data });
             this.#dataSet = response.data;
         } catch (err) {
             console.error(err);
             return;
-        }
-        // Mark "N/A" for complicated properties.
-        for (var key in this.#dataSet[0]) {
-            if (Array.isArray(this.#dataSet[0][key]) || typeof this.#dataSet[0][key] === 'object' && this.#dataSet[0][key] != null) {
-                this.#dataSet.forEach(item => {
-                    item[key] = "N/A";
-                })
-            }
         }
     }
 
@@ -81,11 +75,36 @@ class Table {
 
         let columns = [];
         for (var key in this.#dataSet[0]) {
-            columns.push({
-                field: key,
-                title: key,
-                align: "center"
-            })
+
+            if (Array.isArray(this.#dataSet[0][key] && this.#dataSet[0][key] != null)) {
+                //value is array 
+                columns.push({
+                    field: key,
+                    title: key,
+                    align: "center",
+                    formatter: function (value) {
+                        return value.toString();
+                    }
+                })
+            } else if (typeof this.#dataSet[0][key] === 'object' && this.#dataSet[0][key] != null) {
+                //value is JSON object 
+
+                columns.push({
+                    field: key,
+                    title: key,
+                    align: "center",
+                    formatter: function (value) {
+                        return JSON.stringify(value)
+                    }
+                })
+            } else {
+                //common value
+                columns.push({
+                    field: key,
+                    title: key,
+                    align: "center"
+                })
+            }
         }
         $(this.#tableId).bootstrapTable('destroy');
         $(this.#tableId).bootstrapTable({
@@ -118,41 +137,62 @@ class Table {
             showRefresh: true,
             minimumCountColumns: 2,
             smartDisplay: true,
-            columns: columns
+            columns: columns,
+            sortName:'displayId',
+            sortOrder:'desc'
         });
     }
 
-    exportToCSV = ()=>{
-        if (this.#dataSet == null || this.#dataSet.length == 0) {
-            console.warn('DataSet is not ready, please fetch your data first.');
+
+    exportToCSV = () => {
+        const separatorForColumns = ',';
+        const headers = Object.keys(this.#dataSet[0]).join(separatorForColumns);
+        const rows = this.#dataSet.map(row =>
+            Object.values(row)
+                .map(value => {
+                    if (value === null || value === undefined) {
+                        value = "";
+                    } else {
+                        //because array or json value includes comma
+                        //hard to parse the values from csv (for import workflow)
+                        //so set the value='Complicated Object' to csv.
+                        if (typeof value === 'object') {
+                            value = '<Complicated Object>';
+                        } else if (Array.isArray(value)) {
+                            value = '<Complicated Object>';
+                        }
+                    }
+                    return `"${String(value).replace(/"/g, '""')}"`
+                }) // Escape quotes
+                .join(separatorForColumns)
+        ).join('\n');
+
+        const csvContent = `${headers}\n${rows}`;
+        // Create a Blob and trigger download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = this.#tabKey + (new Date()).getTime() + '.csv';
+        link.click();
+    } 
+ 
+    formatDate(date, format = 'YYYY-MM-DD') {
+        const pad = (num) => String(num).padStart(2, '0');
+      
+        const replacements = {
+          YYYY: date.getFullYear(),
+          MM: pad(date.getMonth() + 1),
+          DD: pad(date.getDate()) 
+        };
+      
+        return format.replace(/YYYY|MM|DD/g, (match) => replacements[match]);
+      }
+
+    importFromCSV = async () => {
+        if (TABLE_TABS[this.#tabKey].TAB_NAME != 'ISSUES') {
+            alert('only issue is supported to be created/modified!Please active ISSUES table firstly!');
             return;
         }
-        let csvDataList = [];
-        let csvHeader = [];
-        for (let key in this.#dataSet[0]) {
-            csvHeader.push(key);
-        }
-        csvDataList.push(csvHeader);
-        this.#dataSet.forEach((row) => {
-            let csvRowItem = [];
-            for (let key in row) {
-                if (typeof row[key] === 'string')
-                    csvRowItem.push("\"" + row[key].replace(/\"/g, "\"\"").replace("#", "") + "\"")
-                else
-                    csvRowItem.push(row[key]);
-            }
-            csvDataList.push(csvRowItem);
-        })
-        let csvString = csvDataList.join("%0A");
-        let a = document.createElement('a');
-        a.href = 'data:attachment/csv,' + csvString;
-        a.target = '_blank';
-        a.download = this.#tabKey + (new Date()).getTime() + '.csv';
-        document.body.appendChild(a);
-        a.click();
-    }
-
-    importFromCSV = async() => {
         let input = document.createElement('input');
         input.type = 'file';
         input.onchange = _ => {
@@ -166,53 +206,41 @@ class Table {
                             return new Promise(resolve => setTimeout(resolve, ms));
                         }
                         $("#loadingoverlay").fadeIn()
-                        const rows = e.target.result.split("\r\n");
+                        const rows = e.target.result.replace(/\r\n/g, '\n').split('\n'); // First replace \r\n with \n, then split by \n
                         const keys = rows[0].split(',');
-                        let requestDataList = [];
-                        for (let i = 1; i < rows.length && i <= this.#maxItem; i++) {
+                        const import_attributes_keys = TABLE_TABS[this.#tabKey].IMPORT_ATTRIBUTES_KEYS;
+                        let requestDataList = []; 
+                       
+                        for(let i=1;i<rows.length;i++){
+                            // Split each row by commas to get each cell
+                            const cells = rows[i].split(',');
                             let jsonItem = {};
-                            let cells = rows[i].split(",");
-                            for (let j = 0; j < cells.length; j++) {
-                                if (cells[j] == null || cells[j] == '')
-                                    continue
-                                // customize the input property
-                                let key = keys[j];
-                                switch (this.#tabKey) {
-                                    case 'PROJECTS':
-                                        if (key == 'template') {
-                                            jsonItem[key] = { 'projectId': cells[j] };
-                                            continue;
-                                        }
-                                        break;
-                                    case 'PROJECT':
-                                    case 'USERS':
-                                        if (key == 'roleIds') {
-                                            const roleIdList = cells[j].replace(/\s/g, '').split('|');
-                                            jsonItem[key] = roleIdList;
-                                            continue;
-                                        }
-                                        const params = key.split('.')
-                                        const length = params.length;
-                                        if (length == 2 && params[0] == 'products') {
-                                            let productAccess = {
-                                                "key": params[length - 1],
-                                                "access": cells[j]
-                                            }
-                                            if (jsonItem["products"] == null) {
-                                                jsonItem["products"] = [];
-                                            }
-                                            jsonItem["products"].push(productAccess)
-                                            continue
-                                        }
-                                        break;
-                                    default:
-                                        console.warn("The current Admin Data Type is not expected");
-                                        break;
+                            for(let k=0;k<cells.length;k++){
+                                let value =  cells[k].replace(/^"(.*)"$/, '$1')
+                                //only import those fields that are supported with create/modify
+                                if (import_attributes_keys.includes(keys[k]) && value != null && value != undefined) {
+                                    
+                                    //some special fields
+                                    switch(keys[k]){
+                                        case 'dueDate':
+                                            value = this.formatDate(new Date(value));
+                                            break;
+                                        case 'published':
+                                            value = value.toLowerCase() === "true";
+                                            break; 
+                                    }
+  
+                                    jsonItem[keys[k]] = value;
                                 }
-                                jsonItem[key] = cells[j];
                             }
+                            //record the csv row number for tracking error when
+                            //creating/modifying issues.
+                            jsonItem.csvRowNum = i;
+
                             requestDataList.push(jsonItem);
                         }
+                       
+
                         const data = {
                             'accountId': this.#accountId,
                             'projectId': this.#projectId,
@@ -221,8 +249,9 @@ class Table {
                         const url = TABLE_TABS[this.#tabKey].REQUEST_URL;
                         try {
                             const resp = await axios.post(url, data);
-                            resp.data.Succeed && resp.data.Succeed.forEach( item => console.log( item + ' is created'));
-                            resp.data.Failed && resp.data.Failed.forEach( item => console.warn( item + ' failed to be created') );
+                            resp.data.created && resp.data.created.forEach(item => console.log(`The row ${item.csvRowNum} is created with issue id ${item.id} `));
+                            resp.data.modified && resp.data.modified.forEach(item => console.log(`The row ${item.csvRowNum} is modified with issue id ${item.id} `));
+                            resp.data.failed && resp.data.failed.forEach(item => console.log(`The row ${item.csvRowNum} failed to be created/modified for the reason: ${item.reason} `));
                             await sleep(3000);
                             await this.resetData();
                         } catch (err) {
@@ -240,7 +269,7 @@ class Table {
             }
         };
         input.click();
-    }    
+    }
 // highlight-end
 }
 ```
@@ -250,102 +279,39 @@ and during import, the code will parse the propery information from a CSV file i
 body.
 :::
 
-## Load Table Data
-Now, let's complete the logic to load the data within the following 2 functions:
-- initTableTabs
-- refreshTable
-
-Update the code within the above 2 functions by modifying `table.js`:
-
-```js title="wwwroot/table.js"
-export async function refreshTable( accountId = null, projectId=null ) {
-    showTable(false);
-    if( TABLE_TABS[g_accDataTable.tabKey].TAB_CATEGORY=='hub' && projectId ){
-        for (let key in TABLE_TABS) {
-            if( TABLE_TABS[key].TAB_CATEGORY == 'hub' ){
-                $("#" + key).addClass("hidden");
-                $("#" + key).removeClass("active");
-            }
-            else{
-                if( TABLE_TABS[key].CATEGORY_DEFAULT )
-                    $("#" + key).addClass("active");
-                $("#" + key).removeClass("hidden");
-            }
-        } 
-    }
-    if (TABLE_TABS[g_accDataTable.tabKey].TAB_CATEGORY == 'project' && !projectId) {
-        for (let key in TABLE_TABS) {
-            if (TABLE_TABS[key].TAB_CATEGORY == 'hub') {
-                $("#" + key).removeClass("hidden");
-                if (TABLE_TABS[key].CATEGORY_DEFAULT)
-                    $("#" + key).addClass("active");
-            }
-            else {
-                $("#" + key).addClass("hidden");
-                $("#" + key).removeClass("active");
-            }
-        }
-    }
-    const activeTab = $("ul#adminTableTabs li.active")[0].id;
-// highlight-start
-    try{
-        await g_accDataTable.resetData( activeTab, accountId, projectId );
-        g_accDataTable.drawTable();
-    }catch(err){
-        console.warn(err);
-    }
-// highlight-end
-    $("#loadingoverlay").fadeOut()
-}
-
-export async function initTableTabs(){
-    // add all tabs
-    for (let key in TABLE_TABS) {
-        $('<li id=' + key + '><a href="accTable" data-toggle="tab">' + TABLE_TABS[key].TAB_NAME + '</a></li>').appendTo('#adminTableTabs');
-        $("#" + key).addClass((TABLE_TABS[key].CATEGORY_NAME == 'hub' && TABLE_TABS[key].CATEGORY_DEFAULT) ? "active" : "hidden");
-    } 
-    // event on the tabs
-    $('a[data-toggle="tab"]').on('shown.bs.tab', async function (e) {
-        $("#loadingoverlay").fadeIn()
-        const activeTab = e.target.parentElement.id;
-// highlight-start
-        try {
-            await g_accDataTable.resetData(activeTab);
-            g_accDataTable.drawTable();
-        } catch (err) {
-            console.warn(err);
-        }    
-// highlight-end
-        $("#loadingoverlay").fadeOut()
-    });  
-}
-```
 
 ## CSV File Prepare
-Finally, the most important feature is batch import projects/users, this is achieved by using a CSV file,
-we provided 2 template files for projects and users, you can add/modify your information based on the template, 
-then import these data from CSV file into ACC account.
+Finally, the most important feature is batch import projects issues for creating new or modifying exiting issue, this is achieved by using a CSV file,
+we provided a sample template files for projects issues, you can add/modify your information based on the template, 
+then import the data from CSV file into ACC account.
 
-- [ProjectsTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/ProjectsTemplate.csv) 
-- [UsersTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/UsersTemplate.csv) 
+- [IssueTemplate.csv](https://github.com/xiaodongliang/aps-acc-issues-tutorial-nodejs/blob/main/template/IssueTemplate.csv) 
 
 :::caution
-- When import projects to the hub, make sure the **Project Name** prepared in the CSV file
-is not existing in the hub, otherwise, the project can not created due to the name conflicts.
 
-- When import users to the project, the column **`roleIds`** of CSV file supports multiple roles for the project user,
-please use **"|"** as separator.
+- It is strongly recommended to use the same pattern of the csv that is exported in the previous function (Export Issue Records).
+
+- To add new issue, leave the column id empty
+
+- To modify the existing issue, keep the column id with the issue id, update other fields with new values.
+
+- A few fields are required when working with creating issues(POST). A few fields are supported when working with modifying issues (PATCH). Please check API references for more details.
+ > to make it clearer, this application narrow down with some supported fields.
+
+- The row number of the CSV records is not used with these scenarios, but will be used when tracking the status.
+
+- The status of created/modified/failed are tracked and will be printed out in the browser console after the process.
 
 - If you open the CSV file with Microsoft Excel, some data type will be automatically changed by the setting, for example, the column of
-**startDate** might be changed to the type as **"2012/03/14"**, please make sure to select another type like **"2012-03-14"** without **"/"** as shown in the screenshot, 
+**startDate** and **duDate** might be changed to the type as **"2012/03/14"**, please make sure to select another type like **"2012-03-14"** without **"/"** as shown in the screenshot, 
 otherwise the date will not be recognized correctly after exporting to CSV file.
 :::
 ![Excel Data Format](./_shared/excel-data-type.png)
 
 :::tip
-- When importing projects, you can always open the **Developer Tools** and check the console
-for the status of these projects as picture shown below, be noted this only work for importing 
-projects, not work for importing users.
+- When importing issues, you can always open the **Developer Tools** and check the console
+for the status ofcreation/modifying the issue as picture shown below, be noted this only work for importing 
+issues.
 :::
 ![Projects Status](./_shared/projects-status.png)
 
@@ -354,23 +320,17 @@ projects, not work for importing users.
 And that's it! Your application is now ready for action. Start it as usual, and when you go to
 [http://localhost:8080](http://localhost:8080), you should be presented with a simple UI, with
 a tree-view on the left side, you can do the following operation:
-- Select an ACC Hub: The table will list all the ACC Projects, you can export all the projects to a CSV file by click
-the `Export` button, or import the prepared projects by a CSV file with Projects information.
-- Select an ACC Project: There are 2 tabs, `PROJECT` and `USERS`, `PROJECT` tab will list the detail information about this 
-project, only export is available, `USERS` tab will list all the project users, you can click the `Export` button to export all
-the project users to a csv file, or click `Import` button to import users into the selected project with a prepare CSV file of User information.
+- Select an ACC Hub: 
+    - The tree will list all the ACC Projects within the hub that the logged in user has access to.
+    - The table will show 5 tabs
+- Select an ACC Project: There are 5 tabs, `ISSUES`, `USERS`, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS`. `ISSUES` tab will list all the project issues, 
+`USERS` tab will list all the project users, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS` tabs will list the project subtypes, rootcauses and custom sttributes respectively.
+ You can click the `Export` button to export all the project issues, users, subtypes, rootcauses and custom attributes to a csv file
+- or click `Import` button to import issues into the selected project with a prepare CSV file of issue information.
 
 :::caution
-Please note that you can only import the certain type of data based on the active Tab, here 
-are the details:
-- `PROJECTS` Tab: You can only import project list into the selected account, the csv file needs to follow
-the Projects template, the csv file of Users template can not be imported. You can check the console to see 
-if any projects failed.
-- `PROJECT` Tab: Nothing can be imported when this tab is active.
-- `USERS` Tab: You can only import user list into the selected project, the csv file needs to follow the Users 
-template, Projects template can not be imported. Due to the limitation of Import Project Users API, No information to 
-tell if any users are failed to be imported.
+Please note that you can only import the issue data  while the `ISSUES` tab is active.
 :::
 
 
-![Final App](./_shared/acc-administrator-final-app.webp)
+![Final App](./_shared/acc-issue-final-app.webp)

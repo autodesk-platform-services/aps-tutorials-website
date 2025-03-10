@@ -1,0 +1,139 @@
+First, let's include the Acc Issue SDK, add the `@aps_sdk/construction-issues` library, and also create an instance of
+SDK client of `IssueClient` at the beginning of `services/aps.js` file:
+```js title="services/aps.js"
+const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
+const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
+const { DataManagementClient } = require('@aps_sdk/data-management');
+const { AdminClient } = require('@aps_sdk/construction-account-admin');
+// highlight-start
+const { IssueClient } = require('@aps_sdk/construction-issues');
+// highlight-end
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../config.js');
+
+const service = module.exports = {};
+
+const sdk = SdkManagerBuilder.create().build();
+const authenticationClient = new AuthenticationClient(sdk);
+const dataManagementClient = new DataManagementClient(sdk);
+const adminClient = new AdminClient(sdk);
+// highlight-start
+const issueClient = new IssueClient(sdk);
+// highlight-end
+```
+
+Now append the following code to the end of the `services/aps.js` file to support export & import issues:
+```js title="services/aps.js"
+// ACC Assue APIs
+
+service.getIssues = async (projectId, token) => {
+    let allIssues = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getIssues(projectId, {accessToken:token,offset:offset});
+        allIssues = allIssues.concat(resp.results);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allIssues;
+};
+
+service.getIssueSubtypes = async (projectId, token) => {
+    let allSubtypes = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getIssuesTypes(projectId, {accessToken:token,include:'subtypes',offset:offset});
+        let eachPage = resp.results.flatMap(item => item.subtypes);
+        allSubtypes = allSubtypes.concat(eachPage);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allSubtypes;
+};
+
+service.getIssueRootcauses = async (projectId, token) => {
+    let allRootcauses = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getRootCauseCategories(projectId, {accessToken:token,include:'rootcauses',offset:offset});
+        let eachPage = resp.results.flatMap(item => item.rootCauses);
+        allRootcauses = allRootcauses.concat(eachPage);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allRootcauses;
+};
+
+service.getIssueCustomAttributesDefs = async (projectId, token) => {
+    let allCustomAttributesDefs = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getAttributeDefinitions(projectId, {accessToken:token,offset:offset});
+        allCustomAttributesDefs = allCustomAttributesDefs.concat( resp.results);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allCustomAttributesDefs;
+};
+
+
+service.createIssues = async (projectId, token,data) => {
+    
+    let results = {
+        created:[],
+        failed:[]
+    }
+
+    //remove id field from the payload.
+    var data = data.map(obj => {
+        const { ['id']: removed, ...rest } = obj;
+        return rest;
+    });
+    await Promise.all(
+        data.map(async (oneIssueData)=>{
+        try{
+            //remove unsupported fields and build the payload
+            const {id, csvRowNum, ...payload } = oneIssueData;
+            const resp = await issueClient.createIssue(projectId,payload,{accessToken:token});
+            results.created.push({id:resp.id,csvRowNum:oneIssueData.csvRowNum});
+        }catch(e){
+            results.failed.push({csvRowNum:oneIssueData.csvRowNum,reason:e.toString()}); 
+        }
+    })); 
+
+    return results;
+};
+
+service.modifyIssues = async (projectId, token,data) => {
+    
+    let results = {
+        modified:[],
+        failed:[]
+    }
+
+    await Promise.all(
+        data.map(async (oneIssueData)=>{        
+        try{
+            const issueId=  oneIssueData.id;
+            //remove unsupported fields and build the payload
+            const {id, csvRowNum, ...payload } = oneIssueData;
+            const resp = await issueClient.patchIssueDetails(projectId,issueId,payload,{accessToken:token});
+            results.modified.push({id:resp.id,csvRowNum:oneIssueData.csvRowNum});
+        }catch(e){
+            results.failed.push({csvRowNum:oneIssueData.csvRowNum,reason:e.toString()}); 
+        }
+    })); 
+
+    return results;
+};
+
+
+```
+

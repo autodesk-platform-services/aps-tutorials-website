@@ -11,23 +11,43 @@ Create a `table.js` file under the `wwwroot` subfolder with the following code:
 
 ```js title="wwwroot/table.js"
 const TABLE_TABS = {
-    'PROJECTS': {
-        'REQUEST_URL': '/api/admin/projects',
-        'TAB_NAME': 'PROJECTS',
-        'CATEGORY_NAME': 'hub',
-        'CATEGORY_DEFAULT': true
+    ISSUES: {
+        REQUEST_URL: '/api/issues/issues',
+        TAB_NAME: 'ISSUES',
+        VISIBILITY: true,
+        IMPORT_ATTRIBUTES_KEYS: [
+            'id',
+            'title',
+            'description',
+            'issueSubtypeId',
+            'status',
+            'dueDate',
+            'assignedTo',
+            'assignedToType',
+            'rootCauseId',
+            'published'
+        ]
     },
-    'PROJECT': {
-        'REQUEST_URL': '/api/admin/project',
-        'TAB_NAME': 'PROJECT',
-        'CATEGORY_NAME': 'project',
-        'CATEGORY_DEFAULT': true
-    },
+
     'USERS': {
-        'REQUEST_URL': '/api/admin/project/users',
+        'REQUEST_URL': '/api/admin/projectUsers',
         'TAB_NAME': 'USERS',
-        'CATEGORY_NAME': 'project',
-        'CATEGORY_DEFAULT': false
+        'VISIBILITY': false
+    },
+    'ISSUE_SUBTYPES': {
+        'REQUEST_URL': '/api/issues/subtypes',
+        'TAB_NAME': 'SUBTYPES',
+        'VISIBILITY': false
+    },
+    'ISSUE_ROOTCAUSES': {
+        'REQUEST_URL': '/api/issues/rootcauses',
+        'TAB_NAME': 'ROOT_CAUSES',
+        'VISIBILITY': false
+    },
+    'ISSUE_CUSTOM_ATTRIBUTES_DEFS': {
+        'REQUEST_URL': '/api/issues/customAttDefs',
+        'TAB_NAME': 'CUSTOM_ATTRIBUTES_DEFS',
+        'VISIBILITY': false
     }
 }
 
@@ -76,57 +96,44 @@ class Table {
 }
 
 
-export async function refreshTable( accountId = null, projectId=null ) {
+export async function refreshTable(accountId = null, projectId = null) {
     $("#loadingoverlay").fadeIn()
-    if( TABLE_TABS[g_accDataTable.tabKey].CATEGORY_NAME=='hub' && projectId ){
-        for (let key in TABLE_TABS) {
-            if( TABLE_TABS[key].CATEGORY_NAME == 'hub' ){
-                $("#" + key).addClass("hidden");
-                $("#" + key).removeClass("active");
-            }
-            else{
-                if( TABLE_TABS[key].CATEGORY_DEFAULT )
-                    $("#" + key).addClass("active");
-                $("#" + key).removeClass("hidden");
-            }
-        } 
+
+    const activeTab = $("ul#issueTableTabs li.active")[0].id;
+    // highlight-start
+    try {
+        await g_accDataTable.resetData(activeTab, accountId, projectId);
+        g_accDataTable.drawTable();
+    } catch (err) {
+        console.warn(err);
     }
-    if (TABLE_TABS[g_accDataTable.tabKey].CATEGORY_NAME == 'project' && !projectId) {
-        for (let key in TABLE_TABS) {
-            if (TABLE_TABS[key].CATEGORY_NAME == 'hub') {
-                $("#" + key).removeClass("hidden");
-                if (TABLE_TABS[key].CATEGORY_DEFAULT)
-                    $("#" + key).addClass("active");
-            }
-            else {
-                $("#" + key).addClass("hidden");
-                $("#" + key).removeClass("active");
-            }
-        }
-    }
-    const activeTab = $("ul#adminTableTabs li.active")[0].id;
-    g_accDataTable.tabKey = activeTab;
-    alert( "current active tab is: " + activeTab );
+    // highlight-end
     $("#loadingoverlay").fadeOut()
 }
 
-export async function initTableTabs(){
+export async function initTableTabs() {
     // add all tabs
     for (let key in TABLE_TABS) {
-        $('<li id=' + key + '><a href="accTable" data-toggle="tab">' + TABLE_TABS[key].TAB_NAME + '</a></li>').appendTo('#adminTableTabs');
-        $("#" + key).addClass((TABLE_TABS[key].CATEGORY_NAME == 'hub' && TABLE_TABS[key].CATEGORY_DEFAULT) ? "active" : "hidden");
-    } 
+        $('<li id=' + key + '><a href="accTable" data-toggle="tab">' + TABLE_TABS[key].TAB_NAME + '</a></li>').appendTo('#issueTableTabs');
+    }
+    $("#ISSUES").addClass("active");
     // event on the tabs
     $('a[data-toggle="tab"]').on('shown.bs.tab', async function (e) {
         $("#loadingoverlay").fadeIn()
         const activeTab = e.target.parentElement.id;
-        g_accDataTable.tabKey = activeTab;
-        alert( "current active tab is: " + activeTab );
+        // highlight-start
+        try {
+            await g_accDataTable.resetData(activeTab);
+            g_accDataTable.drawTable();
+        } catch (err) {
+            console.warn(err);
+        }
+        // highlight-end
         $("#loadingoverlay").fadeOut()
-    }); 
+    });
 }
 
-var g_accDataTable = new Table('#accTable' );
+var g_accDataTable = new Table('#accTable');
 ```
 
 The script is an [ES6 module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
@@ -134,7 +141,7 @@ that define a class `Table` which is used to list the information of Projects an
 exports two functions:
 
 - `initTableTabs` will create the Tabs and also register the function when active tab is changed.
-- `refreshTable` for loading the data of selected hub/project into the table.
+- `refreshTable` for loading the data of selected tab into the table.
 
 ## Sidebar logic
 
@@ -222,7 +229,7 @@ try {
                 document.body.removeChild(iframe);
             };
         }
-        initTree('#tree', (accountId, projectId) => refreshTable(accountId, projectId));
+        initTree('#tree', (accountId, projectId) => refreshTable(accountId,projectId.replace('b.','')));
         await initTableTabs();
     } else {
         login.innerText = 'Login';
@@ -233,6 +240,7 @@ try {
     alert('Could not initialize the application. See console for more details.');
     console.error(err);
 }
+
 ```
 
 The script will first try and obtain user details to check whether we're logged in or not.
@@ -388,23 +396,25 @@ Then, create an `index.html` file in the same folder with the following content:
     <script src="https://unpkg.com/bootstrap-table@1.22.2/dist/bootstrap-table.min.js"></script>
     <script src="https://rawgit.com/michaelsogos/bootstrap-table-toolbar-buttons/master/src/bootstrap-table-toolbar-buttons.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="/main.js" type="module"></script>
 
-    <title>Autodesk Platform Services: ACC Administrator</title>
+    <title>Autodesk Platform Services: ACC Issues</title>
 </head>
 
 <body>
     <div id="header">
         <img class="logo" src="https://cdn.autodesk.io/logo/black/stacked.png" alt="Autodesk Platform Services">
-        <span class="title">ACC Administrator</span>
+        <span class="title">ACC Issues</span>
         <button id="login" style="visibility: hidden;">Login</button>
     </div>
     <div id="sidebar">
         <div id="tree"></div>
     </div>
     <div id="table">
-        <ul id="adminTableTabs" class="nav nav-tabs">
+        <ul id="issueTableTabs" class="nav nav-tabs">
         </ul>
+        
         <table id="accTable" class="table-striped table-bordered table-hover">
         </table>
         <div id="loadingoverlay">
@@ -431,4 +441,4 @@ a tree-view on the left side, and an empty table on the right. Try browsing thro
 we will load data into the table in next step.
 
 
-![Account Admin](./_shared/aps-acc-admin.webp)
+![Account Admin](./_shared/aps-acc-issue.webp)

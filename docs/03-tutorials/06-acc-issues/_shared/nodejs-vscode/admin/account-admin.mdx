@@ -23,28 +23,6 @@ const adminClient = new AdminClient(sdk);
 Now append the following code to the end of the `services/aps.js` file to support export & import projects and users:
 ```js title="services/aps.js"
 // ACC Admin APIs
-service.getProjectsACC = async (accountId, token) => {
-    let allProjects = [];
-    let offset = 0;
-    let totalResults = 0;
-    do {
-        const resp = await adminClient.getProjects(accountId, { offset: offset, accessToken: token });
-        allProjects = allProjects.concat(resp.results);
-        offset += resp.pagination.limit;
-        totalResults = resp.pagination.totalResults;
-    } while (offset < totalResults)
-    return allProjects;
-};
-
-service.createProjectACC = async (accountId, projectInfo, token) =>{
-    const resp = await adminClient.createProject(accountId, projectInfo, { accessToken: token});
-    return resp;
-}
-
-service.getProjectACC = async (projectId, token) => {
-    const resp = await adminClient.getProject(projectId, { accessToken: token });
-    return resp;
-};
 
 service.getProjectUsersACC = async (projectId, token) => {
     let allUsers = [];
@@ -59,29 +37,5 @@ service.getProjectUsersACC = async (projectId, token) => {
     return allUsers;
 };
 
-service.addProjectAdminACC = async (projectId, email, token) => {
-    const userBody = {
-        "email": email,
-        "products": [{
-            "key": "projectAdministration",
-            "access": "administrator"
-        }, {
-            "key": "docs",
-            "access": "administrator"
-        }]
-    }
-    const resp = await adminClient.assignProjectUser(projectId, userBody, { accessToken: token });
-    return resp;
-}
-
-service.importProjectUsersACC = async (projectId, projectUsers, token) => {
-    const resp = await adminClient.importProjectUsers(projectId, projectUsers, { accessToken: token });
-    return resp;
-}
 ```
 
-:::tip
-The method adminClient.getProjects() returns all the production projects within this hub, 
-it's different from the Data Management GET Projects API which only returns these projects 
-the current user is involved.
-:::
