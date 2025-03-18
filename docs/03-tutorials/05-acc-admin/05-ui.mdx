@@ -1,4 +1,8 @@
+import EnvTabs from '@site/src/components/EnvTabs.js';
+
 import NodeJsVsCodeStructure from './_shared/nodejs-vscode/final-folder-structure.mdx';
+import DotNetVs2022CodeStructure from './_shared/dotnet-vs2022/final-folder-structure.mdx'
+import DotNetVsCodeStructure from './_shared/dotnet-vscode/final-folder-structure.mdx'
 
 # UI Framework
 
@@ -421,7 +425,7 @@ Then, create an `index.html` file in the same folder with the following content:
 
 The final folder structure of your application's source code should now look something like this:
 
-<NodeJsVsCodeStructure />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeStructure} DotNetVsCode={DotNetVsCodeStructure} DotNetVs2022={DotNetVs2022CodeStructure} />
 
 ## Try it out
 

@@ -259,10 +259,10 @@ Update the code within the above 2 functions by modifying `table.js`:
 
 ```js title="wwwroot/table.js"
 export async function refreshTable( accountId = null, projectId=null ) {
-    showTable(false);
-    if( TABLE_TABS[g_accDataTable.tabKey].TAB_CATEGORY=='hub' && projectId ){
+    $("#loadingoverlay").fadeIn()
+    if( TABLE_TABS[g_accDataTable.tabKey].CATEGORY_NAME=='hub' && projectId ){
         for (let key in TABLE_TABS) {
-            if( TABLE_TABS[key].TAB_CATEGORY == 'hub' ){
+            if( TABLE_TABS[key].CATEGORY_NAME == 'hub' ){
                 $("#" + key).addClass("hidden");
                 $("#" + key).removeClass("active");
             }
@@ -273,9 +273,9 @@ export async function refreshTable( accountId = null, projectId=null ) {
             }
         } 
     }
-    if (TABLE_TABS[g_accDataTable.tabKey].TAB_CATEGORY == 'project' && !projectId) {
+    if (TABLE_TABS[g_accDataTable.tabKey].CATEGORY_NAME == 'project' && !projectId) {
         for (let key in TABLE_TABS) {
-            if (TABLE_TABS[key].TAB_CATEGORY == 'hub') {
+            if (TABLE_TABS[key].CATEGORY_NAME == 'hub') {
                 $("#" + key).removeClass("hidden");
                 if (TABLE_TABS[key].CATEGORY_DEFAULT)
                     $("#" + key).addClass("active");

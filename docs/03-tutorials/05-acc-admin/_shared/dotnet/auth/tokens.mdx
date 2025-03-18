@@ -1,0 +1,149 @@
+Create an `APS.cs` file under the `Models` subfolder. This is where we will be implementing
+the APS-specific logic that will be used in different areas of our server application. Let's
+start by adding the following code to the file:
+
+```csharp title="Models/APS.cs"
+using System;
+using System.Collections.Generic;
+using Autodesk.SDKManager;
+using Autodesk.Authentication.Model;
+
+public class Tokens
+{
+    public string? AccessToken;
+    public string? RefreshToken;
+    public DateTime ExpiresAt;
+}
+
+public partial class APS
+{
+    private readonly string _clientId;
+    private readonly string _clientSecret;
+    private readonly string _callbackUri;
+    private SDKManager _SDKManager;
+    private readonly List<Scopes> TokenScopes = new List<Scopes> { Scopes.DataRead, Scopes.AccountRead, Scopes.AccountWrite };
+
+    public APS(string clientId, string clientSecret, string callbackUri)
+    {
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _callbackUri = callbackUri;
+        _SDKManager = SdkManagerBuilder.Create().Build();
+    }
+}
+```
+
+Notice that the `APS` class is declared as `partial`. We're going to extend it
+in other `*.cs` files later. An `APS` singleton will then be provided to our server
+through ASP.NET's [dependency injection](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-6.0).
+
+Next, let's create an `APS.Auth.cs` file under the `Models` subfolder with the following code:
+
+```csharp title="Models/APS.Auth.cs"
+using System;
+using System.Threading.Tasks;
+using Autodesk.Authentication;
+using Autodesk.Authentication.Model;
+
+public partial class APS
+{
+    public string GetAuthorizationURL()
+    {
+        AuthenticationClient authenticationClient = new AuthenticationClient(_SDKManager);
+        return authenticationClient.Authorize(_clientId, ResponseType.Code, _callbackUri, TokenScopes);
+
+    }
+
+    public async Task<Tokens> GenerateTokens(string code)
+    {
+        AuthenticationClient authenticationClient = new AuthenticationClient(_SDKManager);
+        dynamic Token = await authenticationClient.GetThreeLeggedTokenAsync(_clientId,code,_callbackUri, _clientSecret);
+        
+        return new Tokens
+        {
+            AccessToken = Token.AccessToken,
+            RefreshToken = Token.RefreshToken,
+            ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds(Token.ExpiresIn)
+        };
+    }
+
+    public async Task<Tokens> RefreshTokens(Tokens tokens)
+    {
+        AuthenticationClient authenticationClient = new AuthenticationClient(_SDKManager);
+        dynamic Token = await authenticationClient.RefreshTokenAsync(tokens.RefreshToken, _clientId, _clientSecret,TokenScopes);
+        return new Tokens
+        {
+            AccessToken = Token.AccessToken,
+            RefreshToken = Token.RefreshToken,
+            ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds(Token.ExpiresIn)
+        };
+    }
+
+    public async Task<dynamic> GetUserProfile(Tokens tokens)
+    {
+        AuthenticationClient authenticationClient = new AuthenticationClient(_SDKManager);
+        dynamic profile = await authenticationClient.GetUserInfoAsync(tokens.AccessToken);
+        return profile;
+    }
+}
+```
+
+These helper methods will later be used in our server's controllers to handle
+various types of requests related to authentication, for example, redirecting the user
+to the Autodesk login page, processing the callback when the user gets redirected back
+to our application, or refreshing tokens that have expired.
+
+Finally, let's update our `Startup.cs` file to make a singleton instance of the `APS` class
+available to our server application:
+
+```csharp title="Startup.cs"
+using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+public class Startup
+{
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddControllers().AddNewtonsoftJson();
+        var clientID = Configuration["APS_CLIENT_ID"];
+        var clientSecret = Configuration["APS_CLIENT_SECRET"];
+        var callbackURL = Configuration["APS_CALLBACK_URL"];
+        var server_Session_Secret = Configuration["SERVER_SESSION_SECRET"];
+        if (string.IsNullOrEmpty(clientID) || string.IsNullOrEmpty(clientSecret) || string.IsNullOrEmpty(callbackURL) || string.IsNullOrEmpty(server_Session_Secret))
+        {
+            throw new ApplicationException("Missing required environment variables APS_CLIENT_ID, APS_CLIENT_SECRET,APS_CALLBACK_URL or SERVER_SESSION_SECRET");
+        }
+         // highlight-start
+        services.AddSingleton(new APS(clientID, clientSecret, callbackURL));
+        // highlight-end
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        app.UseDefaultFiles();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
+    }
+}
+```

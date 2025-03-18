@@ -1,0 +1,27 @@
+import SetupVS2022 from '../../../../_shared/setup-vs2022/01-create-project.md';
+
+import ResponsiveVideo from "@site/src/components/ResponsiveVideo.js";
+import PreviewUrl from "@site/static/videos/vs2022-proj-setup.mp4";
+
+- Launch Visual Studio 2022, select `Create New Project`
+- Enter `ASP.NET Core Empty` in templates search bar. Select and Next.
+- On the next dialog, let's name it `MyAPSApp`, Next.
+- On the next dialog, ensure .NET 8.0 (Long Term Support) is selected, uncheck `Configure for HTTPS`.
+- Disable use of top level-statements by checking the `Do not use top-level statements` box, then click `create`.
+- In the NuGet Package Manager, switch to the Browse tab, and search for and install the following packages:
+
+
+:::note
+At the writing of this documentation, the tutorial is using the specified version next to the package name.
+:::
+
+```bash
+Autodesk.SDKManager v1.1.2
+Autodesk.Authentication v2.0.0
+Autodesk.Construction.AccountAdmin v2.1.0
+Autodesk.DataManagement v2.0.1
+Microsoft.AspNetCore.Mvc.NewtonsoftJson v8.0.5
+```
+
+<ResponsiveVideo src={PreviewUrl} />
+```

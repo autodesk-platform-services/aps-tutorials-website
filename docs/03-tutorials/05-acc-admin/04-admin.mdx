@@ -1,6 +1,10 @@
+import EnvTabs from '@site/src/components/EnvTabs.js';
 
 import NodeJsVsCodeHubs from './_shared/nodejs-vscode/admin/account-admin.mdx';
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/admin/endpoints.mdx';
+
+import DotNetAccoutAdmin from './_shared/dotnet/admin/account-admin.mdx';
+import DotNetEndpoints from './_shared/dotnet/admin/endpoints.mdx';
 
 # Account Admin
 
@@ -12,14 +16,14 @@ to FETCH and CREATE the data of ACC Projects and Users:
 
 First, let's add a couple of helper methods for getting and importing projects and users:
 
-<NodeJsVsCodeHubs />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeHubs} DotNetVsCode={DotNetAccoutAdmin} DotNetVs2022={DotNetAccoutAdmin} />
 
 ## Server endpoints
 
 Next, let's expose the new functionality to the client-side code through another
 set of endpoints.
 
-<NodeJsVsCodeEndpoints />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetEndpoints} DotNetVs2022={DotNetEndpoints} />
 
 ## Try it out
 

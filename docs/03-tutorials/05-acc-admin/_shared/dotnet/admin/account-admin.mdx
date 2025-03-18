@@ -1,0 +1,102 @@
+Create a `APS.Admin.cs` under the Models subfolder with the following content:
+```js title="Models/APS.Admin.cs"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Autodesk.Construction.AccountAdmin;
+using Autodesk.Construction.AccountAdmin.Model;
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public partial class APS
+{
+    public async Task<IEnumerable<dynamic>> GetProjectsACC(string accountId, Tokens tokens)
+   {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        List<Project> allProjects = new List<Project>();
+        var offset = 0;
+        var totalResult = 0;
+        do
+        {
+            var projects = await adminClient.GetProjectsAsync(accountId,offset:offset,accessToken:tokens.AccessToken);
+            allProjects.AddRange(projects.Results);
+            offset += (int)projects.Pagination.Limit;
+            totalResult = (int)projects.Pagination.TotalResults;
+        } while (offset < totalResult);
+        return allProjects;
+    }
+
+    public async Task<dynamic> GetProjectACC(string projectId, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        var project = await adminClient.GetProjectAsync(projectId, accessToken: tokens.AccessToken);       
+        return project;
+    }
+
+
+    public async Task<IEnumerable<dynamic>> GetProjectUsersACC(string projectId, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        var allUsers = new List<ProjectUser>();
+        var offset = 0;
+        var totalResult = 0;
+        do
+        {
+            var users = await adminClient.GetProjectUsersAsync(projectId, offset: offset, accessToken: tokens.AccessToken );
+            allUsers.AddRange(users.Results);            
+            offset += (int)users.Pagination.Limit;
+            totalResult = (int)users.Pagination.TotalResults;
+        } while (offset < totalResult);
+        return allUsers;
+    }
+
+
+    public async Task<dynamic> CreateProjectACC(string accountId, JObject body, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        var projectPayload = body.ToObject<ProjectPayload>();
+        var newProject = await adminClient.CreateProjectAsync(accountId, projectPayload, accessToken: tokens.AccessToken);
+        return newProject;
+    }
+
+
+    public async Task<dynamic> AddProjectAdminACC(string projectId, string email, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        ProjectUserPayload adminUser = new ProjectUserPayload()
+        {
+            Email = email,
+            Products = new List<ProjectUserPayloadProducts>()
+            {
+                new ProjectUserPayloadProducts()
+                {
+                    Key = ProductKeys.ProjectAdministration,
+                    Access = ProductAccess.Administrator
+                },
+                new ProjectUserPayloadProducts()
+                {
+                    Key = ProductKeys.Docs,
+                    Access = ProductAccess.Administrator
+
+                }
+            }
+        };
+        var projectUser = await adminClient.AssignProjectUserAsync(projectId, adminUser, accessToken: tokens.AccessToken);
+        return projectUser;
+    }
+
+
+    public async Task<dynamic> ImportProjectUsersACC(string projectId, JObject body, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        var projectUsersPayload = body.ToObject<ProjectUsersImportPayload>();
+        var usersRes = await adminClient.ImportProjectUsersAsync(projectId, projectUsersPayload, accessToken: tokens.AccessToken);
+        return usersRes;
+    }
+}
+```
+:::tip
+The method adminClient.GetProjectsAsync() returns all the production projects within this hub, 
+it's different from the Data Management GET Projects API which only returns these projects 
+the current user is involved.
+:::
