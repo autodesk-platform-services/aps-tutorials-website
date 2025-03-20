@@ -1,0 +1,47 @@
+import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/admin/endpoints.mdx';
+import NodeJsVsCodeSDK from './_shared/nodejs-vscode/admin/admin-sdk.mdx';
+import NodeJsVsCodeAdmin from './_shared/nodejs-vscode/admin/admin.mdx';
+
+# Project Admin
+
+Similarly, some issue data are those fields related with user, watcher, we will use ACC Admin API to get the information.  
+
+## ACC Admin SDK
+First, let's include the ACC Admin SDK, add the `@aps_sdk/construction-account-admin` library, and also create an instance of
+SDK client of `adminClient` at the beginning of `services/aps.js` file:
+
+<NodeJsVsCodeSDK />
+
+## Project users
+
+Next, we will add helper function to extract project users. Append the following code to the end of the `services/aps.js` file. Similaly, this API also works with **pagination**. 
+The code will extract all users.
+
+<NodeJsVsCodeAdmin />
+
+
+## Server endpoints
+
+Next, let's expose the routings to get project users to the client-side code through another
+set of endpoints. Create a `admin.js` file under the **routes** subfolder with the following content:
+
+
+<NodeJsVsCodeEndpoints />
+
+
+## Try it out
+
+And that's it for the server side. Time to try it out!
+
+- Use same project ID in previous step (remove b.) and try to call the endpoint: 
+[http://localhost:8080/api/admin/projectUsers?projectId={your-project-id}](http://localhost:8080/api/issues/subtypes?projectId={your-project-id}), the server application should
+respond with a JSON list of all the users from this project. 
+
+![Users Response](./_shared/project-users.webp)
+
+:::info
+Admin API has not exposed endpoint to get project roles. The workaround is to use [Data Connector API](https://aps.autodesk.com/apis-and-services/data-connector-api).
+
+Admin API exposes endpoint to [get project companies](https://aps.autodesk.com/en/docs/acc/v1/reference/http/projects-:project_id-companies-GET/), but it supports App context authentication only. While this tutorial sample builds the skeleton of user context authentication. 
+if you want to fetch, you could add code to get 2-legged token to call this API.or Data Connector API](https://aps.autodesk.com/apis-and-services/data-connector-api).
+:::

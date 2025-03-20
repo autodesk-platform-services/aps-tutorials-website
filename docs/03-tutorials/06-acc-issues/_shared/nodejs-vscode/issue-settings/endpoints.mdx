@@ -1,0 +1,41 @@
+
+```js title="routes/issue.js"
+router.get('/api/issues/subtypes', async function(req, res, next){
+    try {
+        const subTypes = await getIssueSubtypes(req.query.projectId,req.internalOAuthToken.access_token);
+        res.json(subTypes);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/api/issues/rootcauses', async function(req, res, next){
+    try {
+        const rootcauses = await getIssueRootcauses(req.query.projectId,req.internalOAuthToken.access_token);
+        res.json(rootcauses);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/api/issues/customAttDefs', async function(req, res, next){
+    try {
+        const customAttributes = await getIssueCustomAttributesDefs(req.query.projectId,req.internalOAuthToken.access_token);
+        res.json(customAttributes);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get('/api/issues/issueUserProfile', async function(req, res, next){
+    try {
+        const issueUserProfile = await getIssueUserProfile(req.query.projectId,req.internalOAuthToken.access_token);
+        res.json([issueUserProfile]);
+    } catch (err) {
+        next(err);
+    }
+});
+
+```
+ 

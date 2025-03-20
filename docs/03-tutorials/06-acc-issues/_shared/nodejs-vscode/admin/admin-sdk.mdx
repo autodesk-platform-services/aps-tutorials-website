@@ -1,0 +1,21 @@
+
+```js title="services/aps.js"
+const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
+const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
+const { DataManagementClient } = require('@aps_sdk/data-management');
+const { IssueClient } = require('@aps_sdk/construction-issues');
+// highlight-start
+const { AdminClient } = require('@aps_sdk/construction-account-admin');
+// highlight-end
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
+
+const service = module.exports = {};
+
+const sdk = SdkManagerBuilder.create().build();
+const authenticationClient = new AuthenticationClient(sdk);
+const dataManagementClient = new DataManagementClient(sdk);
+const issueClient = new IssueClient(sdk);
+// highlight-start
+const adminClient = new AdminClient(sdk);
+// highlight-end
+```

@@ -8,7 +8,7 @@ const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authent
 // highlight-start
 const { DataManagementClient } = require('@aps_sdk/data-management');
 // highlight-end
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL } = require('../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
 
 const service = module.exports = {};
 
@@ -19,7 +19,7 @@ const dataManagementClient = new DataManagementClient(sdk);
 // highlight-end
 ```
 
- And then append the following code to the end of the `services/aps.js` file:
+ Next, append the following code to the end of the `services/aps.js` file:
 
 ```js title="services/aps.js"
 // Data Management APIs
@@ -37,8 +37,8 @@ service.getProjects = async (hubId, token) => {
     } )
 };
 ```
+
 :::tip
-The method dataManagementClient.getHubProjects() returns these projects that 
-the current user is involed, it's different from the ACC Admin GET Projects API which 
-returns all the projects including those the user is not involved.
+The method dataManagementClient.getHubProjects() only returns these projects that 
+the current logged user is member of.
 :::

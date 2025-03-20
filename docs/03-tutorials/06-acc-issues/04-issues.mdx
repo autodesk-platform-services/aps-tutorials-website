@@ -1,0 +1,79 @@
+
+import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/issue/endpoints.mdx';
+import NodeJsVsCodeSDK from './_shared/nodejs-vscode/issue/issue-sdk.mdx';
+import NodeJsVsCodeExtractIssues from './_shared/nodejs-vscode/issue/export-issues.mdx';
+import NodeJsVsCodeImportIssues from './_shared/nodejs-vscode/issue/import-issues.mdx';
+
+# Project Issues
+
+Now, we will implement our server to consume [ACC Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to fetch project issues and create/modify issues.
+
+## ACC Issue SDK
+First, let's include the ACC Issue SDK, add the `@aps_sdk/construction-issues` library, and also create an instance of
+SDK client of `IssueClient` at the beginning of `services/aps.js` file:
+
+<NodeJsVsCodeSDK />
+
+## Extract Issues
+Next, we will add a couple of helper functions to extract issues. Append the following code to the end of the `services/aps.js` file.
+We will extract 100 issues in one call and move to the next 100 issues until all issues are fetched.
+<NodeJsVsCodeExtractIssues />
+
+:::tip
+Issues is a collection managed on APS cloud database. To have nice performance of the call, it is a web standard of HTTP request that each call only returns partial records of the collection, called **pagination**. 
+With current design, ACC Issue returns 1-100 issues in one call by default. We also have chance to specify the **limit** parameter which indicates how many records in one page. The other parameter **offset** specifies from which index of issue to extract the records.
+Check API reference of [GET:Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-GET/) for more information.
+:::
+
+
+## Import Issues
+Moving forward, we will add helper functions to create and modify issues. [POST Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-POST/) for creating a new issue. 
+[PATCH Issues/:IssueId](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-PATCH/) for modifying an existing issue. When the server side receives imorted records from client side (csv), it will check if the record has value with **Id**, if no, it will go to the branch to create a new issue. If yes, it will modify the exsisting issue with updated data. 
+
+For tracking the status, an json array makes a note on those created or modfied issues, or the failed call with corresponding csv row number.
+
+<NodeJsVsCodeImportIssues />
+
+:::tip
+The APIs of creating issue and modifying issues only accept a few fields in the payload. This sample isolates the extracted csv data with a few fields:
+
+- title
+- description
+- issueSubtypeId
+- status
+- dueDate
+- assignedTo
+- assignedToType
+- rootCauseId
+- published
+:::
+ 
+
+## Server endpoints
+
+Next, let's expose the routings to extract issues and import issue to the client-side code through another
+set of endpoints. Create a `issue.js` file under the **routes** subfolder with the following content:
+
+
+<NodeJsVsCodeEndpoints />
+
+## Try it out
+
+And that's it for the server side. Time to try it out!
+
+- Use same project ID in previous step (remove b.) and try to call the endpoint: 
+[http://localhost:8080/api/issues/issues?projectId={your-project-id}](http://localhost:8080/api/issues/issues?projectId={your-project-id}), the server application should
+respond with a JSON list of all the issues from this project. 
+
+![Issues Response](./_shared/project-issues.webp)
+
+:::info
+It would take a bit long time if the volumn of the issue records is large.
+This sample extract raw data of issue directly. Some fields are json object or array object. Their value will be in string.
+:::
+
+- To test creating or modifying issues, use HTTP test tools or commandline scripts to perform the test with access token and request payload.
+ 
+:::info
+Recommended HTTP test tools: [Postman](https://www.postman.com/downloads/), [Insomnia](https://insomnia.rest/)
+:::

@@ -1,0 +1,20 @@
+
+```js title="services/aps.js"
+// ACC Assue APIs
+
+//Extract Issue Data
+service.getIssues = async (projectId, token) => {
+    let allIssues = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{ 
+        const resp = await issueClient.getIssues(projectId, {accessToken:token,offset:offset});
+        allIssues = allIssues.concat(resp.results);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allIssues;
+};
+
+```
+

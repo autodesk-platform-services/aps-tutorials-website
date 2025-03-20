@@ -5,33 +5,28 @@ import PreviewUrl from '@site/static/videos/acc-issues-app.png';
 
 ## Introduction
 
-:::note
-Ensure **[Issue Module](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_About)** is activated in ACC Project.
-:::
-
-
-In this tutorial we're going to build an APS application that will let us browse Hubs and Projects
-of our authenticated user in [Autodesk Construction Cloud](https://www.autodesk.com/products/autodesk-docs/overview),
-extract project issues, issue subtypes, issue rootcauses, issue Attribute Definitions of a 
-given ACC project and  render them in a tabular view, list all the information of project users,you can also export these information to a CSV
-file easily as well as import from an external CSV. Most important, the tutorial will show case how to:
-1. Export project issues into a csv file
-2. Import issues from external CSV file into the ACC project to create new or existing  issue.
-
+In this tutorial we're going to build an APS application that allows the authenticated user in [Autodesk Construction Cloud](https://www.autodesk.com/products/autodesk-docs/overview) to 
+extract project issues and issues settings: issue sub types, issue root causes, issue custom attribute of a 
+given ACC project. This application renders these data in a tabular view. The data can also be exported to CSV
+file easily. With the data from a CSV, the application demos the scenario that imports them to create new issues or modify the existing issues.
 
 :::note
-Make sure to [provision access](../../01-getting-started/index.mdx#provision-access-in-other-products) to your ACC accounts
-so that the application can see your project issues.
-:::
+This sample will also extract some admin data such as project users, companie. Please make sure to [provision access](../../01-getting-started/index.mdx#provision-access-in-other-products) to your ACC accounts.
+
+Ensure **[Issue Module](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_About)** has been activated in ACC Project. 
+
+Issue API supports user context of authentication only. Ensure the logged user has permissions to access expected related issues. See **[Issues Permission](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_Permissions)**
+::: 
 
 <Image img={PreviewUrl} />
 
-We will use the following components of the platform:
+We will use the following APIs of Autodesk Platform Services (APS):
 
 - [Authentication](https://aps.autodesk.com/en/docs/oauth/v2/developers_guide/overview)
 - [Data Management](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
 - [Autodesk Construction Cloud Admin](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
 - [Autodesk Construction Issues](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/)
+
 
 :::tip
 If you're not interested in building the application from scratch, and you just want to try

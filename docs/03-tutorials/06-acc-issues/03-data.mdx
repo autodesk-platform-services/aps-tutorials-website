@@ -4,8 +4,9 @@ import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
 
 # Project Browsing
 
-In this step we'll extend our server so that we can browse the projects of Autodesk Construction Cloud. 
-We will basically get the hierarchy of hubs, projects using Data Management APIs:
+The base URI schema of ACC Issue API is in the pattern: https://developer.api.autodesk.com/construction/issues/v1/projects/:projectId/. 
+, where the **projectId** is a required URI parameter. In this step we'll extend the server to browse the projects of Autodesk Construction Cloud, in order to fetch **project id**. 
+We will basically get the hierarchy of hubs, projects using Data Management APIs.
 
 ## Browsing hubs
 
@@ -17,6 +18,7 @@ First, let's add a couple of helper methods for browsing through the hubs, proje
 
 Next, let's expose the new functionality to the client-side code through another
 set of endpoints.
+Data Management API returns plentiful data of the object. Our endpoints will extract partial data for client-side.
 
 <NodeJsVsCodeEndpoints />
 
@@ -25,9 +27,14 @@ set of endpoints.
 Start (or restart) the app from Visual Studio Code as usual, and navigate to
 [http://localhost:8080/api/hubs](http://localhost:8080/api/hubs) in the browser.
 The server should respond with a JSON list of all the hubs you have access to.
+
+![Hubs Response](./_shared/hubs-response.webp)
+
 Try copying the ID of one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
+
+![Projects Response](./_shared/projects-response.webp)
 
 :::info
 If you skipped the login procedure in the previous step, or restarted your server application,
@@ -41,4 +48,3 @@ If you are using Google Chrome, consider installing [JSON Formatter](https://chr
 or a similar extension to automatically format JSON responses.
 :::
 
-![Hubs Response](./_shared/hubs-response.webp)

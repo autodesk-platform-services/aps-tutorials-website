@@ -1,0 +1,45 @@
+import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/issue-settings/endpoints.mdx';
+import NodeJsVsCodeIssuesSettings from './_shared/nodejs-vscode/issue-settings/settings.mdx';
+
+# Issue Settings
+
+In the previous step, we extracted the raw data of issues. 
+The values of some fields are specific **ids** such as `Issue Sub Type`, `Root Cause`. And `Custom Attributes` is in for patten of id & value.
+They are **Issue Settings**. To get their information with the **ids**, we will need to call more Issues APIs.
+
+In addition, the APIs permissions follows the user permission setting of the logged user, who authorizes this sample to manipulate the issues. We will also add one more help function to get the user permissions.
+We will append a couple of helper functions to the end of the `services/aps.js` file.
+
+<NodeJsVsCodeIssuesSettings />
+
+:::info
+**Issue Sub Type** is children of **Issue Type** . This sample iterates each type, 
+extracts its sub types to build the collection.
+
+similarly, **Issue Root Cause** is children of **Issue Root Cause Caregory**. 
+This sample iterates each category , extracts its root causes to build the collection.
+
+The corresponding APIs also return types or categories in **pagination**.
+
+No API yet to get permissions table like ACC UI does: [Issues Permission](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_Permissions). Current API supports to fetch the logged user permission.
+
+:::
+
+
+## Server endpoints
+
+Next, let's expose the routings to extract issues and import issue to the client-side code through another
+set of endpoints. Append these endpoints to  `issue.js` file with the following content:
+ 
+
+<NodeJsVsCodeEndpoints />
+
+## Try it out
+
+And that's it for the server side. Time to try it out!
+
+- Use same project ID in previous step (remove b.) and try to call the endpoint: 
+[http://localhost:8080/api/issues/subtypes?projectId={your-project-id}](http://localhost:8080/api/issues/subtypes?projectId={your-project-id}), the server application should
+respond with a JSON list of all the issue sub types from this project. 
+
+![Issues Response](./_shared/issue-subtypes.webp)
