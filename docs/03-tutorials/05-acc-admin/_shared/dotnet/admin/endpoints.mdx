@@ -82,17 +82,17 @@ public class AdminController : ControllerBase
         {
             var projectInfo = await _aps.CreateProjectACC(accountId, project, tokens);
             try
-            {                
+            {
                 projectsCreated.Add(projectInfo.Name);
 
-                while(projectInfo.Status!="active")
+                while (projectInfo.Status != "active")
                 {
-                    await Task.Delay(1000);                  
+                    await Task.Delay(1000);
                     projectInfo = await _aps.GetProjectACC(projectInfo.Id, tokens);
                 }
 
                 var profile = await _aps.GetUserProfile(tokens);
-                await _aps.AddProjectAdminACC(projectInfo.Id, profile.Email, tokens); 
+                await _aps.AddProjectAdminACC(projectInfo.Id, profile.Email, tokens);
             }
             catch (Exception ex)
             {
@@ -101,8 +101,8 @@ public class AdminController : ControllerBase
             }
         });
         await Task.WhenAll(tasks);
-        return Ok(new { Succeed = projectsCreated, Failed = projectsFailed });       
-    }    
+        return Ok(new { Succeed = projectsCreated, Failed = projectsFailed });
+    }
 
     [HttpPost("project/users")]
     public async Task<IActionResult> CreateProjectUsers([FromBody] JObject content)
