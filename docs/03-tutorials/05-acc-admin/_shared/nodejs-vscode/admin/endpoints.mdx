@@ -55,7 +55,7 @@ router.post('/api/admin/projects', bodyParser.json(), async function (req, res, 
             }
         })
     )
-    res.json({'Succeed':projectsCreated, 'Failed': projectsFailed });
+    res.json({'succeed':projectsCreated, 'failed': projectsFailed });
 });
 
 router.get('/api/admin/project/users', async function (req, res, next) {
