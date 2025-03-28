@@ -4,13 +4,13 @@ import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
 
 # Project Browsing
 
-The base URI schema of ACC Issue API is in the pattern: https://developer.api.autodesk.com/construction/issues/v1/projects/:projectId/. 
+The base URI schema of ACC Issue API is in the pattern: `https://developer.api.autodesk.com/construction/issues/v1/projects/:projectId`
 , where the **projectId** is a required URI parameter. In this step we'll extend the server to browse the projects of Autodesk Construction Cloud, in order to fetch **project id**. 
-We will basically get the hierarchy of hubs, projects using Data Management APIs.
+We will basically get the hierarchy of hubs and projects using Data Management APIs.
 
 ## Browsing hubs
 
-First, let's add a couple of helper methods for browsing through the hubs, projects:
+We will add a couple of helper methods for browsing through the hubs, projects:
 
 <NodeJsVsCodeHubs />
 

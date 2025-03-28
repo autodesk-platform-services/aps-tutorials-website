@@ -28,9 +28,9 @@ Check API reference of [GET:Issues](https://aps.autodesk.com/en/docs/acc/v1/refe
 
 ## Import Issues
 Moving forward, we will add helper functions to create and modify issues. [POST Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-POST/) for creating a new issue. 
-[PATCH Issues/:IssueId](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-PATCH/) for modifying an existing issue. When the server side receives imorted records from client side (csv), it will check if the record has value with **Id**, if no, it will go to the branch to create a new issue. If yes, it will modify the exsisting issue with updated data. 
+[PATCH Issues/:IssueId](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-PATCH/) for modifying an existing issue. When the server side receives imported records from client side (csv), it will check if the record has value with **Id**, if no, it will go to the branch to create a new issue. If yes, it will modify the exsisting issue with updated data. 
 
-For tracking the status, an json array makes a note on those created or modfied issues, or the failed call with corresponding csv row number.
+For tracking the status, a json array makes a note on those created or modfied issues, or the failed call with corresponding csv row number.
 
 <NodeJsVsCodeImportIssues />
 
@@ -68,7 +68,7 @@ respond with a JSON list of all the issues from this project.
 ![Issues Response](./_shared/project-issues.webp)
 
 :::info
-It would take a bit long time if the volumn of the issue records is large.
+It would take a bit long time if the volume of the issue records is large.
 This sample extract raw data of issue directly. Some fields are json object or array object. Their value will be in string.
 :::
 
