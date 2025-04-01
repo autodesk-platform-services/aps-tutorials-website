@@ -221,8 +221,8 @@ class Table {
                         const url = TABLE_TABS[this.#tabKey].REQUEST_URL;
                         try {
                             const resp = await axios.post(url, data);
-                            resp.data.Succeed && resp.data.Succeed.forEach( item => console.log( item + ' is created'));
-                            resp.data.Failed && resp.data.Failed.forEach( item => console.warn( item + ' failed to be created') );
+                            resp.data.succeed && resp.data.succeed.forEach( item => console.log( item + ' is created'));
+                            resp.data.failed && resp.data.failed.forEach( item => console.warn( item + ' failed to be created') );
                             await sleep(3000);
                             await this.resetData();
                         } catch (err) {
@@ -259,10 +259,10 @@ Update the code within the above 2 functions by modifying `table.js`:
 
 ```js title="wwwroot/table.js"
 export async function refreshTable( accountId = null, projectId=null ) {
-    showTable(false);
-    if( TABLE_TABS[g_accDataTable.tabKey].TAB_CATEGORY=='hub' && projectId ){
+    $("#loadingoverlay").fadeIn()
+    if( TABLE_TABS[g_accDataTable.tabKey].CATEGORY_NAME=='hub' && projectId ){
         for (let key in TABLE_TABS) {
-            if( TABLE_TABS[key].TAB_CATEGORY == 'hub' ){
+            if( TABLE_TABS[key].CATEGORY_NAME == 'hub' ){
                 $("#" + key).addClass("hidden");
                 $("#" + key).removeClass("active");
             }
@@ -273,9 +273,9 @@ export async function refreshTable( accountId = null, projectId=null ) {
             }
         } 
     }
-    if (TABLE_TABS[g_accDataTable.tabKey].TAB_CATEGORY == 'project' && !projectId) {
+    if (TABLE_TABS[g_accDataTable.tabKey].CATEGORY_NAME == 'project' && !projectId) {
         for (let key in TABLE_TABS) {
-            if (TABLE_TABS[key].TAB_CATEGORY == 'hub') {
+            if (TABLE_TABS[key].CATEGORY_NAME == 'hub') {
                 $("#" + key).removeClass("hidden");
                 if (TABLE_TABS[key].CATEGORY_DEFAULT)
                     $("#" + key).addClass("active");
