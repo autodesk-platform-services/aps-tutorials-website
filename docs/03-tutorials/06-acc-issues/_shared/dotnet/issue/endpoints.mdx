@@ -1,0 +1,58 @@
+Create a `ACCIssuesController.cs` file under the `Controllers` subfolder with the following content:
+
+```js title="Controoler/ACCIssuesController.cs"
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ACCIssuesController : ControllerBase
+{
+    private readonly ILogger<ACCIssuesController> _logger;
+    private readonly APS _aps;
+
+    public ACCIssuesController(ILogger<ACCIssuesController> logger, APS aps)
+    {
+        _logger = logger;
+        _aps = aps;
+    }
+ 
+//get issues
+    [HttpGet("issues")]
+    public async Task<ActionResult<string>> ListIssues( string projectId)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+
+        var issues = await _aps.GetIssues(Request.Query["projectId"], tokens);
+        return JsonConvert.SerializeObject(issues);
+    } 
+
+    //create new issue or modify issue
+    [HttpPost("issues")]
+    public async Task<ActionResult> CreateOrModifyIssues([FromBody] JObject content)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null) 
+        {
+            return Unauthorized(); 
+        }
+     
+        string projectId = content["projectId"].Value<string>();
+        dynamic issues = content["data"].Value<dynamic>();
+ 
+        var status = await _aps.CreateOrModifyACCIssues(projectId, tokens,issues);
+
+        return Ok(new {created = status.created ,modified = status.modified,failed = status.failed  });
+    }
+}
+```
+

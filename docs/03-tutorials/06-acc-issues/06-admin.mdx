@@ -1,32 +1,28 @@
+import EnvTabs from '@site/src/components/EnvTabs.js';
+
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/admin/endpoints.mdx';
 import NodeJsVsCodeSDK from './_shared/nodejs-vscode/admin/admin-sdk.mdx';
 import NodeJsVsCodeAdmin from './_shared/nodejs-vscode/admin/admin.mdx';
+
+import DotNetEndpoints from './_shared/dotnet/admin/endpoints.mdx';
+import DotNetSDK from './_shared/dotnet/admin/admin-sdk.mdx';
+import DotNetAdmin from './_shared/dotnet/admin/admin.mdx';
 
 # Project Admin
 
 Similarly, some issue data are those fields related with user, watcher, we will use ACC Admin API to get the information.  
 
 ## ACC Admin SDK
-First, let's include the ACC Admin SDK, add the `@aps_sdk/construction-account-admin` library, and also create an instance of
-SDK client of `adminClient` at the beginning of `services/aps.js` file:
-
-<NodeJsVsCodeSDK />
-
-## Project users
-
-Next, we will add helper function to extract project users. Append the following code to the end of the `services/aps.js` file. Similaly, this API also works with **pagination**. 
-The code will extract all users.
-
-<NodeJsVsCodeAdmin />
+First, let's include the ACC Admin SDK:
+<EnvTabs NodeJsVsCode={NodeJsVsCodeSDK} DotNetVsCode={DotNetSDK} DotNetVs2022={DotNetSDK} />
 
 
 ## Server endpoints
 
 Next, let's expose the routings to get project users to the client-side code through another
-set of endpoints. Create a `admin.js` file under the **routes** subfolder with the following content:
+set of endpoints. 
 
-
-<NodeJsVsCodeEndpoints />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetEndpoints} DotNetVs2022={DotNetEndpoints} />
 
 
 ## Try it out

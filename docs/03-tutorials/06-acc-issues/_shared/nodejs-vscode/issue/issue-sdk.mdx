@@ -1,4 +1,7 @@
+import NodeJsVsCodeExtractIssues from './export-issues.mdx';
 
+Add the `@aps_sdk/construction-issues` library, and also create an instance of
+SDK client of `IssueClient` at the beginning of `services/aps.js` file:
 ```js title="services/aps.js"
 const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
 const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
@@ -17,3 +20,8 @@ const dataManagementClient = new DataManagementClient(sdk);
 const issueClient = new IssueClient(sdk);
 // highlight-end
 ```
+
+## Extract Issues
+Next, we will add a couple of helper functions to extract issues. Append the following code to the end of the `services/aps.js` file.
+We will extract 100 issues in one call and move to the next 100 issues until all issues are fetched.
+<NodeJsVsCodeExtractIssues />

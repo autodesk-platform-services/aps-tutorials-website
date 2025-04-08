@@ -1,5 +1,10 @@
+import EnvTabs from '@site/src/components/EnvTabs.js';
+
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/issue-settings/endpoints.mdx';
 import NodeJsVsCodeIssuesSettings from './_shared/nodejs-vscode/issue-settings/settings.mdx';
+
+import DotnetEndpoints from './_shared/dotnet/issue-settings/endpoints.mdx';
+import DotNetIssuesSettings from './_shared/dotnet/issue-settings/settings.mdx';
 
 # Issue Settings
 
@@ -7,10 +12,10 @@ In the previous step, we extracted the raw data of issues.
 The values of some fields are specific **ids** such as `Issue Sub Type`, `Root Cause`. And `Custom Attributes` is in for patten of id & value.
 They are **Issue Settings**. To get their information with the **ids**, we will need to call more Issues APIs.
 
-In addition, the APIs permissions follows the user permission setting of the logged user, who authorizes this sample to manipulate the issues. We will also add one more help function to get the user permissions.
-We will append a couple of helper functions to the end of the `services/aps.js` file.
+In addition, the APIs permissions follows the user permission setting of the logged user, who authorizes this sample to manipulate the issues. 
 
-<NodeJsVsCodeIssuesSettings />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeIssuesSettings} DotNetVsCode={DotNetIssuesSettings} DotNetVs2022={DotNetIssuesSettings} />
+
 
 :::info
 **Issue Sub Type** is a child of **Issue Type** . This sample iterates each type, 
@@ -32,7 +37,8 @@ Next, let's expose the routings to extract issues and import issue to the client
 set of endpoints. Append these endpoints to  `issue.js` file with the following content:
  
 
-<NodeJsVsCodeEndpoints />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotnetEndpoints} DotNetVs2022={DotnetEndpoints} />
+
 
 ## Try it out
 

@@ -1,3 +1,7 @@
+import NodeJsVsCodeAdmin from './admin.mdx';
+
+Add the `@aps_sdk/construction-account-admin` library, and also create an instance of
+SDK client of `adminClient` at the beginning of `services/aps.js` file:
 
 ```js title="services/aps.js"
 const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
@@ -19,3 +23,11 @@ const issueClient = new IssueClient(sdk);
 const adminClient = new AdminClient(sdk);
 // highlight-end
 ```
+
+
+## Project users
+
+Next, we will add helper function to extract project users. Append the following code to the end of the `services/aps.js` file. Similaly, this API also works with **pagination**. 
+The code will extract all users.
+
+<NodeJsVsCodeAdmin />

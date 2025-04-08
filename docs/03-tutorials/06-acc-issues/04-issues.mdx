@@ -1,23 +1,23 @@
+import EnvTabs from '@site/src/components/EnvTabs.js';
 
 import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/issue/endpoints.mdx';
 import NodeJsVsCodeSDK from './_shared/nodejs-vscode/issue/issue-sdk.mdx';
 import NodeJsVsCodeExtractIssues from './_shared/nodejs-vscode/issue/export-issues.mdx';
 import NodeJsVsCodeImportIssues from './_shared/nodejs-vscode/issue/import-issues.mdx';
 
+import DotNetEndpoints from './_shared/dotnet/issue/endpoints.mdx';
+import DotNetSDK from './_shared/dotnet/issue/issue-sdk.mdx';
+import DotNetExtractIssues from './_shared/dotnet/issue/export-issues.mdx';
+import DotNetImportIssues from './_shared/dotnet/issue/import-issues.mdx';
+
 # Project Issues
 
 Now, we will implement our server to consume [ACC Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to fetch project issues and create/modify issues.
 
 ## ACC Issue SDK
-First, let's include the ACC Issue SDK, add the `@aps_sdk/construction-issues` library, and also create an instance of
-SDK client of `IssueClient` at the beginning of `services/aps.js` file:
+First, let's include the ACC Issue SDK:
+<EnvTabs NodeJsVsCode={NodeJsVsCodeSDK} DotNetVsCode={DotNetSDK} DotNetVs2022={DotNetSDK} />
 
-<NodeJsVsCodeSDK />
-
-## Extract Issues
-Next, we will add a couple of helper functions to extract issues. Append the following code to the end of the `services/aps.js` file.
-We will extract 100 issues in one call and move to the next 100 issues until all issues are fetched.
-<NodeJsVsCodeExtractIssues />
 
 :::tip
 Issues is a collection managed on APS cloud database. To have nice performance of the call, it is a web standard of HTTP request that each call only returns partial records of the collection, called **pagination**. 
@@ -32,7 +32,9 @@ Moving forward, we will add helper functions to create and modify issues. [POST 
 
 For tracking the status, a json array makes a note on those created or modfied issues, or the failed call with corresponding csv row number.
 
-<NodeJsVsCodeImportIssues />
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeImportIssues} DotNetVsCode={DotNetImportIssues} DotNetVs2022={DotNetImportIssues} />
+
 
 :::tip
 The APIs of creating issue and modifying issues only accept a few fields in the payload. This sample isolates the extracted csv data with a few fields:
@@ -52,10 +54,11 @@ The APIs of creating issue and modifying issues only accept a few fields in the 
 ## Server endpoints
 
 Next, let's expose the routings to extract issues and import issue to the client-side code through another
-set of endpoints. Create a `issue.js` file under the **routes** subfolder with the following content:
+set of endpoints. 
 
 
-<NodeJsVsCodeEndpoints />
+<EnvTabs NodeJsVsCode={NodeJsVsCodeEndpoints} DotNetVsCode={DotNetEndpoints} DotNetVs2022={DotNetEndpoints} />
+
 
 ## Try it out
 
