@@ -10,6 +10,8 @@ Next we will need to install the dependencies. In this case it will be the requi
 ```bash
 dotnet add package Autodesk.Authentication
 dotnet add package Autodesk.DataManagement
+dotnet add package Adsk.Platform.ACC.AccountAdmin
+dotnet add package Autodesk.Construction.Issues 
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -18,13 +20,19 @@ slightly different version numbers, and additional .NET settings):
 ```xml
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>aps_acc_issues_dotnet_vscode</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Adsk.Platform.ACC.AccountAdmin" Version="0.1.4" />
     <PackageReference Include="Autodesk.Authentication" Version="2.0.0" />
-    <PackageReference Include="Autodesk.DataManagement" Version="2.0.0" />
+    <PackageReference Include="Autodesk.Construction.Issues" Version="2.1.2" />
+    <PackageReference Include="Autodesk.DataManagement" Version="2.0.1" />
   </ItemGroup>
 </Project>
+
 ```
 
 Finally, let's create a couple more subfolders in your project folder that we're going to need later:
