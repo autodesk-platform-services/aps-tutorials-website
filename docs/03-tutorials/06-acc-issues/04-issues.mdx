@@ -14,30 +14,30 @@ import DotNetImportIssues from './_shared/dotnet/issue/import-issues.mdx';
 
 Now, we will implement our server to consume [ACC Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to fetch project issues and create/modify issues.
 
-## ACC Issue SDK
+## Work with Issues
 First, let's include the ACC Issue SDK:
 <EnvTabs NodeJsVsCode={NodeJsVsCodeSDK} DotNetVsCode={DotNetSDK} DotNetVs2022={DotNetSDK} />
 
 
 :::tip
-Issues is a collection managed on APS cloud database. To have nice performance of the call, it is a web standard of HTTP request that each call only returns partial records of the collection, called **pagination**. 
-With current design, ACC Issue returns 1-100 issues in one call by default. We also have chance to specify the **limit** parameter which indicates how many records in one page. The other parameter **offset** specifies from which index of issue to extract the records.
+The 'Issues' collection is managed in the APS cloud database. To ensure optimal performance, the API follows the web standard of **pagination** meaning each HTTP request returns only a portion of the records in the collection.
+With current design, ACC Issue API returns 1-100 issues in one call by default. We also have chance to specify the **limit** parameter which indicates how many records in one page. The other parameter **offset** specifies from which index of issue to extract the records.
 Check API reference of [GET:Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-GET/) for more information.
 :::
 
 
 ## Import Issues
 Moving forward, we will add helper functions to create and modify issues. [POST Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-POST/) for creating a new issue. 
-[PATCH Issues/:IssueId](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-PATCH/) for modifying an existing issue. When the server side receives imported records from client side (csv), it will check if the record has value with **Id**, if no, it will go to the branch to create a new issue. If yes, it will modify the exsisting issue with updated data. 
+[PATCH Issues/:IssueId](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-PATCH/) for modifying an existing issue. 
+When the server receives records imported from the client (via CSV), it checks whether a record contains an ID value. If not, it creates a new issue. If an ID exists, it updates the corresponding issue with the new data.
 
-For tracking the status, a json array makes a note on those created or modfied issues, or the failed call with corresponding csv row number.
-
+To track status, a JSON array logs the successfully created or modified issues, along with any failed API calls and their corresponding CSV row numbers.
 
 <EnvTabs NodeJsVsCode={NodeJsVsCodeImportIssues} DotNetVsCode={DotNetImportIssues} DotNetVs2022={DotNetImportIssues} />
 
 
-:::tip
-The APIs of creating issue and modifying issues only accept a few fields in the payload. This sample isolates the extracted csv data with a few fields:
+:::info
+The issue creation and modification APIs only accept a limited set of fields in the request payload. This sample demonstrates how to just use some required fields from the CSV data.
 
 - title
 - description
@@ -71,12 +71,14 @@ respond with a JSON list of all the issues from this project.
 ![Issues Response](./_shared/project-issues.webp)
 
 :::info
-It would take a bit long time if the volume of the issue records is large.
-This sample extract raw data of issue directly. Some fields are json object or array object. Their value will be in string.
-:::
+- It would take a bit long time if the volume of the issue records is large.
+This sample extract raw data of issue directly. 
+
+- Some fields are json object or array object. Their value will be dumped as string in this sample.
 
 - To test creating or modifying issues, use HTTP test tools or commandline scripts to perform the test with access token and request payload.
- 
-:::info
+:::
+
+:::tip
 Recommended HTTP test tools: [Postman](https://www.postman.com/downloads/), [Insomnia](https://insomnia.rest/)
 :::

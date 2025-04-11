@@ -8,8 +8,8 @@ import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
 
 # Project Browsing
 
-The base URI schema of ACC Issue API is in the pattern: `https://developer.api.autodesk.com/construction/issues/v1/projects/:projectId`
-, where the **projectId** is a required URI parameter. In this step we'll extend the server to browse the projects of Autodesk Construction Cloud, in order to fetch **project id**. 
+The base URI schema of ACC Issue API is: `https://developer.api.autodesk.com/construction/issues/v1/projects/:projectId`
+, where the **projectId** is a required URI parameter. In this step we'll extend the server to browse the projects of Autodesk Construction Cloud, in order to fetch **project Id**. 
 We will basically get the hierarchy of hubs and projects using Data Management APIs.
 
 ## Browsing hubs
@@ -34,14 +34,13 @@ The server should respond with a JSON list of all the hubs you have access to.
 
 ![Hubs Response](./_shared/hubs-response.webp)
 
-Try copying the ID of one of the hubs, and use it in another address: http://localhost:8080/api/hubs/your-hub-id/projects.
-In this case the server application should respond with a JSON list of all projects
-available under the specified hub.
+Try to copy one hub Id, and use it in another address: [http://localhost:8080/api/hubs/your-hub-id/projects](http://localhost:8080/api/hubs/your-hub-id/projects).
+The server should respond with a JSON list of all projects available under the specified hub.
 
 ![Projects Response](./_shared/projects-response.webp)
 
 :::info
-If you skipped the login procedure in the previous step, or restarted your server application,
+If you have skipped the login procedure in the previous step, or restarted your server application,
 you may need to go to [http://localhost:8080/api/auth/login](http://localhost:8080/api/auth/login)
 again to make sure that all the authentication data is available in cookies before testing
 the `/api/hubs` endpoint.

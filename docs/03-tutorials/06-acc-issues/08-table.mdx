@@ -1,15 +1,11 @@
 # Table
 
 Finally, we're ready to implement all the remaining logic of the class `Table`.
-The class `Table` is responsible to handle different type of data, including project issues and issue settings 
-(custom attribute (field) definitions and mappings, issue types/subtypes, and root cause categories),
-user list, and provide the functions including:
-- Get the data list from ACC Issues based on the current input information.
-- Draw the current data list into a bootstrap table.
-- Export the current data list into a csv file.
-- Import the data (issue list) from a csv file into the ACC Project.
+The class `Table` is responsible to render project issues, issue settings, project users and the information of this logged user.
 
-## Table
+This class also exposes functions to export the current data list into a csv file and import the issues data from a csv file.
+
+## Export Issue Data
 
 Let's start by implementing the Table functionality.
 Open `table.js` file under the `wwwroot` subfolder, add the implementation code into Class `Table`:
@@ -274,63 +270,53 @@ class Table {
 }
 ```
 :::note
-Please note that some complicated properties are just marked as "N/A" to simplify the tutorial, 
-and during import, the code will parse the propery information from a CSV file into the request 
-body.
+
+ - The complicated properties (json or array) will be in string in the table, but will be a note only: **Complicated Objects**, when exporting to csv
+because the special char and comma in the complicated object will distort the csv. If you want to export the value, you may parse each key-value in the comluns.
+ - During import, the code will parse the propery information from a csv file to build request payload.
 :::
 
 
 ## CSV File Prepare
-Finally, the most important feature is batch import projects issues for creating new or modifying exiting issue, this is achieved by using a CSV file,
+Finally, let us implement the feature: batch import projects issues for creating new or modifying existing issue, this is achieved by using a CSV file,
 we provided a sample template files for projects issues, you can add/modify your information based on the template, 
 then import the data from CSV file into ACC account.
 
 - [IssueTemplate.csv](https://github.com/xiaodongliang/aps-acc-issues-tutorial-nodejs/blob/main/template/IssueTemplate.csv) 
 
 :::caution
-
 - It is strongly recommended to use the same pattern of the csv that is exported in the previous function (Export Issue Records).
-
 - To add new issue, leave the column id empty
-
 - To modify the existing issue, keep the column id with the issue id, update other fields with new values.
-
-- A few fields are required when working with creating issues(POST). A few fields are supported when working with modifying issues (PATCH). Please check API references for more details.
- > to make it clearer, this application narrow down with some supported fields.
-
-- The row number of the CSV records is not used with these scenarios, but will be used when tracking the status.
-
+- A few fields are required when working with creating issues(POST). A few fields are supported when working with modifying issues (PATCH). Please check API references for more details. To make it clearer, this sample only demos some supported fields.
+- The row number of the CSV records is not used with API calls, but will be used when tracking the status.
 - The status of created/modified/failed are tracked and will be printed out in the browser console after the process.
-
 - If you open the CSV file with Microsoft Excel, some data type will be automatically changed by the setting, for example, the column of
 **startDate** and **duDate** might be changed to the type as **"2012/03/14"**, please make sure to select another type like **"2012-03-14"** without **"/"** as shown in the screenshot, 
 otherwise the date will not be recognized correctly after exporting to CSV file.
 :::
 ![Excel Data Format](./_shared/excel-data-type.png)
 
-:::tip
-- When importing issues, you can always open the **Developer Tools** and check the console
-for the status ofcreation/modifying the issue as picture shown below, be noted this only work for importing 
-issues.
-:::
-![Projects Status](./_shared/projects-status.png)
 
 ## Try it out
 
 And that's it! Your application is now ready for action. Start it as usual, and when you go to
 [http://localhost:8080](http://localhost:8080), you should be presented with a simple UI, with
 a tree-view on the left side, you can do the following operation:
-- Select an ACC Hub: 
-    - The tree will list all the ACC Projects within the hub that the logged in user has access to.
-    - The table will show 5 tabs
-- Select an ACC Project: There are 5 tabs, `ISSUES`, `USERS`, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS`. `ISSUES` tab will list all the project issues, 
-`USERS` tab will list all the project users, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS` tabs will list the project subtypes, rootcauses and custom sttributes respectively.
- You can click the `Export` button to export all the project issues, users, subtypes, rootcauses and custom attributes to a csv file
-- or click `Import` button to import issues into the selected project with a prepare CSV file of issue information.
+- Select an ACC Hub. The tree will list all the ACC Projects within the hub that the logged in user has access to.
+- Select an ACC Project:  `ISSUES` tab will list all the project issues, `USERS` tab will list all the project users, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS` tabs will list the project subtypes, rootcauses and custom sttributes respectively.
+- Click the `Export` button to export all the data of current active tab to a csv file
+- Click `Import` button to select a prepared CSV file with issue data as mentioned in #CSV File Prepare. The sample will create or modify issues. 
 
 :::caution
 Please note that you can only import the issue data  while the `ISSUES` tab is active.
 :::
 
+:::tip
+When importing issues, you can always open the **Developer Tools** and check the console
+for the status ofcreation/modifying the issue as picture shown below, be noted this only work for importing 
+issues.
+:::
+![Projects Status](./_shared/projects-status.png)
 
 ![Final App](./_shared/acc-issue-final-app.webp)
