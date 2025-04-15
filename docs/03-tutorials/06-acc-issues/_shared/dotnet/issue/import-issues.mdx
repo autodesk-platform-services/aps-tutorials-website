@@ -1,8 +1,6 @@
 
-
-```js title="APS.ACC.issues.cs"
-
-//import issues (create new issue or modify existing issue)
+```js title="APS.Issues.cs"
+ //import issues (create new issue or modify existing issue)
  public async Task<TaskRes> CreateOrModifyACCIssues(string projectId, Tokens tokens, JArray body)
  {
      IssuesClient issueClient = new IssuesClient(_SDKManager);
@@ -31,13 +29,8 @@
                  Status =status, 
                  IssueSubtypeId = issue.IssueSubtypeId,
                  DueDate =issue.DueDate,
-
-                 //problems with the two attriubtes
-                 //checking with SDK team
-
-                 //AssignedTo =issue.AssignedTo,
-                 //AssignedToType = AssignedToType.User,
-
+                 AssignedTo = issue.AssignedTo,
+                 AssignedToType = AssignedToType.User,
                  RootCauseId = issue.RootCauseId,
                  Published = issue.Published
              };  
@@ -60,6 +53,14 @@
      return taskRes;
 
  } 
+  
+ public class TaskRes
+ {
+     public List<succeded> created { get; set; }
+     public List<succeded> modified { get; set; }
+     public List<failed> failed { get; set; }
+
+ }
 
 ```
 
