@@ -1,5 +1,5 @@
-Create a `APS.ACC.issues.cs` under the `Models` subfolder with the following content:
-```js title="APS.ACC.issues.cs"
+Create a `APS.Issues.cs` under the `Models` subfolder with the following content:
+```js title="APS.Issues.cs"
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autodesk.Construction.Issues;
@@ -15,7 +15,9 @@ public partial class APS
     //export issues list of the project
     public async Task<IEnumerable<dynamic>> GetIssues(string projectId, Tokens tokens)
     {
+        // highlight-start
         IssuesClient issueClient = new IssuesClient(_SDKManager);
+        // highlight-end
         var allIssues = new List<Autodesk.Construction.Issues.Model.Results>();
         var offset = 0;
         var totalResult = 0;

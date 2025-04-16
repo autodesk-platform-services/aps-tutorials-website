@@ -1,6 +1,6 @@
-Create a `ACCIssuesController.cs` file under the `Controllers` subfolder with the following content:
+Create a `IssuesController.cs` file under the `Controllers` subfolder with the following content:
 
-```js title="Controoler/ACCIssuesController.cs"
+```js title="Controoler/IssuesController.cs"
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ACCIssuesController : ControllerBase
+public class IssuesController : ControllerBase
 {
     private readonly ILogger<ACCIssuesController> _logger;
     private readonly APS _aps;

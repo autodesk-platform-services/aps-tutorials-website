@@ -15,7 +15,7 @@ import DotNetImportIssues from './_shared/dotnet/issue/import-issues.mdx';
 Now, we will implement our server to consume [ACC Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to fetch project issues and create/modify issues.
 
 ## Work with Issues
-First, let's include the ACC Issue SDK:
+We shall be utilizing ACC Issue SDK in both NodeJs and .NET samples
 <EnvTabs NodeJsVsCode={NodeJsVsCodeSDK} DotNetVsCode={DotNetSDK} DotNetVs2022={DotNetSDK} />
 
 
@@ -27,11 +27,11 @@ Check API reference of [GET:Issues](https://aps.autodesk.com/en/docs/acc/v1/refe
 
 
 ## Import Issues
-Moving forward, we will add helper functions to create and modify issues. [POST Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-POST/) for creating a new issue. 
+Moving forward, we will add helper functions to create and modify issues. [POST Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-POST/) for creating a new issue, 
 [PATCH Issues/:IssueId](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-PATCH/) for modifying an existing issue. 
 When the server receives records imported from the client (via CSV), it checks whether a record contains an ID value. If not, it creates a new issue. If an ID exists, it updates the corresponding issue with the new data.
 
-To track status, a JSON array logs the successfully created or modified issues, along with any failed API calls and their corresponding CSV row numbers.
+To track status, a JSON array is logged on console with the successfully created or modified issues, along with any failed API calls and their corresponding CSV row numbers.
 
 <EnvTabs NodeJsVsCode={NodeJsVsCodeImportIssues} DotNetVsCode={DotNetImportIssues} DotNetVs2022={DotNetImportIssues} />
 

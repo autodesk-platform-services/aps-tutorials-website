@@ -207,7 +207,7 @@ class Table {
                         const import_attributes_keys = TABLE_TABS[this.#tabKey].IMPORT_ATTRIBUTES_KEYS;
                         let requestDataList = []; 
                        
-                        for(let i=1;i<rows.length;i++){
+                        for(let i=1;i<rows.length - 1;i++){
                             // Split each row by commas to get each cell
                             const cells = rows[i].split(',');
                             let jsonItem = {};
