@@ -1,0 +1,19 @@
+```js title="services/aps.js"
+
+// ACC Admin APIs
+
+//get project users list
+service.getProjectUsers = async (projectId, token) => {
+    let allUsers = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+        const resp = await adminClient.getProjectUsers( projectId, {accessToken:token,offset:offset});
+        
+        allUsers = allUsers.concat(resp.results);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allUsers;    
+}; 
+```

@@ -1,0 +1,46 @@
+Create a `admin.js` file under the `routes` subfolder with the following content:
+
+```js title="routes/admin.js"
+const express = require('express');
+var bodyParser = require('body-parser');
+
+const { authRefreshMiddleware,
+        getProjectUsers
+        } = require('../services/aps.js');
+
+let router = express.Router();
+
+router.use(authRefreshMiddleware); 
+
+//get project users list
+router.get('/api/admin/projectUsers', async function (req, res, next) {
+    try {
+        const users = await getProjectUsers(req.query.projectId, req.internalOAuthToken.access_token);
+        res.json(users);
+    } catch (err) {
+        next(err);
+    }
+});
+
+module.exports = router;
+
+```
+
+And mount the router to our server application by modifying `server.js`:
+
+```js title="server.js"
+const express = require('express');
+const session = require('cookie-session');
+const { PORT, SERVER_SESSION_SECRET } = require('./config.js');
+
+let app = express();
+app.use(express.static('wwwroot'));
+app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
+app.use(require('./routes/auth.js'));
+app.use(require('./routes/hubs.js'));
+app.use(require('./routes/issues.js')); 
+// highlight-start
+app.use(require('./routes/admin.js'));
+// highlight-end
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`));
+```

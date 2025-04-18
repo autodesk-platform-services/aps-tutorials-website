@@ -1,0 +1,34 @@
+Create a `APS.Issues.cs` under the `Models` subfolder with the following content:
+```js title="APS.Issues.cs"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Autodesk.Construction.Issues;
+using Autodesk.Construction.Issues.Model;
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Linq;
+using Autodesk.DataManagement.Model;
+
+public partial class APS
+{
+    //export issues list of the project
+    public async Task<IEnumerable<dynamic>> GetIssues(string projectId, Tokens tokens)
+    {
+        // highlight-start
+        IssuesClient issueClient = new IssuesClient(_SDKManager);
+        // highlight-end
+        var allIssues = new List<Autodesk.Construction.Issues.Model.Results>();
+        var offset = 0;
+        var totalResult = 0;
+        do
+        {
+            var issues = await issueClient.GetIssuesAsync(projectId, accessToken: tokens.InternalToken,offset:offset);
+            allIssues.AddRange(issues.Results);
+            offset += (int)issues.Pagination.Limit;
+            totalResult = (int)issues.Pagination.TotalResults;
+        } while (offset < totalResult);
+        return allIssues;
+    }
+}
+```

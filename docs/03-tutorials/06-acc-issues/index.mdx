@@ -1,0 +1,36 @@
+import Image from '@theme/IdealImage';
+import PreviewUrl from '@site/static/videos/acc-issues-app.png';
+
+# ACC Issues
+
+## Introduction
+
+In this tutorial we're going to build an APS application that allows the authenticated user in [Autodesk Construction Cloud](https://www.autodesk.com/products/autodesk-docs/overview) to 
+extract project issues and issues settings: sub types, root causes, custom attribute of a 
+given ACC project. This application renders these data in a tabular view. The data can also be exported to CSV
+file easily. With the data from a CSV, the application demos the scenario that imports them to create new issues or modify the existing issues.
+ 
+
+:::note
+- This sample does not demo how to work with document issue (also called pushpin or markup issue).
+- This sample will iterate ACC hubs and project lists. It also extracts some admin data such as project users. Please make sure to [provision access](../../01-getting-started/index.mdx#provision-access-in-other-products) to your ACC accounts.
+- Ensure **[Issue Module](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_About)** has been activated in ACC Project. 
+- Issue API supports user context of authentication only. Ensure the logged user has permissions to access expected related issues. See **[Issues Permission](https://help.autodesk.com/view/BUILD/ENU/?guid=Issues_Permissions)**
+::: 
+
+<Image img={PreviewUrl} />
+
+We will use the following APIs of Autodesk Platform Services (APS):
+
+- [Authentication](https://aps.autodesk.com/en/docs/oauth/v2/developers_guide/overview)
+- [Data Management](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
+- [Autodesk Construction Cloud Admin](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
+- [Autodesk Construction Issues](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/)
+
+
+:::tip
+If you're not interested in building the application from scratch, and you just want to try
+and run it locally, the complete implementation is available on GitHub:
+- NodeJS: https://github.com/autodesk-platform-services/aps-acc-issues-tutorial-nodejs
+- DotNet: https://github.com/autodesk-platform-services/aps-acc-issues-tutorial-dotnet
+:::

@@ -1,0 +1,32 @@
+Create `APS.Admin.cs` file under `Models` folder, add following content.
+
+```js title="Models/APS.Admin.cs"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Autodesk.Construction.AccountAdmin;
+using Autodesk.Construction.AccountAdmin.Model;
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+public partial class APS
+{ 
+    // By ACC Issue API, it only tells the user id with related fields.
+    //to fetch the information of the user, call the endpoint below and map with the user id.
+    public async Task<IEnumerable<dynamic>> GetProjectUsersACC( string projectId, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        var allUsers = new List<ProjectUser>();
+        var offset = 0;
+        var totalResult = 0;
+        do
+        {
+            var users = await adminClient.GetProjectUsersAsync(projectId,accessToken:tokens.InternalToken,offset:offset);
+            allUsers.AddRange(users.Results);
+            offset += (int)users.Pagination.Limit;
+            totalResult = (int)users.Pagination.TotalResults;
+        } while (offset < totalResult);
+        return allUsers;
+    }
+}
+```

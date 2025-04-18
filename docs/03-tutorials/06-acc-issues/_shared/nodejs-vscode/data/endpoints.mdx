@@ -1,0 +1,51 @@
+Create a `hubs.js` file under the `routes` subfolder with the following content:
+
+```js title="routes/hubs.js"
+const express = require('express');
+const { authRefreshMiddleware, getHubs, getProjects } = require('../services/aps.js');
+
+let router = express.Router();
+
+router.use('/api/hubs', authRefreshMiddleware);
+
+
+router.get('/api/hubs', async function (req, res, next) {
+    try {
+        const hubs = await getHubs(req.internalOAuthToken.access_token);
+        //build the json response with some data of the hub
+        res.json(hubs.map(hub => ({type:hub.type, id: hub.id, name: hub.attributes.name,region:hub.attributes.region})));
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/api/hubs/:hub_id/projects', async function (req, res, next) {
+    try {
+        const projects = await getProjects(req.params.hub_id, req.internalOAuthToken.access_token);
+        //build the json response with some data of the project 
+        res.json(projects.map(project => ({type:project.type, id: project.id, name: project.attributes.name, })));
+    } catch (err) {
+        next(err);
+    }
+});
+
+module.exports = router;
+
+```
+
+And mount the router to our server application by modifying `server.js`:
+
+```js title="server.js"
+const express = require('express');
+const session = require('cookie-session');
+const { PORT, SERVER_SESSION_SECRET } = require('./config.js');
+
+let app = express();
+app.use(express.static('wwwroot'));
+app.use(session({ secret: SERVER_SESSION_SECRET, maxAge: 24 * 60 * 60 * 1000 }));
+app.use(require('./routes/auth.js'));
+// highlight-start
+app.use(require('./routes/hubs.js'));
+// highlight-end
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}...`));
+```

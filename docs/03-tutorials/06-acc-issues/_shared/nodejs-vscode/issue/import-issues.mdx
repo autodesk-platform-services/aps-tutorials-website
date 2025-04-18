@@ -1,0 +1,35 @@
+Append the following code to the end of the services/aps.js file. 
+```js title="services/aps.js"
+//import issues (create new issue or modify existing issue)
+service.createOrModifyIssues = async (projectId,token,data) => {
+    
+    let results = {
+        created:[],
+        modified:[],
+        failed:[]
+    } 
+
+    await Promise.all(
+        data.map(async (oneIssueData)=>{
+        try{
+            //remove unsupported fields and build the payload 
+            const {id, csvRowNum, ...payload } = oneIssueData;
+            if(id == '' || id==undefined || id==null){
+                //create new issue
+                const resp = await issueClient.createIssue(projectId,payload,{accessToken:token});
+                results.created.push({id:resp.id,csvRowNum:oneIssueData.csvRowNum}); 
+            }else{
+                 //modify an issue
+                const resp = await issueClient.patchIssueDetails(projectId,id,payload,{accessToken:token});
+                results.modified.push({id:resp.id,csvRowNum:oneIssueData.csvRowNum});
+            }
+        }catch(e){
+            results.failed.push({csvRowNum:oneIssueData.csvRowNum,reason:e.toString()}); 
+        }
+    })); 
+
+    return results;
+};
+
+```
+

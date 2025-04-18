@@ -1,0 +1,61 @@
+We will also add one more help function to get the user permissions.
+We will append a couple of helper functions to the end of the `services/aps.js` file.
+
+```js title="services/aps.js"
+ // Issue Settings
+
+//get issue sub types setting
+service.getIssueSubtypes = async (projectId, token) => {
+    let allSubtypes = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getIssuesTypes(projectId, {accessToken:token,include:'subtypes',offset:offset});
+        let eachPage = resp.results.flatMap(item => item.subtypes);
+        allSubtypes = allSubtypes.concat(eachPage);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allSubtypes;
+};
+
+//get issue root causes setting
+service.getIssueRootcauses = async (projectId, token) => {
+    let allRootcauses = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getRootCauseCategories(projectId, {accessToken:token,include:'rootcauses',offset:offset});
+        let eachPage = resp.results.flatMap(item => item.rootCauses);
+        allRootcauses = allRootcauses.concat(eachPage);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allRootcauses;
+};
+
+//get custom attributes definitions
+service.getIssueCustomAttributesDefs = async (projectId, token) => {
+    let allCustomAttributesDefs = [];
+    let offset = 0;
+    let totalResults = 0;
+    do{
+    
+        const resp = await issueClient.getAttributeDefinitions(projectId, {accessToken:token,offset:offset});
+        allCustomAttributesDefs = allCustomAttributesDefs.concat( resp.results);
+        offset += resp.pagination.limit;
+        totalResults = resp.pagination.totalResults;
+    }while (offset < totalResults) 
+    return allCustomAttributesDefs;
+}; 
+
+//get issue permissions of the user
+service.getIssueUserProfile= async (projectId, token) => {
+    
+    const resp = await issueClient.getUserProfile(projectId, {accessToken:token});
+    return resp
+}; 
+```
+

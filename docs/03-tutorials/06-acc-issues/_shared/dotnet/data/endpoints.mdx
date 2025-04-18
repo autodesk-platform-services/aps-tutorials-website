@@ -1,0 +1,52 @@
+Create a `HubsController.cs` file under the `Controllers` subfolder with the following content:
+
+```csharp title="Controllers/HubsController.cs"
+using System.Linq;
+using System.Threading.Tasks;
+using Autodesk.DataManagement.Model;
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("api/[controller]")]
+public class HubsController : ControllerBase
+{
+    private readonly APS _aps;
+
+    public HubsController(APS aps)
+    {
+        _aps = aps;
+    }
+
+    [HttpGet()]
+    public async Task<ActionResult> ListHubs()
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        return Ok(
+            from hub in await _aps.GetHubs(tokens)
+            select new { id = hub.Id, name = hub.Attributes.Name }
+        );
+    }
+
+    [HttpGet("{hub}/projects")]
+    public async Task<ActionResult> ListProjects(string hub)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        return Ok(
+            from project in await _aps.GetProjects(hub, tokens)
+            select new { id = project.Id, name = project.Attributes.Name }
+        );
+    }
+}
+```
+
+The controller handles several endpoints for browsing the content in other APS-based
+applications such as BIM 360 Docs and ACC. We will make use of these endpoints when
+building the UI part of the application.

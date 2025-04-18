@@ -1,0 +1,40 @@
+import EnvTabs from '@site/src/components/EnvTabs.js';
+
+import NodeJsVsCodeProject from './_shared/nodejs-vscode/setup/project.mdx';
+import NodeJsVsCodeConfig from './_shared/nodejs-vscode/setup/config.mdx';
+import NodeJsVsCodeServer from './_shared/nodejs-vscode/setup/server.mdx';
+import NodeJsVsCodeTest from './_shared/nodejs-vscode/setup/test.mdx';
+
+import DotNetConfig from './_shared/dotnet/setup/config.mdx';
+import DotNetVsCodeServer from './_shared/dotnet-vscode/setup/server.mdx';
+import DotNetVs2022Server from './_shared/dotnet-vs2022/setup/server.mdx';
+import DotNetVsCodeProject from './_shared/dotnet-vscode/setup/project.mdx';
+import DotNetVsCodeTest from './_shared/dotnet-vscode/setup/test.mdx';
+import DotNetVs2022Project from './_shared/dotnet-vs2022/setup/project.mdx';
+import DotNetVs2022Test from './_shared/dotnet-vs2022/setup/test.mdx';
+
+# Application Setup
+
+Let's start by creating a new project, installing required dependencies, and setting up
+a basic server application.
+
+## Create project
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeProject} DotNetVsCode={DotNetVsCodeProject} DotNetVs2022={DotNetVs2022Project} />
+
+## Application config
+
+Our application will require a couple of configuration parameters to run properly, for example,
+the credentials of APS app for communicating with Autodesk Platform Services, the callback URL
+where the end users will be redirected to login to authorize the application to access their data of ACC， i.e.[3-legged authentication workflow](https://aps.autodesk.com/en/docs/oauth/v2/tutorials/get-3-legged-token/).
+These parameters (as environment variables) will be loaded to application runtime environment.
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeConfig} DotNetVsCode={DotNetConfig} DotNetVs2022={DotNetConfig} />
+
+## Create basic server
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeServer} DotNetVsCode={DotNetVsCodeServer} DotNetVs2022={DotNetVs2022Server} />
+
+## Try it out
+
+<EnvTabs NodeJsVsCode={NodeJsVsCodeTest} DotNetVsCode={DotNetVsCodeTest} DotNetVs2022={DotNetVs2022Test} />
