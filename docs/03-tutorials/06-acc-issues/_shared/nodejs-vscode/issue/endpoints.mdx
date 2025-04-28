@@ -1,4 +1,5 @@
-Create a `issue.js` file under the **routes** subfolder with the following content:
+Next, let's expose the routings to extract and import issues to the client-side code through set of endpoints.
+Create `issues.js` file under the **routes** subfolder with the following content:
 
 ```js title="routes/issue.js"
 const express = require('express');
@@ -36,8 +37,8 @@ router.post('/api/issues/issues', bodyParser.json(), async function (req, res, n
         next(err);
     }  
 });
- 
 
+module.exports = router;
 ```
 
 And mount the router to our server application by modifying `server.js`:

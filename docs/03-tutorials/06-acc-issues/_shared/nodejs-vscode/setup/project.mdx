@@ -7,16 +7,16 @@ npm init -y
 
 Next, install all the Node.js dependencies we're going to use. In this case it will be [dotenv](https://www.npmjs.com/package/dotenv)
 (utility for initializing environment variables from a file), [Express.js](https://expressjs.com) (web framework),
-and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling cookie-based sessions, and finally the necessary APS SDK including:
-- [@aps_sdk/autodesk-sdkmanager](https://www.npmjs.com/package/@aps_sdk/autodesk-sdkmanager)
-- [@aps_sdk/authentication](https://www.npmjs.com/package/@aps_sdk/authentication)
-- [@aps_sdk/data-management](https://www.npmjs.com/package/@aps_sdk/data-management)
-- [@aps_sdk/construction-account-admin](https://www.npmjs.com/package/@aps_sdk/construction-account-admin)
-- [@aps_sdk/construction-issues](https://www.npmjs.com/package/@aps_sdk/construction-issues)
+and [cookie-session](https://www.npmjs.com/package/cookie-session) for handling cookie-based sessions, and finally the necessary APS SDK with specific version used in this sample includes:
+- [@aps_sdk/autodesk-sdkmanager v1.0.0](https://www.npmjs.com/package/@aps_sdk/autodesk-sdkmanager)
+- [@aps_sdk/authentication v1.0.0 ](https://www.npmjs.com/package/@aps_sdk/authentication)
+- [@aps_sdk/data-management v1.0.2](https://www.npmjs.com/package/@aps_sdk/data-management)
+- [@aps_sdk/construction-account-admin v1.1.0](https://www.npmjs.com/package/@aps_sdk/construction-account-admin)
+- [@aps_sdk/construction-issues v1.1.0](https://www.npmjs.com/package/@aps_sdk/construction-issues)
 
 ```bash
 npm install --save dotenv express cookie-session 
-npm install --save @aps_sdk/autodesk-sdkmanager @aps_sdk/authentication @aps_sdk/data-management @aps_sdk/construction-account-admin @aps_sdk/construction-issues
+npm install --save @aps_sdk/autodesk-sdkmanage  @aps_sdk/authentication  @aps_sdk/data-management  @aps_sdk/construction-account-admin  @aps_sdk/construction-issues 
 ```
 
 The `"dependencies"` in your `package.json` file should now look something like this
@@ -24,16 +24,16 @@ The `"dependencies"` in your `package.json` file should now look something like 
 
 ```json
 // ...
-  "dependencies": {
+   "dependencies": {
     "@aps_sdk/authentication": "^1.0.0",
     "@aps_sdk/autodesk-sdkmanager": "^1.0.0",
-    "@aps_sdk/data-management": "^1.0.0",
-    "@aps_sdk/construction-account-admin": "^1.0.0",
-    "@aps_sdk/construction-issues": "^1.0.0-beta.2"
+    "@aps_sdk/construction-account-admin": "^1.1.0",
+    "@aps_sdk/construction-issues": "^1.1.0",
+    "@aps_sdk/data-management": "^1.0.2",
     "cookie-session": "^2.1.0",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
-  },
+    "express": "^5.1.0"
+  }
 // ...
 ```
 

@@ -8,7 +8,7 @@ service.getIssues = async (projectId, token) => {
     let offset = 0;
     let totalResults = 0;
     do{ 
-        const resp = await issueClient.getIssues(projectId, {accessToken:token,offset:offset});
+        const resp = await issuesClient.getIssues(projectId, {accessToken:token,offset:offset});
         allIssues = allIssues.concat(resp.results);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
