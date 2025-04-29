@@ -1,5 +1,5 @@
 
-```js title="routes/issue.js"
+```js title="routes/issues.js"
 router.get('/api/issues/subtypes', async function(req, res, next){
     try {
         const subTypes = await getIssueSubtypes(req.query.projectId,req.internalOAuthToken.access_token);

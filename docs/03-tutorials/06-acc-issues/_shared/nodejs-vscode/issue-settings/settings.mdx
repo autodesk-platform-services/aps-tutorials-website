@@ -11,7 +11,7 @@ service.getIssueSubtypes = async (projectId, token) => {
     let totalResults = 0;
     do{
     
-        const resp = await issueClient.getIssuesTypes(projectId, {accessToken:token,include:'subtypes',offset:offset});
+        const resp = await issuesClient.getIssuesTypes(projectId, {accessToken:token,include:'subtypes',offset:offset});
         let eachPage = resp.results.flatMap(item => item.subtypes);
         allSubtypes = allSubtypes.concat(eachPage);
         offset += resp.pagination.limit;
@@ -27,7 +27,7 @@ service.getIssueRootcauses = async (projectId, token) => {
     let totalResults = 0;
     do{
     
-        const resp = await issueClient.getRootCauseCategories(projectId, {accessToken:token,include:'rootcauses',offset:offset});
+        const resp = await issuesClient.getRootCauseCategories(projectId, {accessToken:token,include:'rootcauses',offset:offset});
         let eachPage = resp.results.flatMap(item => item.rootCauses);
         allRootcauses = allRootcauses.concat(eachPage);
         offset += resp.pagination.limit;
@@ -43,7 +43,7 @@ service.getIssueCustomAttributesDefs = async (projectId, token) => {
     let totalResults = 0;
     do{
     
-        const resp = await issueClient.getAttributeDefinitions(projectId, {accessToken:token,offset:offset});
+        const resp = await issuesClient.getAttributeDefinitions(projectId, {accessToken:token,offset:offset});
         allCustomAttributesDefs = allCustomAttributesDefs.concat( resp.results);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
@@ -54,8 +54,7 @@ service.getIssueCustomAttributesDefs = async (projectId, token) => {
 //get issue permissions of the user
 service.getIssueUserProfile= async (projectId, token) => {
     
-    const resp = await issueClient.getUserProfile(projectId, {accessToken:token});
+    const resp = await issuesClient.getUserProfile(projectId, {accessToken:token});
     return resp
 }; 
 ```
-

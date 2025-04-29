@@ -16,11 +16,11 @@ service.createOrModifyIssues = async (projectId,token,data) => {
             const {id, csvRowNum, ...payload } = oneIssueData;
             if(id == '' || id==undefined || id==null){
                 //create new issue
-                const resp = await issueClient.createIssue(projectId,payload,{accessToken:token});
+                const resp = await issuesClient.createIssue(projectId,payload,{accessToken:token});
                 results.created.push({id:resp.id,csvRowNum:oneIssueData.csvRowNum}); 
             }else{
                  //modify an issue
-                const resp = await issueClient.patchIssueDetails(projectId,id,payload,{accessToken:token});
+                const resp = await issuesClient.patchIssueDetails(projectId,id,payload,{accessToken:token});
                 results.modified.push({id:resp.id,csvRowNum:oneIssueData.csvRowNum});
             }
         }catch(e){
@@ -32,4 +32,3 @@ service.createOrModifyIssues = async (projectId,token,data) => {
 };
 
 ```
-

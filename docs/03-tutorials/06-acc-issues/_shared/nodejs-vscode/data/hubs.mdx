@@ -23,19 +23,15 @@ const dataManagementClient = new DataManagementClient(sdk);
 
 ```js title="services/aps.js"
 // Data Management APIs
-service.getHubs = async (token) => {
-    const resp = await dataManagementClient.getHubs({ accessToken: token.access_token });
-    return resp.data.filter((item)=>{
-        return item.id.startsWith('b.');
-    })
+service.getHubs = async (accessToken) => {
+    const resp = await dataManagementClient.getHubs({ accessToken });
+    return resp.data;
 };
 
-service.getProjects = async (hubId, token) => {
-    const resp = await dataManagementClient.getHubProjects(hubId, { accessToken: token.access_token});
-    return resp.data.filter( (item)=>{
-        return item.attributes.extension.data.projectType == 'ACC';
-    } )
-};
+service.getProjects = async (hubId, accessToken) => {
+    const resp = await dataManagementClient.getHubProjects(hubId, { accessToken });
+    return resp.data;
+};  
 ```
 
 :::tip
