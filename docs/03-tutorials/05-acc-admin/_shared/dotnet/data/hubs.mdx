@@ -1,0 +1,31 @@
+Create a `APS.Hubs.cs` under the `Models` subfolder with the following content:
+
+```csharp title="Models/APS.Hubs.cs"
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Autodesk.DataManagement;
+using Autodesk.DataManagement.Model;
+using System;
+using System.Linq;
+
+public partial class APS
+{
+    public async Task<IEnumerable<dynamic>> GetHubs(Tokens tokens)
+    {
+        DataManagementClient dataManagementClient = new DataManagementClient(_SDKManager);
+        var getHubs = await dataManagementClient.GetHubsAsync(accessToken: tokens.AccessToken);
+        var hubsData = getHubs.Data.Where(hub => hub.Id.StartsWith("b."));
+        return hubsData;
+    }
+
+    public async Task<IEnumerable<dynamic>> GetProjects(string hubId, Tokens tokens)
+    {
+        DataManagementClient dataManagementClient = new DataManagementClient(_SDKManager);
+        var hubProjects = await dataManagementClient.GetHubProjectsAsync(hubId: hubId, accessToken: tokens.AccessToken);
+        return hubProjects.Data
+        .Where(project => project.Attributes.Extension.Data.TryGetValue("projectType", out var projectType) &&
+                          projectType?.ToString() == "ACC")
+        .ToList();
+    }   
+}
+```
