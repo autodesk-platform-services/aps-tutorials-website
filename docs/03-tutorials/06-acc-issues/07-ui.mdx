@@ -166,12 +166,12 @@ function createTreeNode(id, text, icon, children = false) {
 
 async function getHubs() {
     const hubs = await getJSON('/api/hubs');
-    return hubs.map(hub => createTreeNode(`hub|${hub.id}`, hub.attributes.name, 'icon-hub', true));
+    return hubs.map(hub => createTreeNode(`hub|${hub.id}`, hub.name, 'icon-hub', true));
 }
 
 async function getProjects(hubId) {
     const projects = await getJSON(`/api/hubs/${hubId}/projects`);
-    return projects.map(project => createTreeNode(`project|${hubId}|${project.id}`, project.attributes.name, 'icon-project', false));
+    return projects.map(project => createTreeNode(`project|${hubId}|${project.id}`, project.name, 'icon-project', false));
 }
 
 
@@ -193,15 +193,13 @@ export function initTree(selector, onSelectionChanged) {
     tree.on('node.click', function (event, node) {
         event.preventTreeDefault();
         const tokens = node.id.split('|');
-        if (tokens[0] === 'hub') {
-            onSelectionChanged( tokens[1], null);
-        }
         if (tokens[0] === 'project') {
-            onSelectionChanged( tokens[1], tokens[2]);
+            onSelectionChanged( tokens[1],tokens[2]);
         }
     });
     return new InspireTreeDOM(tree, { target: selector });
 }
+
 ```
 
 ## Application logic
