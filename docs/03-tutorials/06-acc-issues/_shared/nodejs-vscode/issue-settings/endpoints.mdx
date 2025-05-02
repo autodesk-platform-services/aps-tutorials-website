@@ -1,5 +1,16 @@
-Append these endpoints to  `issues.js` file with the following content:
+We will start by importing the issue settings helper functions defined in `services/aps.js` file. Add the following content to `routes/issues.js` file.
 ```js title="routes/issues.js"
+const { authRefreshMiddleware,
+        getIssues,
+        createOrModifyIssues 
+        // highlight-start
+        getIssueSubtypes,
+        getIssueRootcauses,
+        getIssueCustomAttributesDefs,
+        getIssueUserProfile
+        // highlight-end
+        } = require('../services/aps.js');
+
 router.get('/api/issues/subtypes', async function(req, res, next){
     try {
         const subTypes = await getIssueSubtypes(req.query.projectId,req.internalOAuthToken.access_token);
@@ -36,6 +47,5 @@ router.get('/api/issues/issueUserProfile', async function(req, res, next){
         next(err);
     }
 });
-
 ```
  

@@ -11,7 +11,7 @@ import DotNetIssuesSettings from './_shared/dotnet/issue-settings/settings.mdx';
 In the previous step, we extracted raw issue data. Some fields contain specific IDs like `Issue Sub Type` and `Root Cause`, 
 while `Custom Attributes` follow an id-value pair pattern. These are all part of the Issue Settings. To retrieve their full details, we'll need to make additional API calls to the Issues endpoints.
  
-In addition, the APIs permissions follows the user permission setting of the logged user, who authorizes this sample to manipulate the issues. 
+In addition, the APIs permissions follows the user permission setting of the logged user, who authorizes this sample to manipulate the issues. We will also add one more help function to get the user permissions.
 
 <EnvTabs NodeJsVsCode={NodeJsVsCodeIssuesSettings} DotNetVsCode={DotNetIssuesSettings} DotNetVs2022={DotNetIssuesSettings} />
 

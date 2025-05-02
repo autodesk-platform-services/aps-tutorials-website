@@ -39,5 +39,19 @@ Append the following endpoints on `IssuesController.cs` file, under `Controllers
        return JsonConvert.SerializeObject(attdefs);
    } 
 
+    [HttpGet("issueUserProfile")]
+    public async Task<ActionResult<string>> IssueUserProfile(string projectId)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        var list = new List<Autodesk.Construction.Issues.Model.User>(); //to feed the table view of client side. build a dummy json array.
+        var userInfo = await _aps.GetIssueUserProfile(Request.Query["projectId"], tokens);
+        list.Add(userInfo);
+        return JsonConvert.SerializeObject(list, settings); ;
+    }
+
 ```
  

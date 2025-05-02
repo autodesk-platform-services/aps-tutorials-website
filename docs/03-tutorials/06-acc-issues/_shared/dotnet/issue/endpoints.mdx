@@ -1,9 +1,8 @@
 Create a `IssuesController.cs` file under the `Controllers` subfolder with the following content:
 
 ```js title="Controoler/IssuesController.cs"
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using aps_acc_issues_dotnet.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -13,18 +12,23 @@ using Newtonsoft.Json.Linq;
 [Route("api/[controller]")]
 public class IssuesController : ControllerBase
 {
-    private readonly ILogger<ACCIssuesController> _logger;
+    private readonly ILogger<IssuesController> _logger;
     private readonly APS _aps;
 
-    public ACCIssuesController(ILogger<ACCIssuesController> logger, APS aps)
+     private JsonSerializerSettings settings = new JsonSerializerSettings
+    {
+         ContractResolver = new ForceIncludeNullsResolver(),
+         NullValueHandling = NullValueHandling.Include
+    };
+
+    public IssuesController(ILogger<IssuesController> logger, APS aps)
     {
         _logger = logger;
         _aps = aps;
     }
- 
-//get issues
+
     [HttpGet("issues")]
-    public async Task<ActionResult<string>> ListIssues( string projectId)
+    public async Task<ActionResult<string>> ListIssues(string projectId)
     {
         var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
         if (tokens == null)
@@ -32,27 +36,41 @@ public class IssuesController : ControllerBase
             return Unauthorized();
         }
 
-        var issues = await _aps.GetIssues(Request.Query["projectId"], tokens);
-        return JsonConvert.SerializeObject(issues);
-    } 
-
-    //create new issue or modify issue
+        var issues = await _aps.GetIssues(Request.Query["projectId"], tokens);  
+        return JsonConvert.SerializeObject(issues,settings);
+    }
+  
+        //create new issue or modify issue
     [HttpPost("issues")]
     public async Task<ActionResult> CreateOrModifyIssues([FromBody] JObject content)
     {
         var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
-        if (tokens == null) 
+        if (tokens == null)
         {
-            return Unauthorized(); 
+            return Unauthorized();
         }
-     
+
         string projectId = content["projectId"].Value<string>();
         dynamic issues = content["data"].Value<dynamic>();
- 
-        var status = await _aps.CreateOrModifyACCIssues(projectId, tokens,issues);
 
-        return Ok(new {created = status.created ,modified = status.modified,failed = status.failed  });
+        var status = await _aps.CreateOrModifyACCIssues(projectId, tokens, issues);
+
+        return Ok(new { created = status.created, modified = status.modified, failed = status.failed });
     }
 }
+    //include the fields whose value =null when  JsonConvert.SerializeObject
+    public class ForceIncludeNullsResolver : DefaultContractResolver
+    {
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+        {
+            var prop = base.CreateProperty(member, memberSerialization);
+
+            // Always include properties, even if they're null
+            prop.NullValueHandling = NullValueHandling.Include;
+            prop.DefaultValueHandling = DefaultValueHandling.Include;
+
+            return prop;
+        }
+    }
 ```
 
