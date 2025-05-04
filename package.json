@@ -18,7 +18,7 @@
     "@docusaurus/plugin-google-gtag": "^2.3.1",
     "@docusaurus/plugin-ideal-image": "^2.3.1",
     "@docusaurus/preset-classic": "^2.3.1",
-    "@easyops-cn/docusaurus-search-local": "^0.23.3",
+    "@easyops-cn/docusaurus-search-local": "^0.44.0",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^6.3.1",
     "clsx": "^1.1.1",
@@ -30,7 +30,7 @@
     "react-player": "^2.10.0",
     "rehype-plugin-image-native-lazy-loading": "^1.2.0",
     "sharp": "^0.31.3",
-    "url-loader": "^4.1.1"
+    "url-loader": "^4.1.1" 
   },
   "browserslist": {
     "production": [
