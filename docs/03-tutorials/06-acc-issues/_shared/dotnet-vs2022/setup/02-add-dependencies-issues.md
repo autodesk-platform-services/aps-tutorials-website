@@ -13,4 +13,5 @@ At the writing of this documentation, the tutorial sample is using the specified
 - [Autodesk.Authentication v2.0.0](https://www.nuget.org/packages/Autodesk.Authentication/2.0.0)
 - [Autodesk.DataManagement v2.0.2](https://www.nuget.org/packages/Autodesk.DataManagement/2.0.2)
 - [Autodesk.Construction.Issues v2.1.2](https://www.nuget.org/packages/Autodesk.Construction.Issues/2.1.2)
-- [Adsk.Platform.ACC.AccountAdmin v0.1.6](https://www.nuget.org/packages/Adsk.Platform.ACC.AccountAdmin/0.1.6)
+- [Autodesk.Construction.AccountAdmin v2.0.1](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/2.1.0)
+- [Microsoft.AspNetCore.Mvc.NewtonsoftJson v6.0.2](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.NewtonsoftJson/6.0.2)

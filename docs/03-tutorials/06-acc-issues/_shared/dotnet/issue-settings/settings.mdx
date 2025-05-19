@@ -1,67 +1,75 @@
 Add the following content on `APS.Issues.cs` file under `Models` folder
 ```js title="Models/APS.Issues.cs"
-  // Issue Settings
+ // Issue Settings
 
-  //get issue sub types setting
-  public async Task<IEnumerable<dynamic>> GetIssueSubTypes(string projectId, Tokens tokens)
-  {
-      IssuesClient issueClient = new IssuesClient(_SDKManager);
-      var allSubIssueTypes = new List<IssueTypeResultsSubtypes>();
-      var offset = 0;
-      var totalResult = 0;
-      do
-      {
-          var issueTypes = await issueClient.GetIssuesTypesAsync(projectId, accessToken: tokens.InternalToken, include: "subtypes",offset:offset);
-          List<IssueTypeResultsSubtypes> eachPage = issueTypes.Results
-          .Where(type => type.Subtypes != null && type.Subtypes.Any()) // Skip type with empty subtypes
-          .SelectMany(type => type.Subtypes)  // Flatten the non-empty subtypes lists
-          .ToList();
+//get issue sub types setting
+public async Task<IEnumerable<dynamic>> GetIssueSubTypes(string projectId, Tokens tokens)
+{
+    IssuesClient issueClient = new IssuesClient(_SDKManager);
+    var allSubIssueTypes = new List<IssueTypeResultsSubtypes>();
+    var offset = 0;
+    var totalResult = 0;
+    do
+    {
+        var issueTypes = await issueClient.GetIssuesTypesAsync(projectId, accessToken: tokens.InternalToken, include: "subtypes", offset: offset);
+        List<IssueTypeResultsSubtypes> eachPage = issueTypes.Results
+        .Where(type => type.Subtypes != null && type.Subtypes.Any()) // Skip type with empty subtypes
+        .SelectMany(type => type.Subtypes)  // Flatten the non-empty subtypes lists
+        .ToList();
 
-          allSubIssueTypes.AddRange(eachPage);
-          offset += (int)issueTypes.Pagination.Limit;
-          totalResult = (int)issueTypes.Pagination.TotalResults;
-      } while (offset < totalResult);
-      return allSubIssueTypes;
-  }
+        allSubIssueTypes.AddRange(eachPage);
+        offset += (int)issueTypes.Pagination.Limit;
+        totalResult = (int)issueTypes.Pagination.TotalResults;
+    } while (offset < totalResult);
+    return allSubIssueTypes;
+}
 
-  //get issue root causes setting
-  public async Task<IEnumerable<dynamic>> GetIssueRootcauses(string projectId, Tokens tokens)
-  {
-      IssuesClient issueClient = new IssuesClient(_SDKManager);
-      var allRootcauses = new List<IssueRootCauseResultsRootCauses>();
-      var offset = 0;
-      var totalResult = 0;
-      do
-      {
-          var categories = await issueClient.GetRootCauseCategoriesAsync(projectId, accessToken: tokens.InternalToken, include: "rootcauses",offset:offset);
-          List<IssueRootCauseResultsRootCauses> eachPage = categories.Results
-          .Where(type => type.RootCauses != null && type.RootCauses.Any()) // Skip categories with empty rootcasues lists
-          .SelectMany(type => type.RootCauses)  // Flatten the non-empty rootcasues lists
-          .ToList();
+//get issue root causes setting
+public async Task<IEnumerable<dynamic>> GetIssueRootcauses(string projectId, Tokens tokens)
+{
+    IssuesClient issueClient = new IssuesClient(_SDKManager);
+    var allRootcauses = new List<IssueRootCauseResultsRootCauses>();
+    var offset = 0;
+    var totalResult = 0;
+    do
+    {
+        var categories = await issueClient.GetRootCauseCategoriesAsync(projectId, accessToken: tokens.InternalToken, include: "rootcauses", offset: offset);
+        List<IssueRootCauseResultsRootCauses> eachPage = categories.Results
+        .Where(type => type.RootCauses != null && type.RootCauses.Any()) // Skip categories with empty rootcasues lists
+        .SelectMany(type => type.RootCauses)  // Flatten the non-empty rootcasues lists
+        .ToList();
 
-          allRootcauses.AddRange(eachPage);
-          offset += (int)categories.Pagination.Limit;
-          totalResult = (int)categories.Pagination.TotalResults;
-      } while (offset < totalResult);
-      return allRootcauses;
-  }
+        allRootcauses.AddRange(eachPage);
+        offset += (int)categories.Pagination.Limit;
+        totalResult = (int)categories.Pagination.TotalResults;
+    } while (offset < totalResult);
+    return allRootcauses;
+}
 
-  //get custom attributes definitions
-  public async Task<IEnumerable<dynamic>> GetIssueCustomAttDefs(string projectId, Tokens tokens)
-  {
-      IssuesClient issueClient = new IssuesClient(_SDKManager);
-      var allCustomAttDefs = new List<AttrDefinitionResults>();
-      var offset = 0;
-      var totalResult = 0;
-      do
-      {
-          var attdefs = await issueClient.GetAttributeDefinitionsAsync(projectId, accessToken: tokens.InternalToken,offset:offset);
+//get custom attributes definitions
+public async Task<IEnumerable<dynamic>> GetIssueCustomAttDefs(string projectId, Tokens tokens)
+{
+    IssuesClient issueClient = new IssuesClient(_SDKManager);
+    var allCustomAttDefs = new List<AttrDefinitionResults>();
+    var offset = 0;
+    var totalResult = 0;
+    do
+    {
+        var attdefs = await issueClient.GetAttributeDefinitionsAsync(projectId, accessToken: tokens.InternalToken, offset: offset);
 
-          allCustomAttDefs.AddRange(attdefs.Results);
-          offset += (int)attdefs.Pagination.Limit;
-          totalResult = (int)attdefs.Pagination.TotalResults;
-      } while (offset < totalResult);
-      return allCustomAttDefs;
-  }
+        allCustomAttDefs.AddRange(attdefs.Results);
+        offset += (int)attdefs.Pagination.Limit;
+        totalResult = (int)attdefs.Pagination.TotalResults;
+    } while (offset < totalResult);
+    return allCustomAttDefs;
+}
+
+//get user permission in Issue
+public async Task<Autodesk.Construction.Issues.Model.User> GetIssueUserProfile(string projectId, Tokens tokens)
+{
+    IssuesClient issueClient = new IssuesClient(_SDKManager);
+    var userInfo = await issueClient.GetUserProfileAsync(projectId, accessToken: tokens.InternalToken);
+    return userInfo;
+}
 ```
 

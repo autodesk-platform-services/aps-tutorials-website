@@ -2,65 +2,89 @@ Add the following content to `APS.Issues.cs` file
 ```js title="APS.Issues.cs"
  //import issues (create new issue or modify existing issue)
  public async Task<TaskRes> CreateOrModifyACCIssues(string projectId, Tokens tokens, JArray body)
- {
-     IssuesClient issueClient = new IssuesClient(_SDKManager);
- 
-     var taskRes = new TaskRes(){
-         created=new List<succeded>(),
-         modified=new List<succeded>(),
-         failed=new List<failed>()
-     };
+{
+    IssuesClient issueClient = new IssuesClient(_SDKManager);
 
-     foreach (JToken eachItem in body){
-         Autodesk.Construction.Issues.Model.Results issue = 
-              eachItem.ToObject<Autodesk.Construction.Issues.Model.Results>(); 
+    var taskRes = new TaskRes()
+    {
+        created = new List<succeded>(),
+        modified = new List<succeded>(),
+        failed = new List<failed>()
+    };
 
-         try{ 
-             //some attributes are enum with IssuePayload
-             //value of Autodesk.Construction.Issues.Model.Results  is string
-             //need to convert to enum.
-             Status status = (Status)Enum.Parse(typeof(Status),CapitalizeFirstLetter(issue.Status));
-             AssignedToType assignedToType = (AssignedToType)Enum.Parse(typeof(AssignedToType),CapitalizeFirstLetter(issue.AssignedToType));
+    foreach (JToken eachItem in body)
+    {
+        Autodesk.Construction.Issues.Model.Results issue =
+             eachItem.ToObject<Autodesk.Construction.Issues.Model.Results>();
 
-             IssuePayload issuePayload = new IssuePayload
-             {
-                 Title = issue.Title,
-                 Description =issue.Description,
-                 Status =status, 
-                 IssueSubtypeId = issue.IssueSubtypeId,
-                 DueDate =issue.DueDate,
-                 AssignedTo = issue.AssignedTo,
-                 AssignedToType = AssignedToType.User,
-                 RootCauseId = issue.RootCauseId,
-                 Published = issue.Published
-             };  
+        try
+        {
+            //some attributes are enum with IssuePayload
+            //value of Autodesk.Construction.Issues.Model.Results  is string
+            //need to convert to enum.
+            Status status = (Status)Enum.Parse(typeof(Status), CapitalizeFirstLetter(issue.Status));
+            AssignedToType assignedToType = (AssignedToType)Enum.Parse(typeof(AssignedToType), CapitalizeFirstLetter(issue.AssignedToType));
 
-             if ((string)eachItem["id"] == null || (string)eachItem["id"] =="" ){
-                 //create new issue
-                 Issue res = await issueClient.CreateIssueAsync(projectId, issuePayload, accessToken: tokens.InternalToken);
-                 taskRes.created.Add(new succeded { id = res.Id, csvRowNum =(string) eachItem["csvRowNum"] });
-             }else{
-                 //modify issue
-                 Issue res = await issueClient.PatchIssueDetailsAsync(projectId, issue.Id, issuePayload, accessToken: tokens.InternalToken);
-                 taskRes.modified.Add(new succeded { id = res.Id, csvRowNum =(string) eachItem["csvRowNum"] });
-             }
-         }
-         catch (Exception e)
-         {
-            taskRes.failed.Add(new failed { csvRowNum =(string) eachItem["csvRowNum"], reason=e.ToString() });
-         }
-     }  
-     return taskRes;
+            IssuePayload issuePayload = new IssuePayload
+            {
+                Title = issue.Title,
+                Description = issue.Description,
+                Status = status,
+                IssueSubtypeId = issue.IssueSubtypeId,
+                DueDate = issue.DueDate,
+                AssignedTo = issue.AssignedTo,
+                AssignedToType = AssignedToType.User,
+                RootCauseId = issue.RootCauseId,
+                Published = issue.Published
+            };
 
- } 
-  
+            if ((string)eachItem["id"] == null || (string)eachItem["id"] == "")
+            {
+                //create new issue
+                Issue res = await issueClient.CreateIssueAsync(projectId, issuePayload, accessToken: tokens.InternalToken);
+                taskRes.created.Add(new succeded { id = res.Id, csvRowNum = (string)eachItem["csvRowNum"] });
+            }
+            else
+            {
+                //modify issue
+                Issue res = await issueClient.PatchIssueDetailsAsync(projectId, issue.Id, issuePayload, accessToken: tokens.InternalToken);
+                taskRes.modified.Add(new succeded { id = res.Id, csvRowNum = (string)eachItem["csvRowNum"] });
+            }
+        }
+        catch (Exception e)
+        {
+            taskRes.failed.Add(new failed { csvRowNum = (string)eachItem["csvRowNum"], reason = e.ToString() });
+        }
+    }
+    return taskRes;
+}
+
  public class TaskRes
  {
      public List<succeded> created { get; set; }
      public List<succeded> modified { get; set; }
      public List<failed> failed { get; set; }
-
  }
 
+ public class succeded
+{
+    public string id { get; set; }
+    public string csvRowNum { get; set; }
+}
+
+public class failed
+{
+    public string csvRowNum { get; set; }
+    public string reason { get; set; }
+}
+public static string CapitalizeFirstLetter(string input)
+{
+    if (string.IsNullOrEmpty(input))
+    {
+        return input;  // Return the input if it's null or empty
+    }
+    // Capitalize the first letter and make the rest lowercase
+    return char.ToUpper(input[0]) + input.Substring(1).ToLower();
+}
 ```
 
