@@ -12,6 +12,7 @@ dotnet add package Autodesk.Authentication
 dotnet add package Autodesk.DataManagement
 dotnet add package Autodesk.Construction.AccountAdmin
 dotnet add package Autodesk.Construction.Issues 
+dotnet add package Microsoft.AspNetCore.Mvc.NewtonsoftJson
 ```
 
 The `*.csproj` file in your project should now look similar to this (possibly with
@@ -26,13 +27,13 @@ slightly different version numbers, and additional .NET settings):
     <RootNamespace>aps_acc_issues_dotnet_vscode</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autodesk.Construction.AccountAdmin" Version="2.1.0" />
     <PackageReference Include="Autodesk.Authentication" Version="2.0.0" />
-    <PackageReference Include="Autodesk.Construction.Issues" Version="2.1.2" />
+    <PackageReference Include="Autodesk.Construction.AccountAdmin" Version="2.1.0" />
+    <PackageReference Include="Autodesk.Construction.Issues" Version="3.0.0-beta" />
     <PackageReference Include="Autodesk.DataManagement" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.2" />
   </ItemGroup>
 </Project>
-
 ```
 
 Finally, let's create a couple more subfolders in your project folder that we're going to need later:
