@@ -9,6 +9,10 @@ This is expected as we haven't implemented the `GET /` endpoint yet. However, if
 browser dev tools and explore the cookies stored by your browser for the `localhost` origin,
 you'll notice that the application is already to store the authentication data there.
 
+In this tutorial, **cookie-session** is used. It serializes the session data into 
+a cookie which will include all the session data (like public_token, internal_token, etc.). 
+So, only **session** and *session.sig* are available on the cookie of client.
+
 :::info
 Here's where you can find your website cookies in different browsers:
 - [Chrome](https://developer.chrome.com/docs/devtools/storage/sessionstorage/)

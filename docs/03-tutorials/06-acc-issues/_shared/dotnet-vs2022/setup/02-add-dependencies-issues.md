@@ -10,8 +10,8 @@ the following packages:
 At the writing of this documentation, the tutorial sample is using the specified version next to the package name.
 :::
 
-- [Autodesk.Authentication v2.0.0](https://www.nuget.org/packages/Autodesk.Authentication/2.0.0)
-- [Autodesk.DataManagement v2.0.2](https://www.nuget.org/packages/Autodesk.DataManagement/2.0.2)
-- [Autodesk.Construction.Issues v2.1.2](https://www.nuget.org/packages/Autodesk.Construction.Issues/2.1.2)
-- [Autodesk.Construction.AccountAdmin v2.0.1](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/2.1.0)
-- [Microsoft.AspNetCore.Mvc.NewtonsoftJson v6.0.2](https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.NewtonsoftJson/6.0.2)
+
+- [Autodesk.Authentication v2.2.1 ](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/2.2.1)
+- [Autodesk.DataManagement v2.1.2](https://www.nuget.org/packages/Autodesk.DataManagement/2.1.2)
+- [Autodesk.Construction.AccountAdmin v3.1.0-beta](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/3.1.0-beta)
+- [Autodesk.Construction.Issues  v4.0.0-beta](https://www.nuget.org/packages/Autodesk.Construction.Issues/4.0.0-beta)

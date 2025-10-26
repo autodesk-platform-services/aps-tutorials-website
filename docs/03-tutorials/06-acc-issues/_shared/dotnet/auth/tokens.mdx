@@ -3,14 +3,12 @@ the APS-specific logic that will be used in different areas of our server applic
 start by adding the following code to the file:
 
 ```csharp title="Models/APS.cs"
-using System;
 using Autodesk.Authentication.Model;
-using System.Collections.Generic;
+using Autodesk.SDKManager;
 
 public class Tokens
 {
-    public string? InternalToken;
-    public string? PublicToken;
+    public string? InternalToken; 
     public string? RefreshToken;
     public DateTime ExpiresAt;
 }
@@ -21,9 +19,7 @@ public partial class APS
     private readonly string _clientSecret;
     private readonly string _callbackUri;
     //for working with ACC Issue on server side
-    private readonly List<Scopes> InternalTokenScopes = [Scopes.DataRead, Scopes.DataWrite, Scopes.AccountRead];
-    //for working with APS Viewer on client side (future tutorial)
-    private readonly List<Scopes> PublicTokenScopes = [Scopes.ViewablesRead];
+    private readonly List<Scopes> InternalTokenScopes = [Scopes.DataRead, Scopes.DataWrite,Scopes.AccountRead];
     private SDKManager _SDKManager;
 
 
@@ -45,8 +41,6 @@ through ASP.NET's [dependency injection](https://docs.microsoft.com/en-us/aspnet
 Next, let's create an `APS.Auth.cs` file under the `Models` subfolder with the following code:
 
 ```csharp title="Models/APS.Auth.cs"
-using System;
-using System.Threading.Tasks;
 using Autodesk.Authentication;
 using Autodesk.Authentication.Model;
 
@@ -62,10 +56,8 @@ public partial class APS
     {
         var authenticationClient = new AuthenticationClient();
         var internalAuth = await authenticationClient.GetThreeLeggedTokenAsync(_clientId, code, _callbackUri, clientSecret: _clientSecret);
-        //var publicAuth = await authenticationClient.RefreshTokenAsync(internalAuth.RefreshToken, _clientId, clientSecret: _clientSecret, scopes: PublicTokenScopes);
         return new Tokens
         {
-           // PublicToken = publicAuth.AccessToken,
             InternalToken = internalAuth.AccessToken,
             RefreshToken = internalAuth.RefreshToken,
             ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds((double)internalAuth.ExpiresIn)
@@ -76,10 +68,8 @@ public partial class APS
     {
         var authenticationClient = new AuthenticationClient();
         var internalAuth = await authenticationClient.RefreshTokenAsync(tokens.RefreshToken, _clientId, clientSecret: _clientSecret, scopes: InternalTokenScopes);
-        //var publicAuth = await authenticationClient.RefreshTokenAsync(internalAuth.RefreshToken, _clientId, clientSecret: _clientSecret, scopes: PublicTokenScopes);
         return new Tokens
         {
-           // PublicToken = internalAuth.AccessToken,
             InternalToken = internalAuth.AccessToken,
             RefreshToken = internalAuth.RefreshToken,
             ExpiresAt = DateTime.Now.ToUniversalTime().AddSeconds((double)internalAuth.ExpiresIn)

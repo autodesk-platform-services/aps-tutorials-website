@@ -5,7 +5,7 @@ by adding the following code to the file:
 ```js title="services/aps.js"
 const { SdkManagerBuilder } = require('@aps_sdk/autodesk-sdkmanager');
 const { AuthenticationClient, Scopes, ResponseType } = require('@aps_sdk/authentication');
-const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES, PUBLIC_TOKEN_SCOPES } = require('../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, INTERNAL_TOKEN_SCOPES } = require('../config.js');
 
 const service = module.exports = {};
 
@@ -18,13 +18,9 @@ service.authCallbackMiddleware = async (req, res, next) => {
     const internalCredentials = await authenticationClient.getThreeLeggedToken(APS_CLIENT_ID, req.query.code, APS_CALLBACK_URL, {
         clientSecret: APS_CLIENT_SECRET
     });
-    const publicCredentials = await authenticationClient.refreshToken(internalCredentials.refresh_token, APS_CLIENT_ID, {
-        clientSecret: APS_CLIENT_SECRET,
-        scopes: PUBLIC_TOKEN_SCOPES
-    });
-    req.session.public_token = publicCredentials.access_token;
+
     req.session.internal_token = internalCredentials.access_token;
-    req.session.refresh_token = publicCredentials.refresh_token;
+    req.session.refresh_token = internalCredentials.refresh_token;
     req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
     next();
 };
@@ -41,21 +37,13 @@ service.authRefreshMiddleware = async (req, res, next) => {
             clientSecret: APS_CLIENT_SECRET,
             scopes: INTERNAL_TOKEN_SCOPES
         });
-        const publicCredentials = await authenticationClient.refreshToken(internalCredentials.refresh_token, APS_CLIENT_ID, {
-            clientSecret: APS_CLIENT_SECRET,
-            scopes: PUBLIC_TOKEN_SCOPES
-        });
-        req.session.public_token = publicCredentials.access_token;
+
         req.session.internal_token = internalCredentials.access_token;
-        req.session.refresh_token = publicCredentials.refresh_token;
+        req.session.refresh_token = internalCredentials.refresh_token;
         req.session.expires_at = Date.now() + internalCredentials.expires_in * 1000;
     }
     req.internalOAuthToken = {
         access_token: req.session.internal_token,
-        expires_in: Math.round((req.session.expires_at - Date.now()) / 1000),
-    };
-    req.publicOAuthToken = {
-        access_token: req.session.public_token,
         expires_in: Math.round((req.session.expires_at - Date.now()) / 1000),
     };
     next();

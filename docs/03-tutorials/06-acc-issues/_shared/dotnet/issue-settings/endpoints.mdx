@@ -1,45 +1,46 @@
 Append the following endpoints on `IssuesController.cs` file, under `Controllers` folder
 ```js title="Controllers/IssuesController"
-   [HttpGet("subtypes")]
-   public async Task<ActionResult<string>> ListIssuesSubTypes( string projectId)
-   {
-       var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
-       if (tokens == null)
-       {
-           return Unauthorized();
-       }
+  
+    [HttpGet("subtypes")]
+    public async Task<ActionResult<string>> ListIssuesSubTypes(string projectId)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
 
-       var subtypes = await _aps.GetIssueSubTypes(Request.Query["projectId"], tokens);
-       return JsonConvert.SerializeObject(subtypes);
-   }
+        var subtypes = await _aps.GetIssueSubTypes(projectId, tokens);
+        return JsonConvert.SerializeObject(subtypes,settings);
+    }
 
-   [HttpGet("rootcauses")]
-   public async Task<ActionResult<string>> ListRootCauses( string projectId)
-   {
-       var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
-       if (tokens == null)
-       {
-           return Unauthorized();
-       }
+    [HttpGet("rootcauses")]
+    public async Task<ActionResult<string>> ListRootCauses(string projectId)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
 
-       var rootcauses = await _aps.GetIssueRootcauses(Request.Query["projectId"], tokens);
-       return JsonConvert.SerializeObject(rootcauses);
-   }
+        var rootcauses = await _aps.GetIssueRootcauses(projectId, tokens);
+        return JsonConvert.SerializeObject(rootcauses,settings);
+    }
 
-   [HttpGet("customAttDefs")]
-   public async Task<ActionResult<string>> ListCustomAttDefs( string projectId)
-   {
-       var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
-       if (tokens == null)
-       {
-           return Unauthorized();
-       }
+    [HttpGet("customAttDefs")]
+    public async Task<ActionResult<string>> ListCustomAttDefs(string projectId)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
 
-       var attdefs = await _aps.GetIssueCustomAttDefs(Request.Query["projectId"], tokens);
-       return JsonConvert.SerializeObject(attdefs);
-   } 
+        var attdefs = await _aps.GetIssueCustomAttDefs(projectId, tokens);
+        return JsonConvert.SerializeObject(attdefs,settings);
+    }
 
-    [HttpGet("issueUserProfile")]
+     [HttpGet("issueUserProfile")]
     public async Task<ActionResult<string>> IssueUserProfile(string projectId)
     {
         var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
@@ -47,10 +48,10 @@ Append the following endpoints on `IssuesController.cs` file, under `Controllers
         {
             return Unauthorized();
         }
-        var list = new List<Autodesk.Construction.Issues.Model.User>(); //to feed the table view of client side. build a dummy json array.
-        var userInfo = await _aps.GetIssueUserProfile(Request.Query["projectId"], tokens);
+        var list = new List<User>(); //to feed the table view of client side. build a dummy json array.
+        var userInfo = await _aps.GetIssueUserProfile(projectId, tokens);
         list.Add(userInfo);
-        return JsonConvert.SerializeObject(list, settings); ;
+        return JsonConvert.SerializeObject(list,settings);;
     }
 
 ```

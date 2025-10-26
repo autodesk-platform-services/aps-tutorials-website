@@ -13,7 +13,6 @@ Here are the explanation of the main function:
 - `resetData`: Fetch and setup the data based on the input accountId, projectId, and tabKey. 
 - `drawTable`: Draw the bootstrap table with the current data. 
 - `exportToCSV`: Export the current data into CSV file.
-- `importFromCSV`: Import the information into ACC Issue sample from the prepared CSV file.
 
 ```js title="wwwroot/table.js"
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,10 +63,11 @@ class Table {
     }
 
     drawTable = () => {
-        if (this.#dataSet == null || this.#dataSet.length == 0) {
-            console.warn('DataSet is not ready, please fetch your data first.');
-            return;
-        }
+          // the dataset can be empty or null when 
+        // 1. no records at all
+        // 2. issue module is not activated with the user
+        // 3. this user has no access to the data
+        // 4. exceptions/errors
 
         let columns = [];
         for (var key in this.#dataSet[0]) {
@@ -77,8 +77,8 @@ class Table {
                 columns.push({
                     field: key,
                     title: key,
-                    align: "center",
-                    formatter: function (value) {
+                    align: "left",
+                    formatter: (value) => {
                         return value.toString();
                     }
                 })
@@ -88,9 +88,15 @@ class Table {
                 columns.push({
                     field: key,
                     title: key,
-                    align: "center",
-                    formatter: function (value) {
-                        return JSON.stringify(value)
+                    align: "left", 
+                    formatter: (value) => {
+
+                        const jsonString = JSON.stringify(value, null, 2);
+
+                        return `<pre style="max-height: 120px; 
+                                max-width: 500px; overflow: auto; 
+                                white-space: pre-wrap;  margin: 0;word-break: break-word;">
+                                ${jsonString}</pre>`;
                     }
                 })
             } else {
@@ -125,7 +131,7 @@ class Table {
             showToggle: false,
             pagination: true,
             pageList: [5],
-            pageSize: 5,
+            pageSize: 7,
             pageNumber: 1,
             uniqueId: 'id',
             striped: true,
@@ -134,11 +140,11 @@ class Table {
             minimumCountColumns: 2,
             smartDisplay: true,
             columns: columns,
-            sortName:'displayId',
-            sortOrder:'desc'
+            sortName: 'displayId',
+            sortOrder: 'desc',
+            resizable: true
         });
     }
-
 
     exportToCSV = () => {
         const separatorForColumns = ',';
@@ -172,19 +178,34 @@ class Table {
         link.click();
     } 
  
-    formatDate(date, format = 'YYYY-MM-DD') {
-        const pad = (num) => String(num).padStart(2, '0');
-      
-        const replacements = {
-          YYYY: date.getFullYear(),
-          MM: pad(date.getMonth() + 1),
-          DD: pad(date.getDate()) 
-        };
-      
-        return format.replace(/YYYY|MM|DD/g, (match) => replacements[match]);
-      }
+   
+// highlight-end
+}
+```
+:::note
+ - Complex properties (such as JSON objects or arrays) will be displayed in the table but will appear as a note — “Complicated Objects” — when exporting to CSV. 
+ This is because special characters and commas within these objects can distort the CSV format. 
+ If you need to export the actual values, consider parsing each key–value pair and exporting them in an appropriate format.
+:::
 
-    importFromCSV = async () => {
+## Import Issues
+Finally, let us implement the feature: batch import projects issues for creating new or modifying existing issue, this is achieved by using a CSV file,
+we provided a sample template files for projects issues, you can add/modify your information based on the template, 
+then import the data from CSV file into ACC account.
+- [IssueTemplate.csv](https://github.com/xiaodongliang/aps-acc-issues-tutorial-nodejs/blob/main/template/IssueTemplate.csv) 
+
+During import, the code will parse the propery information from a csv file to build request payload.
+
+In `table.js`,  add the implementation code into Class `Table`, after the function `exportToCSV`:
+- `importFromCSV`: Import the information into ACC Issue sample from the prepared CSV file.
+
+```js title="wwwroot/table.js"
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Table class wraps the specific data info
+
+// highlight-start
+
+  importFromCSV = async () => {
         if (TABLE_TABS[this.#tabKey].TAB_NAME != 'ISSUES') {
             alert('only issue is supported to be created/modified!Please active ISSUES table firstly!');
             return;
@@ -266,37 +287,34 @@ class Table {
         };
         input.click();
     }
+
+    formatDate(date, format = 'YYYY-MM-DD') {
+        const pad = (num) => String(num).padStart(2, '0'); 
+        const replacements = {
+          YYYY: date.getFullYear(),
+          MM: pad(date.getMonth() + 1),
+          DD: pad(date.getDate()) 
+        };
+      
+        return format.replace(/YYYY|MM|DD/g, (match) => replacements[match]);
+      } 
 // highlight-end
-}
+
 ```
-:::note
-
- - The complicated properties (json or array) will be in string in the table, but will be a note only: **Complicated Objects**, when exporting to csv
-because the special char and comma in the complicated object will distort the csv. If you want to export the value, you may parse each key-value in the comluns.
- - During import, the code will parse the propery information from a csv file to build request payload.
-:::
-
-
-## CSV File Prepare
-Finally, let us implement the feature: batch import projects issues for creating new or modifying existing issue, this is achieved by using a CSV file,
-we provided a sample template files for projects issues, you can add/modify your information based on the template, 
-then import the data from CSV file into ACC account.
-
-- [IssueTemplate.csv](https://github.com/xiaodongliang/aps-acc-issues-tutorial-nodejs/blob/main/template/IssueTemplate.csv) 
-
-:::caution
-- It is strongly recommended to use the same pattern of the csv that is exported in the previous function (Export Issue Records).
+ 
+:::caution CSV File Preparation
+- It is strongly recommended to use the same pattern of the csv that is exported in the previous function (exportToCSV).
 - To add new issue, leave the column id empty
 - To modify the existing issue, keep the column id with the issue id, update other fields with new values.
-- A few fields are required when working with creating issues(POST). A few fields are supported when working with modifying issues (PATCH). Please check API references for more details. To make it clearer, this sample only demos some supported fields.
+- A few fields are required when working with creating issues(POST). A few fields are supported when working with modifying issues (PATCH). Please check API references for more details. 
+To make it clearer, this sample only demos some supported fields.
 - The row number of the CSV records is not used with API calls, but will be used when tracking the status.
-- The status of created/modified/failed are tracked and will be printed out in the browser console after the process.
+- The status of created/modified/failed are tracked and will be printed out in the browser console and server log after the process. 
 - If you open the CSV file with Microsoft Excel, some data type will be automatically changed by the setting, for example, the column of
 **startDate** and **duDate** might be changed to the type as **"2012/03/14"**, please make sure to select another type like **"2012-03-14"** without **"/"** as shown in the screenshot, 
 otherwise the date will not be recognized correctly after exporting to CSV file.
 :::
 ![Excel Data Format](./_shared/excel-data-type.png)
-
 
 ## Try it out
 

@@ -2,17 +2,18 @@
 ```js title="services/aps.js"
 // ACC Assue APIs
 
-//Extract Issue Data
+//export issues list of the project
 service.getIssues = async (projectId, token) => {
     let allIssues = [];
     let offset = 0;
     let totalResults = 0;
-    do{ 
-        const resp = await issuesClient.getIssues(projectId, {accessToken:token,offset:offset});
+    do {
+        const resp = await issuesClient.getIssues(projectId, { accessToken: token, offset: offset });
+        console.log(`Fetched ${resp.results.length} issues from offset ${offset}`);
         allIssues = allIssues.concat(resp.results);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
-    }while (offset < totalResults) 
+    } while (offset < totalResults)
     return allIssues;
 };
 ```

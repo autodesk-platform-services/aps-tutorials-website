@@ -1,38 +1,30 @@
 Create a `AdminController.cs` file under the `Controllers` subfolder with the following content:
 
 ```js title="Controllers/AdminController.cs"
- using System.Threading.Tasks;
- using aps_acc_issues_dotnet.Models;
- using Microsoft.AspNetCore.Mvc;
- using Microsoft.Extensions.Logging;
- using Newtonsoft.Json;
+ using Autodesk.Construction.AccountAdmin;
+using Autodesk.Construction.AccountAdmin.Model;
 
- [ApiController]
- [Route("api/[controller]")]
- public class AdminController : ControllerBase
- {
-     private readonly ILogger<AdminController> _logger;
-     private readonly APS _aps;
+public partial class APS
+{
+    // The ACC Issue API only returns the user ID along with related fields.
+    // To retrieve additional user information, use the endpoint below and map it to the user ID.
+    public async Task<IEnumerable<dynamic>> GetProjectUsersACC(string projectId, Tokens tokens)
+    {
+        AdminClient adminClient = new AdminClient(_SDKManager);
+        var allUsers = new List<ProjectUser>();
+        var offset = 0;
+        var totalResult = 0;
+        do
+        {
+            var users = await adminClient.GetProjectUsersAsync(projectId, accessToken: tokens.InternalToken, offset: offset);
+            Console.WriteLine($"Fetched {users.Results.Count} users from index {offset} record.");
+            allUsers.AddRange(users.Results);
+            offset += (int)users.Pagination.Limit;
+            totalResult = (int)users.Pagination.TotalResults;
 
-     public AdminController(ILogger<AdminController> logger, APS aps)
-     {
-         _logger = logger;
-         _aps = aps;
-     }
-
-     [HttpGet("projectUsers")]
-     public async Task<ActionResult<string>> ListProjectUsers(string projectId)
-     {
-         var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
-         if (tokens == null)
-         {
-             return Unauthorized();
-         }
-
-         var projects = await _aps.GetProjectUsersACC(Request.Query["projectId"], tokens);
-         return JsonConvert.SerializeObject(projects);
-     }
-
- }
+        } while (offset < totalResult);
+        return allUsers;
+    } 
+}
 ```
 
