@@ -1,9 +1,9 @@
 # Further Learning
 
-Now you have learnt the basic workflow and related API of exporting issue data and importing issue. 
-The following are few more scenarios you might be interested in exploring more.
+Now that you understand the basic workflow and APIs for exporting and importing issue data,
+you may be interested in exploring these additional scenarios. We will briefly introduce some of them.
 
-## Custom Attributes Values
+## Custom Attributes
 The `Custom Attributes` are a collection of data returned by the [GET /Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-GET/) and [GET /Issues/:id](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-GET/) endpoints. 
 This collection includes the `title`, `type`, and `value` for each attribute.
 
@@ -33,13 +33,14 @@ For a list (dropdown) attribute, the `value` field contains the ID of the select
 
 To include custom attribute values when creating or updating an issue, follow these steps:
 
-1.  **Get Attribute Definitions:** First, call [`GET /issues/issue-attribute-definitions`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issue-attribute-definitions-GET/) to retrieve the available attributes.
-2.  **Build the Payload:** Construct your request payload with a `customAttributes` collection.
-3.  **Format the Items:** Each item in the collection must provide:
-    *   The `id` of the attribute definition (attributeDefinitionId)
-    *   The corresponding `value`.
+1.  **Get available custom attributes with the issue type**: given the type with this issue, call [GET /issue-attribute-mappings](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issue-attribute-mappings-GET/) issue custom attributes (custom fields) that are assigned to issue categories and issue types.
+2.  **Get attribute definitions:** call [`GET /issues/issue-attribute-definitions`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issue-attribute-definitions-GET/) to retrieve the attributes definitions.
+2.  **Build the payload:** Construct your request payload with a `customAttributes` collection.
+3.  **Format the items:** Each item in the collection must provide:
+    *   The id of the attribute definition (`attributeDefinitionId`)
+    *   The corresponding value.
    
-  For `list` (dropdown) type attributes, the `value` must be the ID of the desired option.
+  For `list` (dropdown) type attributes, the value must be the ID of the desired option.
  
 
 ```json
@@ -91,15 +92,14 @@ To create comments, build the payload with comment body and issue id, call [POST
 ## Attachments
 
 The [`GET /attachments/{issueId}/items`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-attachments-issueId-items-GET/) endpoint returns a collection of attachment data.
-
 To download an attachment file, follow this process:
 
-1.  **Get Attachment Data:** Call the endpoint above. Each attachment in the response contains a `storageUrn`.
-2.  **Parse the Storage URN:** The `storageUrn` specifies the file's location, containing:
+1.  **Get attachment data:** Call the endpoint above. Each attachment in the response contains a `storageUrn`.
+2.  **Parse the storage URN:** The `storageUrn` specifies the file's location, containing:
     *   `bucketKey`: The identifier for the storage bucket.
     *   `objectKey`: The unique name of the file within the bucket.
-3.  **Get a Download URL:** Use the `bucketKey` and `objectKey` with the Data Management API's [`GET /signeds3download`](https://aps.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectKey-signeds3download-GET/) endpoint to retrieve a secure, signed URL.
-4.  **Download the File:** Use the signed URL from the previous step to download the file directly.
+3.  **Get a download URL:** Use the `bucketKey` and `objectKey` with the Data Management API's [`GET /signeds3download`](https://aps.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectKey-signeds3download-GET/) endpoint to retrieve a secure, signed URL.
+4.  **Download the file:** Use the signed URL from the previous step to download the file directly.
 
 Please check this tutorial [Download Issue Attachments](https://aps.autodesk.com/en/docs/acc/v1/tutorials/issues/download-issue-attachments/) for more detail steps.
 
@@ -121,14 +121,14 @@ Please check this tutorial [Download Issue Attachments](https://aps.autodesk.com
 
 To upload an attachment to an issue, follow this workflow:
 
-1.  **Get the Target Folder:**
+1.  **Get the root folder of this project:**
     Retrieve the parent folder of the "Project Files" folder by [GET /projects/:project_id/topFolders](https://aps.autodesk.com/en/docs/data/v2/reference/http/hubs-hub_id-projects-project_id-topFolders-GET/).
-2.  **Create File Storage:**
+2.  **Create file storage:**
     Create a storage location within the folder from the previous step by [POST /data/v1/projects/:project_id/storage](https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-storage-POST/). Note the returned `bucketKey` and `objectKey`.
-3.  **Upload the File:**
+3.  **Upload the file:**
     - Use the Data Management API's [GET `/signeds3upload`](https://aps.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectKey-signeds3upload/) endpoint with the `bucketKey` and `objectKey` to get a signed upload URL.
     - Use this signed URL to upload your file and finalize the process.
-4.  **Register the Attachment:**
+4.  **Add the attachment:**
     Finally, add the attachment to the issue by calling the [POST `/issues/v1/projects/:projectId/attachments`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-attachments-POST/) endpoint.
 
 ```json
