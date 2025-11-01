@@ -1,62 +1,76 @@
 Add the following content to `APS.Issues.cs` file
 ```js title="APS.Issues.cs"
- //import issues (create new issue or modify existing issue)
- public async Task<TaskRes> CreateOrModifyACCIssues(string projectId, Tokens tokens, JArray body)
-{
-    IssuesClient issueClient = new IssuesClient(_SDKManager);
-
-    var taskRes = new TaskRes()
+ //create or modify issues
+    public async Task<TaskRes> CreateOrModifyACCIssues(string projectId, Tokens tokens, JArray body)
     {
-        created = new List<succeded>(),
-        modified = new List<succeded>(),
-        failed = new List<failed>()
-    };
+        IssuesClient issueClient = new IssuesClient(_SDKManager);
 
-    foreach (JToken eachItem in body)
-    {
-        Autodesk.Construction.Issues.Model.Results issue =
-             eachItem.ToObject<Autodesk.Construction.Issues.Model.Results>();
-
-        try
+        var taskRes = new TaskRes()
         {
-            //some attributes are enum with IssuePayload
-            //value of Autodesk.Construction.Issues.Model.Results  is string
-            //need to convert to enum.
-            Status status = (Status)Enum.Parse(typeof(Status), CapitalizeFirstLetter(issue.Status));
-            AssignedToType assignedToType = (AssignedToType)Enum.Parse(typeof(AssignedToType), CapitalizeFirstLetter(issue.AssignedToType));
+            created = new List<succeded>(),
+            modified = new List<succeded>(),
+            failed = new List<failed>()
+        };
 
-            IssuePayload issuePayload = new IssuePayload
-            {
-                Title = issue.Title,
-                Description = issue.Description,
-                Status = status,
-                IssueSubtypeId = issue.IssueSubtypeId,
-                DueDate = issue.DueDate,
-                AssignedTo = issue.AssignedTo,
-                AssignedToType = AssignedToType.User,
-                RootCauseId = issue.RootCauseId,
-                Published = issue.Published
-            };
+        foreach (JToken eachItem in body)
+        {
+            Issue issue = eachItem.ToObject<Issue>();
 
-            if ((string)eachItem["id"] == null || (string)eachItem["id"] == "")
+            try
             {
-                //create new issue
-                Issue res = await issueClient.CreateIssueAsync(projectId, issuePayload, accessToken: tokens.InternalToken);
-                taskRes.created.Add(new succeded { id = res.Id, csvRowNum = (string)eachItem["csvRowNum"] });
+                //build issue payload with non-null properties only
+                var issuePayload = new IssuePayload();
+                var inputDataProperties = typeof(Issue).GetProperties();
+                var issuePayloadProperties = typeof(IssuePayload).GetProperties();
+
+                foreach (var property in inputDataProperties)
+                {
+                    var value = property.GetValue(issue);
+                    if (value != null)
+                    {
+                        // Find the corresponding property in the IssuePayload class
+                        var matchingProperty = issuePayloadProperties.FirstOrDefault(p => p.Name == property.Name && p.CanWrite);
+                        if (matchingProperty != null)
+                        {
+                            Type propertyType = matchingProperty.PropertyType;
+                            Type actualType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+                            // If the property is an enum, parse the string value to the enum type
+                            if (actualType.IsEnum)
+                            {
+                                var enumValue = Enum.Parse(actualType, value.ToString(), true);
+                                matchingProperty.SetValue(issuePayload, enumValue);
+                            }
+                            else
+                            {
+                                matchingProperty.SetValue(issuePayload, value);
+                            }
+                        }
+                    }
+                }
+
+                if ((string)eachItem["id"] == null || (string)eachItem["id"] == "")
+                {
+                    //create new issue
+                    Issue res = await issueClient.CreateIssueAsync(projectId, issuePayload, accessToken: tokens.InternalToken);
+                    taskRes.created.Add(new succeded { id = res.Id, csvRowNum = (string)eachItem["csvRowNum"] });
+                    Console.WriteLine($"Created one new issue with id: {res.Id}"); 
+                }
+                else
+                {
+                    //modify issue
+                    Issue res = await issueClient.PatchIssueDetailsAsync(projectId, issue.Id, issuePayload, accessToken: tokens.InternalToken);
+                    taskRes.modified.Add(new succeded { id = res.Id, csvRowNum = (string)eachItem["csvRowNum"] });
+                    Console.WriteLine($"Modified one issue with id: {res.Id}");
+                }
             }
-            else
+            catch (Exception e)
             {
-                //modify issue
-                Issue res = await issueClient.PatchIssueDetailsAsync(projectId, issue.Id, issuePayload, accessToken: tokens.InternalToken);
-                taskRes.modified.Add(new succeded { id = res.Id, csvRowNum = (string)eachItem["csvRowNum"] });
+                taskRes.failed.Add(new failed { csvRowNum = (string)eachItem["csvRowNum"], reason = e.ToString() });
+                Console.WriteLine($"Failed to create/modify issue at csv row number: {(string)eachItem["csvRowNum"]}. Error: {e.ToString()}");
             }
         }
-        catch (Exception e)
-        {
-            taskRes.failed.Add(new failed { csvRowNum = (string)eachItem["csvRowNum"], reason = e.ToString() });
-        }
-    }
-    return taskRes;
+        return taskRes;
+
 }
 
  public class TaskRes

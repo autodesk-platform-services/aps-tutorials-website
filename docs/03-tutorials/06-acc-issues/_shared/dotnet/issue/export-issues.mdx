@@ -3,18 +3,24 @@
 // ACC Assue APIs
 
 //Extract Issue Data
-service.getIssues = async (projectId, token) => {
-    let allIssues = [];
-    let offset = 0;
-    let totalResults = 0;
-    do{ 
-        const resp = await issueClient.getIssues(projectId, {accessToken:token,offset:offset});
-        allIssues = allIssues.concat(resp.results);
-        offset += resp.pagination.limit;
-        totalResults = resp.pagination.totalResults;
-    }while (offset < totalResults) 
-    return allIssues;
-};
+ public async Task<IEnumerable<dynamic>> GetIssues(string projectId, Tokens tokens)
+    {
+        IssuesClient issueClient = new IssuesClient(_SDKManager);
+        var allIssues = new List<Issue>();
+        var offset = 0;
+        var totalResult = 0;
+        do
+        {
+            var issues = await issueClient.GetIssuesAsync(projectId, accessToken: tokens.InternalToken, offset: offset);
+            Console.WriteLine($"Fetched {issues.Results.Count} issues from index {offset} record.");
+
+            allIssues.AddRange(issues.Results);
+            offset += (int)issues.Pagination.Limit;
+            totalResult = (int)issues.Pagination.TotalResults;
+
+        } while (offset < totalResult);
+        return allIssues;
+    }
 
 ```
 

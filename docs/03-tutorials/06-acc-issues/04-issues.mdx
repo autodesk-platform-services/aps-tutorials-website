@@ -4,7 +4,7 @@ import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/issue/endpoints.mdx';
 import NodeJsVsCodeSDK from './_shared/nodejs-vscode/issue/issue-sdk.mdx';
 import NodeJsVsCodeExtractIssues from './_shared/nodejs-vscode/issue/export-issues.mdx';
 import NodeJsVsCodeImportIssues from './_shared/nodejs-vscode/issue/import-issues.mdx';
-
+ 
 import DotNetEndpoints from './_shared/dotnet/issue/endpoints.mdx';
 import DotNetSDK from './_shared/dotnet/issue/issue-sdk.mdx';
 import DotNetExtractIssues from './_shared/dotnet/issue/export-issues.mdx';
@@ -19,12 +19,16 @@ We shall be utilizing ACC Issue SDK in both NodeJs and .NET samples
 <EnvTabs NodeJsVsCode={NodeJsVsCodeSDK} DotNetVsCode={DotNetSDK} DotNetVs2022={DotNetSDK} />
 
 
-:::tip
+## Pagination
+
 The 'Issues' collection is managed in the APS cloud database. To ensure optimal performance, the API follows the web standard of **pagination** meaning each HTTP request returns only a portion of the records in the collection.
 With current design, ACC Issue API returns 1-100 issues in one call by default. We also have chance to specify the **limit** parameter which indicates how many records in one page. The other parameter **offset** specifies from which index of issue to extract the records.
 Check API reference of [GET:Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-GET/) for more information.
-:::
 
+:::tip
+- If the number of issue records is large, the process may take some time. In your production application, consider adding a progress bar that displays the current offset and limit, or use query parameters **filter** to request only specific issues from the API.
+- This sample retrieves all issue data. In a real application, you can request only specific fields by using the **fields** query parameter.
+:::
 
 ## Import Issues
 Moving forward, we will add helper functions to create and modify issues. [POST Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-POST/) for creating a new issue, 
@@ -35,10 +39,8 @@ To track status, a JSON array is logged on console with the successfully created
 
 <EnvTabs NodeJsVsCode={NodeJsVsCodeImportIssues} DotNetVsCode={DotNetImportIssues} DotNetVs2022={DotNetImportIssues} />
 
-
 :::info
 The issue creation and modification APIs only accept a limited set of fields in the request payload. This sample demonstrates how to just use some required fields from the CSV data.
-
 - title
 - description
 - issueSubtypeId
@@ -49,6 +51,7 @@ The issue creation and modification APIs only accept a limited set of fields in 
 - rootCauseId
 - published
 :::
+ 
  
 
 ## Server endpoints
@@ -64,16 +67,40 @@ set of endpoints.
 
 And that's it for the server side. Time to try it out!
 
-- Use same project ID in previous step (remove b.) and try to call the endpoint: 
+- **GET Issues**: Use same project ID in previous step (remove b.) and try to call the endpoint in the browser: 
 [http://localhost:8080/api/issues/issues?projectId={your-project-id}](http://localhost:8080/api/issues/issues?projectId={your-project-id}), the server application should
 respond with a JSON list of all the issues from this project. 
 
 ![Issues Response](./_shared/project-issues.webp)
 
-:::info
-- It would take a bit long time if the volume of the issue records is large.
-This sample extracts raw data of issue. 
-- Some fields are json object or array object. Their value will be dumped as string in this sample.
-- To test creating or modifying issues, use HTTP test tools or commandline scripts to perform the test with access token and request payload.Recommended HTTP test tools: [Postman](https://www.postman.com/downloads/), [Insomnia](https://insomnia.rest/)
-:::
+- **POST Issues**: Browsers by default do not provide built-in tools to test endpoints that modify data, such as POST, PATCH, DELETE, etc. To test the creation or modification of issues, use other HTTP tools or command-line scripts. Below is a demo using [Postman](https://www.postman.com/downloads/).
+    - endpoint of this call  `POST: http://localhost:8080/api/issues/issues`
+    
+    - Input headers Content-Type and Cookie. Check [Try it Out of Authentication](/tutorials/acc-issues/auth#try-it-out) to get Cookie value
+        
+        - Content-Type:application/json
+        - NodeJS: Cookie:session=< value >;session.sig=< value >
+        - NET:  Cookie:internal_token=< value >;refresh_token=< value >;expires_at=< value>
+
+        ![Write Test Header](./_shared/write-test-headers.webp)
+
+    - Input request payload. If new issue, no **id**. The **issueSubtypeId** can be copied to any of the records of GET Issues. If with **id**, that means to update existing issue. 
+
+    ``` json
+        {
+            "projectId":"854c194f-05b3-4117-b926-69fa36c33c0c",
+            "data":[
+                {
+                    "title":"create new issue by my application",
+                    "issueSubtypeId":"a1637225-d69c-4afc-ad02-1c73a92ee3c1",
+                    "status":"open"
+                },
+                {
+                    "id": "b4f6e2f7-7bda-4e87-b139-7d94bc9c2a8d"
+                    "title":"modify an existing issue by my application", 
+                    "status":"close"
+                }
+            ]
+        }
+    ```
  

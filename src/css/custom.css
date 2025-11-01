@@ -269,3 +269,8 @@ html[data-theme='dark'] .table-of-contents__link--active {
   color: #fff !important;
   text-decoration: underline;
 }
+
+/* Ensure both external and internal links have the same styling */
+a {
+  color: blue;           /* Blue color for links */
+}

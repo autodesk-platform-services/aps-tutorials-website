@@ -1,21 +1,24 @@
 We will append a couple of helper functions below to the end of the `services/aps.js` file, for fetching related issue settings.
 
 ```js title="services/aps.js"
- // Issue Settings
+ 
+// Issue Settings
 
 //get issue sub types setting
 service.getIssueSubtypes = async (projectId, token) => {
     let allSubtypes = [];
     let offset = 0;
     let totalResults = 0;
-    do{
-    
-        const resp = await issuesClient.getIssuesTypes(projectId, {accessToken:token,include:'subtypes',offset:offset});
+    do {
+
+        const resp = await issuesClient.getIssuesTypes(projectId, { accessToken: token, include: 'subtypes', offset: offset });
+        console.log(`Fetched ${resp.results.length} types from offset ${offset}`);
         let eachPage = resp.results.flatMap(item => item.subtypes);
+        console.log(`Fetched ${eachPage.length} sub types`);
         allSubtypes = allSubtypes.concat(eachPage);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
-    }while (offset < totalResults) 
+    } while (offset < totalResults)
     return allSubtypes;
 };
 
@@ -24,14 +27,15 @@ service.getIssueRootcauses = async (projectId, token) => {
     let allRootcauses = [];
     let offset = 0;
     let totalResults = 0;
-    do{
-    
-        const resp = await issuesClient.getRootCauseCategories(projectId, {accessToken:token,include:'rootcauses',offset:offset});
+    do {
+        const resp = await issuesClient.getRootCauseCategories(projectId, { accessToken: token, include: 'rootcauses', offset: offset });
+        console.log(`Fetched ${resp.results.length} root cause categories from offset ${offset}`);
         let eachPage = resp.results.flatMap(item => item.rootCauses);
+        console.log(`Fetched ${eachPage.length} root causes`);
         allRootcauses = allRootcauses.concat(eachPage);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
-    }while (offset < totalResults) 
+    } while (offset < totalResults)
     return allRootcauses;
 };
 
@@ -40,20 +44,21 @@ service.getIssueCustomAttributesDefs = async (projectId, token) => {
     let allCustomAttributesDefs = [];
     let offset = 0;
     let totalResults = 0;
-    do{
-    
-        const resp = await issuesClient.getAttributeDefinitions(projectId, {accessToken:token,offset:offset});
-        allCustomAttributesDefs = allCustomAttributesDefs.concat( resp.results);
+    do {
+        const resp = await issuesClient.getAttributeDefinitions(projectId, { accessToken: token, offset: offset });
+        console.log(`Fetched ${resp.results.length} custom attributes definitions from offset ${offset}`);
+        allCustomAttributesDefs = allCustomAttributesDefs.concat(resp.results);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
-    }while (offset < totalResults) 
+    } while (offset < totalResults)
     return allCustomAttributesDefs;
-}; 
+};
 
 //get issue permissions of the user
-service.getIssueUserProfile= async (projectId, token) => {
-    
-    const resp = await issuesClient.getUserProfile(projectId, {accessToken:token});
+service.getIssueUserProfile = async (projectId, token) => {
+    issuesClient
+    const resp = await issuesClient.getUserProfile(projectId, { accessToken: token });
     return resp
-}; 
+};
+
 ```

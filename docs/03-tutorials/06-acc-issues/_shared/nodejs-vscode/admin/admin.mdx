@@ -7,13 +7,13 @@ service.getProjectUsers = async (projectId, token) => {
     let allUsers = [];
     let offset = 0;
     let totalResults = 0;
-    do{
-        const resp = await adminClient.getProjectUsers( projectId, {accessToken:token,offset:offset});
-        
+    do {
+        const resp = await adminClient.getProjectUsers(projectId, { accessToken: token, offset: offset });
+        console.log(`Fetched ${resp.results.length} users from offset ${offset}`);
         allUsers = allUsers.concat(resp.results);
         offset += resp.pagination.limit;
         totalResults = resp.pagination.totalResults;
-    }while (offset < totalResults) 
-    return allUsers;    
-}; 
+    } while (offset < totalResults)
+    return allUsers;
+};
 ```

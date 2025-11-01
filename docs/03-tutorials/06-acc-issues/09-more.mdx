@@ -1,0 +1,182 @@
+# Further Learning
+
+Now that you understand the basic workflow and APIs for exporting and importing issue data,
+you may be interested in exploring these additional scenarios. We will briefly introduce some of them.
+
+## Custom Attributes
+The `Custom Attributes` are a collection of data returned by the [GET /Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-GET/) and [GET /Issues/:id](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-issueId-GET/) endpoints. 
+This collection includes the `title`, `type`, and `value` for each attribute.
+
+```json
+ "customAttributes": [
+       {
+            "attributeDefinitionId": "990b80fc-aeb3-4c5e-90e8-e8ad1dc58f9d",
+            "value": "8ad9ab71-3237-49ee-a5c4-278de121aebc",
+            "type": "list",
+            "title": "Risk"
+        },
+        {
+            "attributeDefinitionId": "06aaa633-0d1c-4999-b81a-0004002d17c6",
+            "value": "Autodesk",
+            "type": "text",
+            "title": "Constructor"
+        },
+        {
+            "attributeDefinitionId": "038d4135-4639-4fc4-9d79-9c18561ae63a",
+            "value": "234",
+            "type": "numeric",
+            "title": "Cost"
+        }
+  ]
+```
+For a list (dropdown) attribute, the `value` field contains the ID of the selected option. To get the human-readable display text for this ID, use the [`GET /issues/issue-attribute-definitions`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issue-attribute-definitions-GET/) endpoint.
+
+To include custom attribute values when creating or updating an issue, follow these steps:
+
+1.  **Get available custom attributes with the issue type**: given the type with this issue, call [GET /issue-attribute-mappings](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issue-attribute-mappings-GET/) issue custom attributes (custom fields) that are assigned to issue categories and issue types.
+2.  **Get attribute definitions:** call [`GET /issues/issue-attribute-definitions`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issue-attribute-definitions-GET/) to retrieve the attributes definitions.
+2.  **Build the payload:** Construct your request payload with a `customAttributes` collection.
+3.  **Format the items:** Each item in the collection must provide:
+    *   The id of the attribute definition (`attributeDefinitionId`)
+    *   The corresponding value.
+   
+  For `list` (dropdown) type attributes, the value must be the ID of the desired option.
+ 
+
+```json
+ "customAttributes": [
+       {
+            "attributeDefinitionId": "990b80fc-aeb3-4c5e-90e8-e8ad1dc58f9d",
+            "value": "8ad9ab71-3237-49ee-a5c4-278de121aebc" 
+        },
+        {
+            "attributeDefinitionId": "06aaa633-0d1c-4999-b81a-0004002d17c6",
+            "value": "Autodesk" 
+        },
+        {
+            "attributeDefinitionId": "038d4135-4639-4fc4-9d79-9c18561ae63a",
+            "value": "234" 
+        }
+  ]
+```
+
+
+## Comments
+The `Comments` is a sub entity of the Issue. [GET /issues/:id/comments] returns the comments list. 
+
+```json
+ "results": [
+    {
+        "id": "ff41897b-48df-497d-a97c-b43013af3bd5",
+        "issueId": "39c3f1a2-6272-48e7-a2d4-57d74524625f",
+        "body": "This is a comment created by API by XXXXUVW4AAB at 2025-10-09.",
+        "createdBy": "XXXXUVW4AAB",
+        "createdAt": "2025-10-09T23:51:24.544Z",
+        "updatedAt": "2025-10-09T23:51:24.544Z",
+        "deletedAt": null,
+        "clientCreatedAt": "2025-10-09T23:51:24.544Z",
+        "clientUpdatedAt": "2025-10-09T23:51:24.544Z" 
+    }
+  ]
+```
+
+To create comments, build the payload with comment body and issue id, call [POST /issues/:id/comments](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-comments-POST/)
+
+```json
+{
+"issueId": "{{one_issue_id}}",
+"body": "This is a comment created by API by {{creator_id}} at {{current_date_time}}."
+}
+```
+
+## Attachments
+
+The [`GET /attachments/{issueId}/items`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-attachments-issueId-items-GET/) endpoint returns a collection of attachment data.
+To download an attachment file, follow this process:
+
+1.  **Get attachment data:** Call the endpoint above. Each attachment in the response contains a `storageUrn`.
+2.  **Parse the storage URN:** The `storageUrn` specifies the file's location, containing:
+    *   `bucketKey`: The identifier for the storage bucket.
+    *   `objectKey`: The unique name of the file within the bucket.
+3.  **Get a download URL:** Use the `bucketKey` and `objectKey` with the Data Management API's [`GET /signeds3download`](https://aps.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectKey-signeds3download-GET/) endpoint to retrieve a secure, signed URL.
+4.  **Download the file:** Use the signed URL from the previous step to download the file directly.
+
+Please check this tutorial [Download Issue Attachments](https://aps.autodesk.com/en/docs/acc/v1/tutorials/issues/download-issue-attachments/) for more detail steps.
+
+```json
+{
+    "attachmentId": "0f21c9b5-1e16-4cc4-8cbb-a0163a85eceb",
+    "displayName": "Screenshot 2025-10-09 at 11.57.42.png",
+    "fileName": "0f21c9b5-1e16-4cc4-8cbb-a0163a85eceb.png",
+    "attachmentType": "issue-attachment",
+    "storageUrn": "urn:adsk.objects:os.object:wip.dm.prod/7816aa19-510f-44cf-b15e-5f75e1625434.png",
+    "fileSize": 472839,
+    "fileType": "png",
+    "domainEntityId": "39c3f1a2-6272-48e7-a2d4-57d74524625f",
+    "lineageUrn": "urn:adsk.wipprod:dm.lineage:uDiCbQseT8ipWYNl65fnpw",
+    "version": 1,
+    "versionUrn": "urn:adsk.wipprod:fs.file:vf.uDiCbQseT8ipWYNl65fnpw?version=1",
+}
+```
+
+To upload an attachment to an issue, follow this workflow:
+
+1.  **Get the root folder of this project:**
+    Retrieve the parent folder of the "Project Files" folder by [GET /projects/:project_id/topFolders](https://aps.autodesk.com/en/docs/data/v2/reference/http/hubs-hub_id-projects-project_id-topFolders-GET/).
+2.  **Create file storage:**
+    Create a storage location within the folder from the previous step by [POST /data/v1/projects/:project_id/storage](https://aps.autodesk.com/en/docs/data/v2/reference/http/projects-project_id-storage-POST/). Note the returned `bucketKey` and `objectKey`.
+3.  **Upload the file:**
+    - Use the Data Management API's [GET `/signeds3upload`](https://aps.autodesk.com/en/docs/data/v2/reference/http/buckets-:bucketKey-objects-:objectKey-signeds3upload/) endpoint with the `bucketKey` and `objectKey` to get a signed upload URL.
+    - Use this signed URL to upload your file and finalize the process.
+4.  **Add the attachment:**
+    Finally, add the attachment to the issue by calling the [POST `/issues/v1/projects/:projectId/attachments`](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-attachments-POST/) endpoint.
+
+```json
+{
+	"domainEntityId": "{{one_issue_id}}",
+    "attachments": [
+        {
+        "attachmentId": "{{one_attachment_id}}",
+        "displayName": "{{randomFileName}}",
+        "fileName": "{{objectKey}}",
+        "attachmentType": "issue-attachment",
+        "storageUrn": "{{newStorageId}}"
+        }
+    ]
+}
+```
+Please check this tutorial [Upload Issue Attachments](https://aps.autodesk.com/en/docs/acc/v1/tutorials/issues/upload-issue-attachments/) for more detail steps.
+
+## References
+
+Issue references are links to files or items that exist in various ACC tools and products. Adding a reference in an issue creates a two-way relationship between the issue and reference. 
+Relationships API runs as a shared API component under the hood, managing the references in projects.
+
+Please check this blog [Get/Create/Delete References of ACC Entities by Relationship API](https://aps.autodesk.com/blog/getcreatedelete-references-acc-entities-relationship-api) for more details.
+
+## Webhooks
+
+A few webhook events are provided for Issue. 
+
+- issue.created-1.0: when an issue is created.
+- issue.updated-1.0: when an issue is updated
+- issue.deleted-1.0: when an issue is deleted.
+- issue.restored-1.0: when an issue is restored.
+- issue.unlinked-1.0: when an issue is unlinked from a document (pushpin issue)
+
+`autodesk.construction.issues` is the name of the system.  `Project ID` is scope of the events. So to build the webhook, you will specify the payload with project id.
+ 
+ ```json
+ { 
+    "callbackUrl": "<your callback url such as http://bf067e05.ngrok.io/callback>", 
+    "scope": { 
+        "project": "{{projectId}}" 
+    }, 
+    "hookAttribute": { 
+        "my-data": "<custom data value>" 
+    } 
+} 
+ ```
+
+ Please check this tutorial [Webhook API of ACC Issue is Released
+](https://aps.autodesk.com/blog/webhook-api-acc-issue-released) for more detail steps.
