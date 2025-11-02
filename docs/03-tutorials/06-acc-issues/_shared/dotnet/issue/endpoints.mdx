@@ -1,12 +1,12 @@
 Create a `IssuesController.cs` file under the `Controllers` subfolder with the following content:
 
 ```js title="Controoler/IssuesController.cs"
-using System.Threading.Tasks;
-using aps_acc_issues_dotnet.Models;
+using System.Reflection;
+using Autodesk.Construction.Issues.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -27,7 +27,7 @@ public class IssuesController : ControllerBase
         _aps = aps;
     }
 
-    [HttpGet("issues")]
+     [HttpGet("issues")]
     public async Task<ActionResult<string>> ListIssues(string projectId)
     {
         var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
@@ -36,11 +36,11 @@ public class IssuesController : ControllerBase
             return Unauthorized();
         }
 
-        var issues = await _aps.GetIssues(Request.Query["projectId"], tokens);  
+        var issues = await _aps.GetIssues(projectId, tokens);  
         return JsonConvert.SerializeObject(issues,settings);
-    }
+    } 
   
-        //create new issue or modify issue
+    //create new issue or modify issue
     [HttpPost("issues")]
     public async Task<ActionResult> CreateOrModifyIssues([FromBody] JObject content)
     {
