@@ -13,5 +13,5 @@ At the writing of this documentation, the tutorial sample is using the specified
 
 - [Autodesk.Authentication v2.2.1 ](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/2.2.1)
 - [Autodesk.DataManagement v2.1.2](https://www.nuget.org/packages/Autodesk.DataManagement/2.1.2)
-- [Autodesk.Construction.AccountAdmin v3.1.0-beta](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/3.1.0-beta)
-- [Autodesk.Construction.Issues  v4.0.0-beta](https://www.nuget.org/packages/Autodesk.Construction.Issues/4.0.0-beta)
+- [Autodesk.Construction.AccountAdmin v3.1.0-beta2](https://www.nuget.org/packages/Autodesk.Construction.AccountAdmin/3.1.0-beta2)
+- [Autodesk.Construction.Issues  v4.0.0-beta2](https://www.nuget.org/packages/Autodesk.Construction.Issues/4.0.0-beta2)
