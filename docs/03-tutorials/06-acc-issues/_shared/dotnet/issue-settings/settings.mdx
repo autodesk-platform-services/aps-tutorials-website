@@ -73,5 +73,13 @@ Add the following content on `APS.Issues.cs` file under `Models` folder
         } while (offset < totalResult);
         return allCustomAttDefs;
     }
+
+     //get user permission in Issue
+    public async Task<User> GetIssueUserProfile(string projectId, Tokens tokens)
+    {
+        IssuesClient issueClient = new IssuesClient(_SDKManager);
+        var userInfo = await issueClient.GetUserProfileAsync(projectId, accessToken: tokens.InternalToken);
+        return userInfo;
+    }
 ```
 
