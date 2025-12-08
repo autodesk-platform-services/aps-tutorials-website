@@ -1,30 +1,36 @@
 Create a `AdminController.cs` file under the `Controllers` subfolder with the following content:
 
 ```js title="Controllers/AdminController.cs"
- using Autodesk.Construction.AccountAdmin;
-using Autodesk.Construction.AccountAdmin.Model;
+ using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
-public partial class APS
+[ApiController]
+[Route("api/[controller]")]
+public class AdminController : ControllerBase
 {
-    // The ACC Issue API only returns the user ID along with related fields.
-    // To retrieve additional user information, use the endpoint below and map it to the user ID.
-    public async Task<IEnumerable<dynamic>> GetProjectUsersACC(string projectId, Tokens tokens)
-    {
-        AdminClient adminClient = new AdminClient(_SDKManager);
-        var allUsers = new List<ProjectUser>();
-        var offset = 0;
-        var totalResult = 0;
-        do
-        {
-            var users = await adminClient.GetProjectUsersAsync(projectId, accessToken: tokens.InternalToken, offset: offset);
-            Console.WriteLine($"Fetched {users.Results.Count} users from index {offset} record.");
-            allUsers.AddRange(users.Results);
-            offset += (int)users.Pagination.Limit;
-            totalResult = (int)users.Pagination.TotalResults;
+    private readonly ILogger<AdminController> _logger;
+    private readonly APS _aps;
 
-        } while (offset < totalResult);
-        return allUsers;
+    public AdminController(ILogger<AdminController> logger, APS aps)
+    {
+        _logger = logger;
+        _aps = aps;
+    }
+ 
+
+    [HttpGet("projectUsers")]
+    public async Task<ActionResult<string>> ListProjectUsers( string projectId)
+    {
+        var tokens = await AuthController.PrepareTokens(Request, Response, _aps);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+
+        var projectUsers = await _aps.GetProjectUsersACC(projectId, tokens);
+        return JsonConvert.SerializeObject(projectUsers);
     } 
+
 }
 ```
 

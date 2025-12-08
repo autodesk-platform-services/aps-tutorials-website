@@ -1,13 +1,13 @@
 Add the following content on `APS.Issues.cs` file under `Models` folder
 ```js title="Models/APS.Issues.cs"
  
-    // Issue Settings
+     // Issue Settings
 
     //get issue sub types
     public async Task<IEnumerable<dynamic>> GetIssueSubTypes(string projectId, Tokens tokens)
     {
         IssuesClient issueClient = new IssuesClient(_SDKManager);
-        var allSubIssueTypes = new List<TypesPageResultsSubtypes>();
+        var allSubIssueTypes = new List<IssueTypeSubtypes>();
         var offset = 0;
         var totalResult = 0;
         do
@@ -16,7 +16,7 @@ Add the following content on `APS.Issues.cs` file under `Models` folder
 
             Console.WriteLine($"Fetched {issueTypes.Results.Count}  sub types from index {offset} record");
 
-            List<TypesPageResultsSubtypes> eachPage = issueTypes.Results
+            List<IssueTypeSubtypes> eachPage = issueTypes.Results
             .Where(type => type.Subtypes != null && type.Subtypes.Any()) // Skip type with empty subtypes
             .SelectMany(type => type.Subtypes)  // Flatten the non-empty subtypes lists
             .ToList();
@@ -33,13 +33,13 @@ Add the following content on `APS.Issues.cs` file under `Models` folder
     public async Task<IEnumerable<dynamic>> GetIssueRootcauses(string projectId, Tokens tokens)
     {
         IssuesClient issueClient = new IssuesClient(_SDKManager);
-        var allRootcauses = new List<RootCauseCategoriesPageResultsRootCauses>();
+        var allRootcauses = new List<RootCauseCategoryRootCauses>();
         var offset = 0;
         var totalResult = 0;
         do
         {
             var categories = await issueClient.GetRootCauseCategoriesAsync(projectId, accessToken: tokens.InternalToken, include: "rootcauses", offset: offset);
-            List<RootCauseCategoriesPageResultsRootCauses> eachPage = categories.Results
+            List<RootCauseCategoryRootCauses> eachPage = categories.Results
             .Where(type => type.RootCauses != null && type.RootCauses.Any()) // Skip categories with empty rootcasues lists
             .SelectMany(type => type.RootCauses)  // Flatten the non-empty rootcasues lists
             .ToList();
@@ -58,7 +58,7 @@ Add the following content on `APS.Issues.cs` file under `Models` folder
     public async Task<IEnumerable<dynamic>> GetIssueCustomAttDefs(string projectId, Tokens tokens)
     {
         IssuesClient issueClient = new IssuesClient(_SDKManager);
-        var allCustomAttDefs = new List<AttrDefinitionPageResults>();
+        var allCustomAttDefs = new List<AttrDefinition>();
         var offset = 0;
         var totalResult = 0;
         do
@@ -74,8 +74,8 @@ Add the following content on `APS.Issues.cs` file under `Models` folder
         return allCustomAttDefs;
     }
 
-    //get user permission in Issue
-    public async Task<Autodesk.Construction.Issues.Model.User> GetIssueUserProfile(string projectId, Tokens tokens)
+     //get user permission in Issue
+    public async Task<User> GetIssueUserProfile(string projectId, Tokens tokens)
     {
         IssuesClient issueClient = new IssuesClient(_SDKManager);
         var userInfo = await issueClient.GetUserProfileAsync(projectId, accessToken: tokens.InternalToken);
