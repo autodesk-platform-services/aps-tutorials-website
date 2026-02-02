@@ -10,57 +10,96 @@ import Bim360ProvisioningSteps from './_shared/provisioning/bim360/steps.mdx';
 
 # Getting Started
 
-Here's a couple of things you want to do before building your first
-[Autodesk Platform Services](https://aps.autodesk.com) application.
+Complete these steps before building your first [Autodesk Platform Services](https://aps.autodesk.com) application.
 
 ## Create an account
 
-If you don't have an APS account yet, sign up for one on https://aps.autodesk.com.
+If you don't have an Autodesk account, create one at [aps.autodesk.com](https://aps.autodesk.com).
+
+1. Go to [aps.autodesk.com](https://aps.autodesk.com) and click **Sign in**.
+2. Click **Create account**.
+3. Complete the form and verify your email.
+
+<Image
+    img={require('./_shared/developer-portal-logged-out.png')}
+    alt="APS developer portal homepage showing the Sign in button in the top-right corner."
+/>
+
+## Create a developer hub
+
+A developer hub is where you create and manage your APS apps.
+
+### Prerequisites
+
+- An [Autodesk account](https://www.autodesk.com/) (created in the previous step)
+- An [Autodesk team](https://www.autodesk.com/support/account/admin/users/manage-teams) with an [APS subscription (Free tier or Paid)](https://www.autodesk.com/products/autodesk-platform-services/overview?_gl=1*80a9j5*FPAU*MTQ3ODg2NTk5MS4xNzYzNjkxNjI2*_ga*OTMzMjUyMTQ5LjE3NjkyMTI0NTk.*_ga_NZSJ72N6RX*czE3NjkyMTIxMTkkbzEkZzEkdDE3NjkyMTI0NjYkajUyJGwwJGgw*_fplc*NGw5T0ttY0ZVemZjYjhtaWtXNFNKS1ZPRUw4ZFlUbHJPTDQ5Q1FOMm1ldTNzdllGVmR4UllNU1ZZTEdKazFFV1kxQjJ3end3T3U0R2NZa1glMkZMdU0lMkJIM3NQcDVTSUtwOHpaWFdDWFAlMkJtamFtY1d5N01qdG5aYld3V21TaTdnJTNEJTNE#pricing)
 
 :::tip
-You can take advantage of a trial subscription that is valid for 3 months.
+Most developers start with the Free tier, which provides monthly access to APS APIs with usage caps on paid APIs.
 :::
 
-<Image img={require('./_shared/developer-portal-logged-out.png')} />
+### Create a developer hub
+
+1. Sign in to [manage.autodesk.com](https://manage.autodesk.com/).
+2. Click **Products and Services**, then click the **Hubs** tab.
+3. Click **Create hub**.
+4. Select **APS Developer Hub** as the product.
+5. Enter a hub name and optional description.
+6. Click **Create & Activate**.
+7. Refresh the page, then click your hub name to open the developer portal.
+
+<Image
+    img={require('./_shared/developer-portal-create-new-hub.png')}
+    alt="Autodesk Account Management page showing the Hubs section with the Create hub button."
+/>
+
+<Image
+    img={require('./_shared/developer-portal-hub-setup.png')}
+    alt="Create Hub dialog showing APS developer hub selected as the product type."
+/>
 
 ## Create app credentials
 
-In order to authenticate ourselves to the APS platform, we will need to generate
-_app credentials_ (specifically, a _client ID_ and _client secret_) for our application.
-After logging into the developer portal, go to your profile menu in the top-right corner,
-and click on _Applications_:
+To authenticate with APS APIs, you need a client ID and client secret. You get these by creating an app in your developer hub.
 
-<Image img={require('./_shared/developer-portal-logged-in.png')} />
+1. In your developer hub, go to the **Applications** page.
+2. Click **Create application**.
+3. Enter a name for your app.
+4. Select the application type that matches your use case:
+    - **Traditional Web App** for cases where your application runs on a server (e.g., a web app with a backend server).
+    - **Desktop, Mobile, Single-Page App** for cases where your application will run on a user's device (e.g., a mobile app, a desktop application, or a web app that runs entirely in the browser).
+    - **Server-to-Server App** for cases where your application runs on a server and does not require user authentication (e.g., backend services, daemons, or applications that access APS APIs on behalf of themselves rather than a user).
+5. Click **Create**.
 
-Next, click on the _Create application_ button:
+<Image
+    img={require('./_shared/developer-portal-hub-apps.png')}
+    alt="Developer hub Applications page showing the Create application button."
+/>
 
-<Image img={require('./_shared/my-apps.png')} />
+<Image
+    img={require('./_shared/developer-portal-create-app.png')}
+    alt="Create application dialog with fields for app name and application type selection."
+/>
 
-Enter the name of your application. Select the type of application that applies to you, and click the _Create_ button:
+<Image
+    img={require('./_shared/developer-portal-created-app.png')}
+    alt="Application details page displaying the client ID and client Secret credentials."
+/>
 
-<Image img={require('./_shared/create-app.png')} />
+### Configure your app
 
-And your application is now ready. Let's store your _Client ID_ and _Client Secret_
-credentials as we will need these soon!
+1. In the **Callback URL** field, enter the URL where users will be redirected after signing in. For local development, we recommend using `http://localhost:8080/api/auth/callback`.
+2. Under **API Access**, select the APIs your app needs.
+3. Click **Save changes**.
 
-<Image img={require('./_shared/app-overview.png')} />
-
-Finally, set the _Callback URL_ under _General Settings_ to `http://localhost:8080/api/auth/callback`,
-and enable the APIs you want your application to have access to. Unless you have any specific reason
-for limiting your application's access to the different services, enable everything.
-
-<Image img={require('./_shared/apis.png')} />
-
-:::caution
-Pay close attention to the _Callback URL_. This is the address your application's
-users will be redirected to after logging in with their Autodesk credentials. It can be
-any arbitrary URL but it has to match exactly the URL your server application expects.
-In our tutorials we will always use the same address: `http://localhost:8080/api/auth/callback`.
+:::note
+The callback URL must exactly match the URL your application expects. Mismatched URLs will cause authentication to fail.
 :::
 
-Finally, update the application by clicking on the _Save changes_ button, and you're all set!
-
-<Image img={require('./_shared/save-changes.png')} />
+<Image
+    img={require('./_shared/developer-portal-app-settings.png')}
+    alt="Application settings page showing the callback URL field and API Access checkboxes."
+/>
 
 ## Provision access in other products
 
