@@ -191,13 +191,13 @@ class Table {
 ## Import Issues
 Finally, let us implement the feature: batch import projects issues for creating new or modifying existing issue, this is achieved by using a CSV file,
 we provided a sample template files for projects issues, you can add/modify your information based on the template, 
-then import the data from CSV file into ACC account.
+then import the data from CSV file into Forma for Construction hub.
 - [IssueTemplate.csv](https://github.com/xiaodongliang/aps-acc-issues-tutorial-nodejs/blob/main/template/IssueTemplate.csv) 
 
-During import, the code will parse the propery information from a csv file to build request payload.
+During import, the code will parse the property information from a csv file to build request payload.
 
 In `table.js`,  add the implementation code into Class `Table`, after the function `exportToCSV`:
-- `importFromCSV`: Import the information into ACC Issue sample from the prepared CSV file.
+- `importFromCSV`: Import the information into Forma for Construction Issue sample from the prepared CSV file.
 
 ```js title="wwwroot/table.js"
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,8 +321,8 @@ otherwise the date will not be recognized correctly after exporting to CSV file.
 And that's it! Your application is now ready for action. Start it as usual, and when you go to
 [http://localhost:8080](http://localhost:8080), you should be presented with a simple UI, with
 a tree-view on the left side, you can do the following operation:
-- Select an ACC Hub. The tree will list all the ACC Projects within the hub that the logged in user has access to.
-- Select an ACC Project:  `ISSUES` tab will list all the project issues, `USERS` tab will list all the project users, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS` tabs will list the project subtypes, rootcauses and custom sttributes respectively.
+- Select Forma for Construction Hub. The tree will list all the Forma for Construction Projects within the hub that the logged in user has access to.
+- Select Forma for Construction Project:  `ISSUES` tab will list all the project issues, `USERS` tab will list all the project users, `SUBTYPES`, `ROOT_CAUSES`, and `CUSTOM_ATTRIBUTES_DEFS` tabs will list the project subtypes, rootcauses and custom sttributes respectively.
 - Click the `Export` button to export all the data of current active tab to a csv file
 - Click `Import` button to select a prepared CSV file with issue data as mentioned in #CSV File Prepare. The sample will create or modify issues. 
 
@@ -332,7 +332,7 @@ Please note that you can only import the issue data  while the `ISSUES` tab is a
 
 :::tip
 When importing issues, you can always open the **Developer Tools** and check the console
-for the status ofcreation/modifying the issue as picture shown below, be noted this only work for importing 
+for the status of creation/modifying the issue as picture shown below, be noted this only work for importing 
 issues.
 :::
 ![Projects Status](./_shared/projects-status.png)

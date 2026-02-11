@@ -12,17 +12,17 @@ import DotNetImportIssues from './_shared/dotnet/issue/import-issues.mdx';
 
 # Project Issues
 
-Now, we will implement our server to consume [ACC Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to fetch project issues and create/modify issues.
+Now, we will implement our server to consume [Forma for Construction Issues APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/issues/) to fetch project issues and create/modify issues.
 
 ## Work with Issues
-We shall be utilizing ACC Issue SDK in both NodeJs and .NET samples
+We shall be utilizing Forma for Construction Issue SDK in both NodeJs and .NET samples
 <EnvTabs NodeJsVsCode={NodeJsVsCodeSDK} DotNetVsCode={DotNetSDK} DotNetVs2022={DotNetSDK} />
 
 
 ## Pagination
 
 The 'Issues' collection is managed in the APS cloud database. To ensure optimal performance, the API follows the web standard of **pagination** meaning each HTTP request returns only a portion of the records in the collection.
-With current design, ACC Issue API returns 1-100 issues in one call by default. We also have chance to specify the **limit** parameter which indicates how many records in one page. The other parameter **offset** specifies from which index of issue to extract the records.
+With current design, **Forma for Construction** Issue API returns 1-100 issues in one call by default. We also have chance to specify the **limit** parameter which indicates how many records in one page. The other parameter **offset** specifies from which index of issue to extract the records.
 Check API reference of [GET:Issues](https://aps.autodesk.com/en/docs/acc/v1/reference/http/issues-issues-GET/) for more information.
 
 :::tip
