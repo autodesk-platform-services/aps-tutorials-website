@@ -1,19 +1,19 @@
 import Image from '@theme/IdealImage';
 
 :::caution
-Make sure you have _admin_ access to an Autodesk Construction Cloud (ACC for short) account
+Make sure you have _admin_ access to a Forma for Construction (Forma for short) hub
 :::
 
-1. Log into your ACC account, and navigate to _Account Administration_
+1. Log into your Forma for Construction account, and navigate to _Hub Admin_
   - From the overview of projects
 
-<Image img={require('./project-list.jpeg')} />
+<Image img={require('./project-list.png')} />
 
   - From the user interface of a specific project
 
 <Image img={require('./project-detail.jpeg')} />
 
-2. On the _Account Admin_ page, go to _Custom Integrations_, use the _Add Custom Integration_ button on the top to add a custom integration. 
+2. On the _Hub Admin_ page, go to _Custom Integrations_, use the _Add Custom Integration_ button on the top to add a custom integration. 
 
 <Image img={require('./account-admin.jpeg')} />
 
@@ -21,9 +21,13 @@ Make sure you have _admin_ access to an Autodesk Construction Cloud (ACC for sho
 
 <Image img={require('./custom-integration.jpeg')} />
 
-4. When ready, hit the _Add_ button
+4. When ready, hit the _Next_ button
+
+<Image img={require('./proceed-integration.jpg')} />
+
+5. Hit the _Proceed anyway_ button, to consent integration Permission control.
 
 After completing the process, your application will be able to use different APS services
 such as [Data Management API](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
-or [ACC API](https://aps.autodesk.com/en/docs/acc/v1/overview/introduction)
-to access information from all projects under this ACC account.
+or [Forma for Construction API](https://aps.autodesk.com/en/docs/acc/v1/overview/introduction)
+to access information from all projects under this Forma for Construction hub.
