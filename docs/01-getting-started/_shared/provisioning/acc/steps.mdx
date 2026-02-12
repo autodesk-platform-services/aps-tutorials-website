@@ -1,13 +1,15 @@
 import Image from '@theme/IdealImage';
 
 :::caution
-Make sure you have _admin_ access to a Forma for Construction (Forma for short) hub
+Make sure you have _admin_ access to an Autodesk Forma hub
 :::
 
-1. Log into your Forma for Construction account, and navigate to _Hub Admin_
-  - From the overview of projects
+1. Log into your Forma hub, and navigate to _Hub Admin_
 
-<Image img={require('./project-list.png')} />
+<Image
+    img={require('./project-list.png')}
+    alt="Autodesk Forma homepage showing the Hub Admin dropdown in the top-left corner."
+/>
 
   - From the user interface of a specific project
 
@@ -32,11 +34,7 @@ Make sure you have _admin_ access to a Forma for Construction (Forma for short) 
 
 4. When ready, hit the _Next_ button
 
-<Image img={require('./proceed-integration.jpg')} />
-
-5. Hit the _Proceed anyway_ button, to consent integration Permission control.
-
 After completing the process, your application will be able to use different APS services
 such as [Data Management API](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
-or [Forma for Construction API](https://aps.autodesk.com/en/docs/acc/v1/overview/introduction)
-to access information from all projects under this Forma for Construction hub.
+or [Forma API](https://aps.autodesk.com/en/docs/acc/v1/overview/introduction)
+to access information from all projects under this Forma hub.
