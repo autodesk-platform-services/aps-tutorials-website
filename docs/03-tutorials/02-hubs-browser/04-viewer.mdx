@@ -38,7 +38,8 @@ async function getAccessToken(callback) {
 
 export function initViewer(container) {
     return new Promise(function (resolve, reject) {
-            Autodesk.Viewing.Initializer({ env: 'AutodeskProduction', getAccessToken }, function () {
+            Autodesk.Viewing.FeatureFlags.set('DS_ENDPOINTS', true);
+            Autodesk.Viewing.Initializer({ env: 'AutodeskProduction2', api: 'streamingV2', getAccessToken }, function () {
             const config = {
                 extensions: ['Autodesk.DocumentBrowser']
             };
@@ -67,6 +68,23 @@ that exports two functions:
 
 - `initViewer` will create a new instance of the viewer in the specified DOM container
 - `loadModel` for loading a specific model to the viewer
+
+Additionally,
+The viewer now supports automatic region-based routing controlled by feature flags since v7.109.1. In the code above, we enable the `DS_ENDPOINTS` flag and set `env: 'AutodeskProduction2'` and `api: 'streamingV2'` in the initializer. This ensures that the viewer automatically routes requests to the appropriate regional endpoints based on where the model is hosted.
+
+Here is the relevant snippet for enabling region-based routing in the viewer, which must be set before the viewer is initialized:
+```js
+Autodesk.Viewing.FeatureFlags.set('DS_ENDPOINTS', true); //!<<< Feature flag for region-based routing and must be set before the viewer is initialized
+Autodesk.Viewing.Initializer({ env: 'AutodeskProduction2', api: 'streamingV2', getAccessToken }, ... );
+``` 
+
+:::caution
+Please note that models hosted in UK+4 regions (UK, Germany, Japan, India, and Canada) may not be loaded in the viewer if we don't enable region-based routing. If you encounter issues with loading models, make sure to check the browser's developer console for any error messages related to network requests, and ensure that the `DS_ENDPOINTS` feature flag is enabled as shown above.
+
+Besides that, previously introduced region-specific api values `streamingV2_EU` and `streamingV2_AUS` are now deprecated. They are ignored, when the `DS_ENDPOINTS` feature flag is enabled, but still supported otherwise. It is recommended though to simplify them to `streamingV2` while enabling the feature flag.
+
+:::
+
 
 ## Sidebar logic
 
