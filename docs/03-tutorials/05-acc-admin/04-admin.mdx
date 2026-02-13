@@ -8,11 +8,11 @@ import DotNetEndpoints from './_shared/dotnet/admin/endpoints.mdx';
 
 import YouTubeVideo from '@site/src/components/YouTubeVideo';
 
-# Account Admin
+# Hub Admin
 
-Now, it's time to implement our server to support Account Admin access, in this step, we'll 
-continue extend our server based on [Account Admin APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
-to FETCH and CREATE the data of ACC Projects and Users:
+Now, it's time to implement our server to support Hub Admin access, in this step, we'll 
+continue extend our server based on [Forma Admin APIs](https://aps.autodesk.com/en/docs/acc/v1/overview/field-guide/admin/)
+to FETCH and CREATE the data of Forma Projects and Users:
 
 <details>
     <summary>
@@ -46,7 +46,7 @@ set of endpoints.
 And that's it for the server side. Time to try it out!
 
 Start (or restart) the app from Visual Studio Code as usual, 
-- Use the ID(removing **b.**) of one ACC hub as you get in previous step in the address: http://localhost:8080/api/admin/projects?accountId={your-account-id}.
+- Use the ID(removing **b.**) of one Forma hub as you get in previous step in the address: http://localhost:8080/api/admin/projects?accountId={your-account-id}.
 In this case the server application should respond with a JSON list of all projects
 available under the specified hub.
 - Use the project ID as you get in previous step, try to call the address: 
@@ -54,9 +54,9 @@ http://localhost:8080/api/admin/project/users?projectId={your-project-id}, the s
 respond with a JSON list of all the users from this project. 
 
 :::info
-You may get different project list by the 2 differnt endpoints, here are the explain:
+You may get different project list from the 2 different endpoints, here are the explain:
 - With Data Management API, it will return all the projects that the current user is involved.
-- With Account Admin API, it will return all the projects in the account if the current user is Account Admin.
+- With Forma Admin API, it will return all the projects in the hub if the current user is Hub Admin.
 :::
 
 ![Account Admin Response](./_shared/account-admin.webp)

@@ -5,10 +5,10 @@ import YouTubeVideo from '@site/src/components/YouTubeVideo';
 Finally, we're ready to implement all the remaining logic of the class `Table`.
 The class `Table` is responsible to handle different type of data, including project list,
 user list, and provide the functions including:
-- Get the data list from ACC Admin App based on the current input information.
+- Get the data list from Forma Admin App based on the current input information.
 - Draw the current data list into a bootstrap table.
 - Export the current data list into a csv file.
-- Import the data from a csv file into the ACC Admin.
+- Import the data from a csv file into the Forma Admin.
 
 <details>
     <summary>
@@ -32,7 +32,7 @@ Here are the explanation of the main function:
 - `resetData`: Fetch and setup the data based on the input accountId, projectId, and tabKey. 
 - `drawTable`: Draw the bootstrap table with the current data. 
 - `exportToCSV`: Export the current data into CSV file.
-- `importFromCSV`: Import the information into ACC Admin system from the prepared CSV file.
+- `importFromCSV`: Import the information into Forma Admin system from the prepared CSV file.
 
 ```js title="wwwroot/table.js"
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -340,7 +340,7 @@ export async function initTableTabs(){
 ## CSV File Prepare
 Finally, the most important feature is batch import projects/users, this is achieved by using a CSV file,
 we provided 2 template files for projects and users, you can add/modify your information based on the template, 
-then import these data from CSV file into ACC account.
+then import these data from CSV file into Forma hub.
 
 - [ProjectsTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/ProjectsTemplate.csv) 
 - [UsersTemplate.csv](https://github.com/autodesk-platform-services/aps-acc-admin-tutorial-nodejs/blob/main/template%20files/UsersTemplate.csv) 
@@ -361,7 +361,7 @@ otherwise the date will not be recognized correctly after exporting to CSV file.
 :::tip
 - When importing projects, you can always open the **Developer Tools** and check the console
 for the status of these projects as picture shown below, be noted this only work for importing 
-projects, not work for importing users.
+projects, NOT for importing users.
 :::
 ![Projects Status](./_shared/projects-status.png)
 
@@ -370,16 +370,16 @@ projects, not work for importing users.
 And that's it! Your application is now ready for action. Start it as usual, and when you go to
 [http://localhost:8080](http://localhost:8080), you should be presented with a simple UI, with
 a tree-view on the left side, you can do the following operation:
-- Select an ACC Hub: The table will list all the ACC Projects, you can export all the projects to a CSV file by click
+- Select a Forma Hub: The table will list all the Forma Projects, you can export all the projects to a CSV file by clicking
 the `Export` button, or import the prepared projects by a CSV file with Projects information.
-- Select an ACC Project: There are 2 tabs, `PROJECT` and `USERS`, `PROJECT` tab will list the detail information about this 
+- Select a Forma Project: There are 2 tabs, `PROJECT` and `USERS`, `PROJECT` tab will list the detail information about this 
 project, only export is available, `USERS` tab will list all the project users, you can click the `Export` button to export all
 the project users to a csv file, or click `Import` button to import users into the selected project with a prepare CSV file of User information.
 
 :::caution
 Please note that you can only import the certain type of data based on the active Tab, here 
 are the details:
-- `PROJECTS` Tab: You can only import project list into the selected account, the csv file needs to follow
+- `PROJECTS` Tab: You can only import project list into the selected hub, the csv file needs to follow
 the Projects template, the csv file of Users template can not be imported. You can check the console to see 
 if any projects failed.
 - `PROJECT` Tab: Nothing can be imported when this tab is active.
