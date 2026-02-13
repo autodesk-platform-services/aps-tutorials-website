@@ -6,11 +6,27 @@ import NodeJsVsCodeEndpoints from './_shared/nodejs-vscode/data/endpoints.mdx';
 import DotNetHubs from './_shared/dotnet/data/hubs.mdx';
 import DotNetEndpoints from './_shared/dotnet/data/endpoints.mdx';
 
+import YouTubeVideo from '@site/src/components/YouTubeVideo';
+
 # Project Browsing
 
 The base URI schema of ACC Issue API is: `https://developer.api.autodesk.com/construction/issues/v1/projects/:projectId`
 , where the **projectId** is a required URI parameter. In this step we'll extend the server to browse the projects of Autodesk Construction Cloud, in order to fetch **project Id**. 
 We will basically get the hierarchy of hubs and projects using Data Management APIs.
+
+<details>
+    <summary>
+        <b>See the video walkthrough for .NET</b>
+    </summary>
+    <YouTubeVideo id="SETMRe7L198" si="uzV2YYfOueWtL5VB" title="ACC Issues for .NET: Project Browsing" />
+</details>
+
+<details>
+    <summary>
+        <b>See the video walkthrough for Node.js</b>
+    </summary>
+    <YouTubeVideo id="plLPEokqCos" si="YSGnFZfLMYhKocPu" title="ACC Issues for Node.js: Project Browsing" />
+</details>
 
 ## Browsing hubs
 
