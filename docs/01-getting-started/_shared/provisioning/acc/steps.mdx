@@ -1,29 +1,40 @@
 import Image from '@theme/IdealImage';
 
 :::caution
-Make sure you have _admin_ access to an Autodesk Construction Cloud (ACC for short) account
+Make sure you have _admin_ access to an Autodesk Forma hub
 :::
 
-1. Log into your ACC account, and navigate to _Account Administration_
-  - From the overview of projects
+1. Log into your Forma hub, and navigate to _Hub Admin_
 
-<Image img={require('./project-list.jpeg')} />
+<Image
+    img={require('./project-list.png')}
+    alt="Autodesk Forma homepage showing the Hub Admin dropdown in the top-left corner."
+/>
 
   - From the user interface of a specific project
 
-<Image img={require('./project-detail.jpeg')} />
+<Image
+    img={require('./project-detail.png')}
+    alt="Autodesk Forma project page showing the Hub Admin dropdown in the top-left corner."
+/>
 
-2. On the _Account Admin_ page, go to _Custom Integrations_, use the _Add Custom Integration_ button on the top to add a custom integration. 
+2. On the _Hub Admin_ page, go to _Custom Integrations_, use the _Add Custom Integration_ button on the top to add a custom integration. 
 
-<Image img={require('./account-admin.jpeg')} />
+<Image
+    img={require('./account-admin.png')}
+    alt="Autodesk Forma hub admin page showing the custom integrations section on the left."
+/>
 
 3. On the _Add custom integration_ dialog page, fill out the _Client ID_, _Custom integration name_ and _Description_ fields.
 
-<Image img={require('./custom-integration.jpeg')} />
+<Image
+    img={require('./custom-integration.png')}
+    alt="Autodesk Forma page showing the Add custom integration dialog."
+/>
 
-4. When ready, hit the _Add_ button
+4. When ready, hit the _Next_ button
 
 After completing the process, your application will be able to use different APS services
 such as [Data Management API](https://aps.autodesk.com/en/docs/data/v2/developers_guide/overview)
-or [ACC API](https://aps.autodesk.com/en/docs/acc/v1/overview/introduction)
-to access information from all projects under this ACC account.
+or [Forma API](https://aps.autodesk.com/en/docs/acc/v1/overview/introduction)
+to access information from all projects under this Forma hub.
